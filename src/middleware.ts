@@ -11,12 +11,12 @@ export async function middleware(req: any) {
   const { pathname } = req.nextUrl;
 
   // If the user is not logged in and is trying to access a protected route, redirect to login
-  if (!token && pathname !== "/pos/login") {
-    return NextResponse.redirect("http://localhost:3000/pos/login");
-  }
-  if (token && pathname == "/pos/login") {
-    return NextResponse.redirect("http://localhost:3000/pos/dashboard");
-  }
+  // if (!token && pathname !== "/pos/login") {
+  //   return NextResponse.redirect("http://localhost:3000/pos/login");
+  // }
+  // if (token && pathname == "/pos/login") {
+  //   return NextResponse.redirect("http://localhost:3000/pos");
+  // }
 
   // Allow the request if it's a public route or the user is logged in
   return NextResponse.next();
