@@ -1,24 +1,86 @@
-export const apiURL = `https://amt.santar.store`;
+// 'use server'
+// import { cookies } from "next/headers";
+// export const Backend_URL = process.env.BACKEND_URL;
+
+// export async function fetchApi(
+// 	url: string,
+// 	method: string = "GET",
+// 	headers: Record<string, string> = {},
+// 	body: any = null
+// ) {
+
+// 	const token = cookies().get("next-auth.session-token");
+
+// 	const options: RequestInit = {
+// 		method,
+// 		headers: {
+// 			"Content-Type": "application/json",
+// 			...headers,
+// 		},
+// 	};
+// 	if (token) {
+// 		headers.Authorization = `Bearer ${token}`;
+// 	}
+
+// 	if (body) {
+// 		options.body = JSON.stringify(body);
+// 	}
+
+// 	const response = await fetch(url, options);
+// 	const data = await response.json();
+// 	console.log(data);
+
+// 	if (!response.ok) {
+// 		throw new Error("error", data.message);
+// 	}
+
+// 	return data;
+// }
+
+// "use server";
+
+import { useSession } from "next-auth/react";
+import { cookies } from "next/headers";
+import { useCookies } from "next-client-cookies";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { getServerSession } from "next-auth/next";
+export const Backend_URL = process.env.BACKEND_URL;
 
 export async function fetchApi(
-  url: string,
-  method: string = "GET",
-  headers: Record<string, string> = {},
-  body: any = null
+	url: string,
+	method: string = "GET",
+	headers: Record<string, string> = {},
+	body: any = null
 ) {
-  const options: RequestInit = {
-    method,
-    headers: {
-      "Content-Type": "application/json",
-      ...headers,
-    },
-  };
+	try {
+		const token = getServerSession(authOptions);
+		// console.log(token);
+		const options: RequestInit = {
+			method,
+			headers: {
+				"Content-Type": "application/json",
+				...headers,
+			},
+		};
 
-  if (body) {
-    options.body = JSON.stringify(body);
-  }
+		// if (token) {
+		// headers.Authorization = `Bearer ${token}`;
+		// }
 
-  const response = await fetch(url, options);
+		if (body) {
+			options.body = JSON.stringify(body);
+		}
+		console.log(url);
+		const response = await fetch(url, options);
+		const data = await response.json();
 
-  return response.json();
+		if (!response.ok) {
+			throw new Error(data.message || "An error occurred");
+		}
+
+		return data;
+	} catch (error: any) {
+		console.error("Fetch API Error:", error.message);
+		throw new Error(error.message || "An error occurred");
+	}
 }
