@@ -44,21 +44,22 @@ import { cookies } from "next/headers";
 import { useCookies } from "next-client-cookies";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { getServerSession } from "next-auth/next";
-export const Backend_URL = process.env.BACKEND_URL;
+export const Backend_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 export async function fetchApi(
 	url: string,
 	method: string = "GET",
+	token: any,
 	headers: Record<string, string> = {},
 	body: any = null
 ) {
 	try {
-		const token = getServerSession(authOptions);
 		// console.log(token);
 		const options: RequestInit = {
 			method,
 			headers: {
 				"Content-Type": "application/json",
+				Authorization: `Bearer ${token}`,
 				...headers,
 			},
 		};
@@ -70,7 +71,6 @@ export async function fetchApi(
 		if (body) {
 			options.body = JSON.stringify(body);
 		}
-		console.log(url);
 		const response = await fetch(url, options);
 		const data = await response.json();
 

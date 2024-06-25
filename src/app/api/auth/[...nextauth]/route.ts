@@ -1,22 +1,15 @@
 import { NextAuthOptions } from "next-auth";
-import { JWT } from "next-auth/jwt";
 import NextAuth from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { useReducer } from "react";
-const Backend_URL = process.env.BACKEND_URL;
+const Backend_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 export const authOptions: NextAuthOptions = {
 	providers: [
 		CredentialsProvider({
 			name: "Credentials",
 			credentials: {
-				email: {
-					label: "Email",
-					type: "text",
-					placeholder: "jsmith@example.com",
-				},
-
-				password: { label: "Password", type: "password" },
+				email: {},
+				password: {},
 			},
 			async authorize(credentials, req) {
 				if (!credentials?.email || !credentials?.password) return null;
@@ -46,11 +39,6 @@ export const authOptions: NextAuthOptions = {
 
 	callbacks: {
 		async jwt({ token, user }) {
-			// if (user) {
-			// 	token.user = user;
-			// 	token.accessToken = token.accessToken; // Assuming the token is returned by the backend
-			// }
-			// console.log(token);
 			if (user) return { ...token, ...user };
 
 			return token;
