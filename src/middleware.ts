@@ -1,6 +1,5 @@
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
-import { authOptions } from "./app/api/auth/[...nextauth]/route";
 import { cookies } from "next/headers";
 const Frontend_URL = process.env.FRONTEND_URL;
 
@@ -13,7 +12,6 @@ export async function middleware(req: NextRequest) {
 		return NextResponse.redirect(`${Frontend_URL}/pos/app`);
 	}
 
-	// Allow the request if it's a public route or the user is logged in
 	return NextResponse.next();
 }
 
