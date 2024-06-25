@@ -3,14 +3,12 @@ import Container from "@/components/Container.components";
 import TableSkeletonLoader from "@/components/TableSkeletonLoader";
 import { SizeControlBar, SizingTable } from "@/components/pos/sizing";
 import { Backend_URL, fetchApi } from "@/lib/api";
-import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
 export default function ProductSizingsPage() {
 	const [isLoading, setIsLoading] = useState(true);
-	const {data: session } = useSession();
 	const getSizes = (url: string) => {
-		return fetchApi(url, "GET",session?.accessToken);
+		return fetchApi(url, "GET");
 	};
 
 	const { data, error } = useSWR(

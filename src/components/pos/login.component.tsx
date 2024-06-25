@@ -4,25 +4,19 @@ import { Button } from "@/components/ui/button";
 import FormInput from "../FormInput.components";
 import { useEffect, useState } from "react";
 import { signIn } from "next-auth/react";
+import { getSession, login } from "@/lib/lib";
+import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export default function Login() {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
+	const router = useRouter(); // Use the useRouter hook
 
 	const handleSubmit = async (e: any) => {
 		e.preventDefault();
-		console.log(email, password);
-		const result = await signIn("credentials", {
-			email,
-			password,
-			redirect: true,
-		});
-		if (result?.error) {
-			console.log(result.error);
-			// Handle login errors here
-		} else {
-			// Handle successful login here, e.g., redirect to dashboard
-		}
+		const result = await login(email, password);
+		router.push("/pos/app");
 	};
 
 	return (
@@ -78,7 +72,6 @@ export default function Login() {
 			</div>
 		</div>
 	);
-
 }
 
 // async function postRequest(

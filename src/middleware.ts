@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 const Frontend_URL = process.env.FRONTEND_URL;
 
 export async function middleware(req: NextRequest) {
-	const token = cookies().get("next-auth.session-token");
+	const token = cookies().get("session");
 
 	const { pathname } = req.nextUrl;
 
@@ -12,13 +12,16 @@ export async function middleware(req: NextRequest) {
 		return NextResponse.redirect(`${Frontend_URL}/pos/app`);
 	}
 
+	// if (!token && pathname == "/pos/login") {
+	// 	return NextResponse.redirect(`${Frontend_URL}/pos/app`);
+	// }
+
 	return NextResponse.next();
 }
 
-// export const config = {
-// 	api: {
-// 		bodyParser: false,
-// 		// Specify a matcher for API routes
-// 		matcher: "/pos/(:path*)", // Example matcher for API routes
-// 	},
-// };
+export const config = {
+	api: {
+		bodyParser: false,
+		matcher: "/app/(:path*)", // Example matcher for API routes
+	},
+};
