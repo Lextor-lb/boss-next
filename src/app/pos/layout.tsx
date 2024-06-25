@@ -8,6 +8,7 @@ export default function POSLayout({ children }: { children: React.ReactNode }) {
 			</div>
 		</ClientSessionProvider>
 	);
+
 }
 
 // import type { Metadata } from "next";
