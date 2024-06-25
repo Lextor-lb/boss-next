@@ -7,7 +7,7 @@ type container = {
 
 const Container = ({ children, className }: container) => {
   return (
-    <div className={`mx-auto h-full w-[90%] ${className}`}>{children}</div>
+    <div className={`mx-auto h-full w-[95%] ${className}`}>{children}</div>
   );
 };
 

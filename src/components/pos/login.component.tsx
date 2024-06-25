@@ -1,24 +1,20 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import Container from "../Container.components";
 import FormInput from "../FormInput.components";
-import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
 import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { apiURL, fetchApi } from "@/lib/api";
 
 export default function Login() {
+  const router = useRouter();
+
   async function postRequest(
     url: string,
     { arg }: { arg: { email: string; password: string } }
   ) {
-    return fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(arg),
-    }).then((res) => res.json());
+    return fetchApi(url, "POST", {}, arg);
   }
 
   const {
@@ -26,12 +22,14 @@ export default function Login() {
     error,
     trigger: login,
     isMutating,
-  } = useSWRMutation("https://amt.santar.store/auth/login", postRequest);
+  } = useSWRMutation(`${apiURL}/auth/login`, postRequest);
 
   console.log(data, error);
 
   useEffect(() => {
     if (data?.status) {
+      localStorage.setItem("token", data.accessToken);
+      router.push("/pos/app/products");
       // document.cookie = `token=${data.accessToken}; path=/`;
     }
   }, [data]);

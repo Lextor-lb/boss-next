@@ -1,6 +1,5 @@
 import Sidebar from "@/components/pos/dashboard/sidebar.dashboard";
 import { Button } from "@/components/ui/button";
-import { ReactNode, useEffect } from "react";
 
 export default function BackofficeLayout({
   children,
@@ -20,7 +19,7 @@ export default function BackofficeLayout({
         </div>
       </div>
       <div className="col-span-10">
-        <div className="py-5 min-h-screen bg-secondary">
+        <div className="p-5 min-h-screen bg-secondary">
           <div className=" w-full h-full">{children}</div>
         </div>
       </div>
