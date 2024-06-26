@@ -1,31 +1,32 @@
-// middleware.ts
+import { getServerSession } from "next-auth";
+import { NextRequest, NextResponse } from "next/server";
+import { cookies } from "next/headers";
+import { getSession, updateSession } from "./lib/lib";
+const Frontend_URL = process.env.FRONTEND_URL;
 
-import { NextResponse } from "next/server";
+export async function middleware(req: NextRequest) {
+	const sessionCookie = req.cookies.get("session")?.value;
+	// const session = await getSession();
+	// const expire = JSON.stringify(session?.expires, null, 2);
 
-export async function middleware(req: any) {
-  // Simulate getToken function
-  // const token = await getToken({ req, secret: process.env.JWT_SECRET });
-  const token = "eiejif"; // Replace null with your actual token retrieval logic
+	const { pathname } = req.nextUrl;
 
-  // Extract pathname safely from req.nextUrl
-  const { pathname } = req.nextUrl;
+	if (sessionCookie && pathname == "/pos/login") {
+		return NextResponse.redirect(`${Frontend_URL}/pos/app`);
+	}
 
-  // If the user is not logged in and is trying to access a protected route, redirect to login
-  if (!token && pathname !== "/pos/login") {
-    return NextResponse.redirect("http://localhost:3000/pos/login");
-  }
-  if (token && pathname == "/pos/login") {
-    return NextResponse.redirect("http://localhost:3000/pos/dashboard");
-  }
+	const appPathRegex = /^\/pos\/app(\/.*)?$/;
+	if (!sessionCookie && appPathRegex.test(pathname)) {
+		return NextResponse.redirect(`${Frontend_URL}/pos/login`);
+	}
 
-  // Allow the request if it's a public route or the user is logged in
-  return NextResponse.next();
+	return await updateSession(req);
+	// return NextResponse.next();
 }
 
 // export const config = {
-//   api: {
-//     bodyParser: false,
-//     // Specify a matcher for API routes
-//     matcher: "/pos/(:path*)", // Example matcher for API routes
-//   },
+// 	api: {
+// 		bodyParser: false,
+// 		matcher: "/app/(:path*)", // Example matcher for API routes
+// 	},
 // };

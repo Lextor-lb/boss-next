@@ -1,11 +1,5 @@
-
-"use client";
+import Login from "../../../components/pos/login.component";
 
 export default function DashboardPage() {
-
-	return (
-		<div>
-			<p>Login page</p>
-		</div>
-	);
+  return <Login />;
 }
