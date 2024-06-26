@@ -1,11 +1,12 @@
+import { getSession } from "@/lib/lib";
 
-"use client";
-
-export default function ProductFittingsPage() {
+export default async function ProductFittingsPage() {
+	const session = await getSession();
 
 	return (
 		<div>
 			<p>ProductFittingsPage</p>
+			<div>{JSON.stringify(session, null, 2)}</div>
 		</div>
 	);
 }
