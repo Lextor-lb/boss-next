@@ -2,9 +2,11 @@
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
+import { Backend_URL } from "./api";
 
-const Backend_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
-const secretKey = process.env.JWT_SECRET || "secret"; // Ensure this is set in your environment variables
+const secretKey =
+	process.env.JWT_SECRET ||
+	"RFiwOjIkevdeknXIJr6S+ti6ofI18+k656d5UHJJfDEOiCez/WW6prw2fqzN6rpSyv4GOWqOfuWBamwIJ6Qz6Q==";
 const key = new TextEncoder().encode(secretKey);
 
 // JWT encryption and decryption functions
@@ -26,7 +28,7 @@ export async function decrypt(input: string): Promise<any> {
 // Authentication functions
 export async function login(email: string, password: string) {
 	// console.log(email, password);
-	const res = await fetch(`https://amt.santar.store/auth/login`, {
+	const res = await fetch(`${Backend_URL}/auth/login`, {
 		method: "POST",
 		body: JSON.stringify({ email, password }),
 		headers: { "Content-Type": "application/json" },

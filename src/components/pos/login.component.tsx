@@ -2,10 +2,8 @@
 
 import { Button } from "@/components/ui/button";
 import FormInput from "../FormInput.components";
-import { useEffect, useState } from "react";
-import { signIn } from "next-auth/react";
-import { getSession, login } from "@/lib/lib";
-import { redirect } from "next/navigation";
+import { useState } from "react";
+import { login } from "@/lib/lib";
 import { useRouter } from "next/navigation";
 
 export default function Login() {
@@ -73,25 +71,3 @@ export default function Login() {
 		</div>
 	);
 }
-
-// async function postRequest(
-// 		url: string,
-// 		{ arg }: { arg: { email: string; password: string } }
-// 	) {
-// 		return fetch(url, {
-// 			method: "POST",
-// 			headers: {
-// 				"Content-Type": "application/json",
-// 			},
-// 			body: JSON.stringify(arg),
-// 		}).then((res) => res.json());
-// 	}
-
-// 	const {
-// 		data,
-// 		error,
-// 		trigger: login,
-// 		isMutating,
-// 	} = useSWRMutation("https://amt.santar.store/auth/login", postRequest);
-
-// 	console.log(data, error);
