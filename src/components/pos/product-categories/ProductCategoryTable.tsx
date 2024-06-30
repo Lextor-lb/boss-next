@@ -15,10 +15,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Backend_URL, getFetch } from "@/lib/fetch";
 import useSWR from "swr";
 
-type SizeTable = {
+type TypeTable = {
   data: [];
   handleCheckboxChange: (e: any) => void;
-  dropSize: () => void;
+  dropCategory: () => void;
   setIdsToDelete: Dispatch<SetStateAction<number[]>>;
   openSheetRef: any;
   setInputValue: any;
@@ -28,23 +28,23 @@ type SizeTable = {
   refetch: () => void;
 };
 
-const SizingTable = ({
+const ProductCategoryTable = ({
   data,
   handleCheckboxChange,
-  dropSize,
+  dropCategory,
   openSheetRef,
   setInputValue,
   editId,
   handleEdit,
   filterTable,
   refetch,
-}: SizeTable) => {
+}: TypeTable) => {
   const getSize = (url: string) => {
     return getFetch(url);
   };
 
   const { data: sizeData } = useSWR(
-    editId.status ? `${Backend_URL}/product-sizings/${editId.id}` : null,
+    editId.status ? `${Backend_URL}/product-types/${editId.id}` : null,
     getSize,
     {
       revalidateIfStale: false,
@@ -122,7 +122,7 @@ const SizingTable = ({
                     confirmTitle={"Are you sure?"}
                     confirmDescription={"This action can't be undone!"}
                     confirmButtonText={"Yes, delete this."}
-                    run={dropSize}
+                    run={dropCategory}
                   />
                 </div>
               </TableCell>
@@ -134,4 +134,4 @@ const SizingTable = ({
   );
 };
 
-export default SizingTable;
+export default ProductCategoryTable;

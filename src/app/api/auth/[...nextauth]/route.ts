@@ -4,53 +4,53 @@ import CredentialsProvider from "next-auth/providers/credentials";
 const Backend_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 export const authOptions: NextAuthOptions = {
-	providers: [
-		CredentialsProvider({
-			name: "Credentials",
-			credentials: {
-				email: {},
-				password: {},
-			},
-			async authorize(credentials, req) {
-				if (!credentials?.email || !credentials?.password) return null;
-				const { email, password } = credentials;
-				console.log(credentials);
-				const res = await fetch(Backend_URL + "/auth/login", {
-					method: "POST",
-					body: JSON.stringify({
-						email,
-						password,
-					}),
-					headers: {
-						"Content-Type": "application/json",
-					},
-				});
-				if (res.status == 401) {
-					console.log(res.statusText);
+  providers: [
+    CredentialsProvider({
+      name: "Credentials",
+      credentials: {
+        email: {},
+        password: {},
+      },
+      async authorize(credentials, req) {
+        if (!credentials?.email || !credentials?.password) return null;
+        const { email, password } = credentials;
+        console.log(credentials);
+        const res = await fetch(Backend_URL + "/auth/login", {
+          method: "POST",
+          body: JSON.stringify({
+            email,
+            password,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        if (res.status == 401) {
+          console.log(res.statusText);
 
-					return null;
-				}
-				const user = await res.json();
-				console.log(user);
-				return user;
-			},
-		}),
-	],
+          return null;
+        }
+        const user = await res.json();
+        console.log(user);
+        return user;
+      },
+    }),
+  ],
 
-	callbacks: {
-		async jwt({ token, user }) {
-			if (user) return { ...token, ...user };
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) return { ...token, ...user };
 
-			return token;
-		},
-		async session({ session, token }) {
-			session.user = token.user;
-			session.accessToken = token.accessToken;
-			// console.log(session);
+      return token;
+    },
+    async session({ session, token }: any) {
+      session.user = token.user;
+      session.accessToken = token.accessToken;
+      // console.log(session);
 
-			return session;
-		},
-	},
+      return session;
+    },
+  },
 };
 const handler = NextAuth(authOptions);
 

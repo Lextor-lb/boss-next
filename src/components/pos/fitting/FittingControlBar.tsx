@@ -1,14 +1,14 @@
 import React from "react";
 import { Input } from "../../ui/input";
 import { Trash2 } from "lucide-react";
-import SizeForm from "./SizeForm";
+import SizeForm from "./FittingForm";
 import ConfirmBox from "@/components/ConfirmBox";
 import { InventoryControlSheet } from "../inventory";
 
 type controlBar = {
   closeRef: any;
   isSelected: boolean;
-  dropSize: () => void;
+  dropFitting: () => void;
   openSheetRef: any;
   editId: any;
   setEditId: any;
@@ -18,12 +18,15 @@ type controlBar = {
   searchInputValue: string;
   setSearchInputValue: any;
   refetch: () => void;
+  sizeData: [];
+  productSizingIds: number[]
+  setProductSizingIds: any;
 };
 
-const SizingControlBar = ({
+const FittingControlBar = ({
   closeRef,
   isSelected,
-  dropSize,
+  dropFitting,
   openSheetRef,
   editId,
   inputValue,
@@ -31,6 +34,9 @@ const SizingControlBar = ({
   searchInputValue,
   setSearchInputValue,
   refetch,
+  sizeData,
+  productSizingIds,
+  setProductSizingIds,
 }: controlBar) => {
   return (
     <div className=" flex justify-between">
@@ -53,16 +59,16 @@ const SizingControlBar = ({
               confirmTitle={"Are you sure?"}
               confirmDescription={"This action can't be undone!"}
               confirmButtonText={"Yes, delete this."}
-              run={dropSize}
+              run={dropFitting}
             />
           </>
         )}
       </div>
       <InventoryControlSheet
-        buttonName="Size"
+        buttonName="Fitting"
         openSheetRef={openSheetRef}
-        title={"Add Size"}
-        description="Make new sizes here. Click save when you're done."
+        title={"Add Fitting"}
+        description="Make new fittings here. Click save when you're done."
         resetValue={resetValue}
         closeRef={closeRef}
       >
@@ -72,10 +78,13 @@ const SizingControlBar = ({
           inputValue={inputValue}
           resetValue={resetValue}
           refetch={refetch}
+          sizeData={sizeData}
+          productSizingIds={productSizingIds}
+          setProductSizingIds={setProductSizingIds}
         />
       </InventoryControlSheet>
     </div>
   );
 };
 
-export default SizingControlBar;
+export default FittingControlBar;

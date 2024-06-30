@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import SidebarNavHeading from "@/components/SidebarNavHeading";
 import { sidebarMenuItems } from "@/utils/constants";
 
@@ -10,11 +10,12 @@ export default function Sidebar() {
     sidebarMenuItems.filter((el) => el.group === group);
 
   // State for controlling open/close state
-  const [open, setOpen] = useState(1);
+  const [open, setOpen] = useState(localStorage.getItem("open"));
 
   // Function to handle opening/closing of sidebar nav
-  const handleOpen = (value: number) => () => {
+  const handleOpen = (value: any) => () => {
     setOpen(open === value ? open : value);
+    localStorage.setItem("open", value);
   };
 
   // Define filtered routes
@@ -24,47 +25,60 @@ export default function Sidebar() {
   const CRMRoutes = filterRoutesByGroup("CRM");
   const profileRoutes = filterRoutesByGroup("profile");
 
+  const sidebarNavHeading = [
+    {
+      id: 0,
+      name: "",
+      routes: controlRoutes,
+    },
+    {
+      id: 1,
+      name: "Sale Report",
+      routes: reportRoutes,
+    },
+    {
+      id: 2,
+      name: "Inventory",
+      routes: inventoryRoutes,
+    },
+    {
+      id: 3,
+      name: "CRM",
+      routes: CRMRoutes,
+    },
+    {
+      id: 4,
+      name: "User Profile",
+      routes: profileRoutes,
+    },
+  ];
+
   return (
-    <div>
-      <div className="space-y-3">
-        <p className="text-xl mb-3 font-semibold">Boss Nation</p>
-        <ul className="space-y-2">
-          {/* Render SidebarNavHeading for control routes */}
-          <SidebarNavHeading handleOpen={handleOpen} routes={controlRoutes} />
-
-          {/* Render SidebarNavHeading for report routes */}
-          <SidebarNavHeading
-            open={open}
-            openId={1}
-            handleOpen={handleOpen}
-            name={"Sale Report"}
-            routes={reportRoutes}
-          />
-
-          {/* Render SidebarNavHeading for inventory routes */}
-          <SidebarNavHeading
-            open={open}
-            openId={2}
-            handleOpen={handleOpen}
-            name={"Inventory"}
-            routes={inventoryRoutes}
-          />
-          <SidebarNavHeading
-            open={open}
-            openId={3}
-            handleOpen={handleOpen}
-            name={"CRM"}
-            routes={CRMRoutes}
-          />
-          <SidebarNavHeading
-            open={open}
-            openId={4}
-            handleOpen={handleOpen}
-            name={"User Profile"}
-            routes={profileRoutes}
-          />
-        </ul>
-      </div>
+    <div className="space-y-3">
+      <p className="text-xl mb-3 font-semibold">Boss Nation</p>
+      <ul className="space-y-2">
+        {sidebarNavHeading.map(({ id, name, routes }) => {
+          if (name === "") {
+            return (
+              <SidebarNavHeading
+                key={id}
+                handleOpen={handleOpen}
+                routes={routes}
+              />
+            );
+          }
+          return (
+            <SidebarNavHeading
+              key={id}
+              open={open}
+              openId={id}
+              handleOpen={handleOpen}
+              name={name}
+              routes={routes}
+            />
+          );
+        })}
+      </ul>
     </div>
   );
 }

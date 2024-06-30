@@ -5,8 +5,8 @@ import { usePathname } from "next/navigation";
 import React from "react";
 
 type header = {
-  name?: String;
-  open?: number;
+  name?: string;
+  open?: any;
   openId?: number;
   routes: Array<menu>;
   handleOpen: Function;
@@ -33,6 +33,7 @@ const SidebarNavHeading = ({
           {isOpen ? <ChevronDown /> : <ChevronUp />}
         </div>
       )}
+
       {isOpen && (
         <>
           {routes.map(({ id, path, pageName, icon }) => {

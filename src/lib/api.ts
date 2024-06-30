@@ -1,44 +1,45 @@
+// api.ts
 import { getSession } from "./lib";
 
 export const Backend_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 export async function fetchApi(
-	url: string,
-	method: string = "GET",
-	headers: Record<string, string> = {},
-	body: any = null
+  url: string,
+  method: string = "GET",
+  body: any = null,
+  headers: Record<string, string> = {}
 ) {
-	try {
-		const session = await getSession();
-		const token = session?.accessToken;
+  try {
+    const session = await getSession();
+    const token = session?.accessToken;
 
-		if (!token) {
-			throw new Error("No access token found");
-		}
+    if (!token) {
+      throw new Error("No access token found");
+    }
 
-		const options: RequestInit = {
-			method,
-			headers: {
-				"Content-Type": "application/json",
-				Authorization: `Bearer ${token}`,
-				...headers,
-			},
-		};
+    const options: RequestInit = {
+      method,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+        ...headers,
+      },
+    };
 
-		if (body) {
-			options.body = JSON.stringify(body);
-		}
+    if (body) {
+      options.body = JSON.stringify(body);
+    }
 
-		const response = await fetch(url, options);
-		const data = await response.json();
+    const response = await fetch(url, options);
+    const data = await response.json();
 
-		if (!response.ok) {
-			throw new Error(data.message || "An error occurred");
-		}
+    if (!response.ok) {
+      throw new Error(data.message || "An error occurred");
+    }
 
-		return data;
-	} catch (error: any) {
-		console.error("Fetch API Error:", error.message);
-		throw new Error(error.message || "An error occurred");
-	}
+    return data;
+  } catch (error: any) {
+    console.error("Fetch API Error:", error.message);
+    throw new Error(error.message || "An error occurred");
+  }
 }

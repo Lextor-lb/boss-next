@@ -1,14 +1,15 @@
 import React from "react";
 import { Input } from "../../ui/input";
 import { Trash2 } from "lucide-react";
-import SizeForm from "./SizeForm";
 import ConfirmBox from "@/components/ConfirmBox";
 import { InventoryControlSheet } from "../inventory";
+import { BrandForm } from ".";
+import { File } from "buffer";
 
 type controlBar = {
   closeRef: any;
   isSelected: boolean;
-  dropSize: () => void;
+  dropType: () => void;
   openSheetRef: any;
   editId: any;
   setEditId: any;
@@ -18,12 +19,14 @@ type controlBar = {
   searchInputValue: string;
   setSearchInputValue: any;
   refetch: () => void;
+  brandImageToShow: any;
+  setBrandImageToShow: any;
 };
 
-const SizingControlBar = ({
+const BrandControlBar = ({
   closeRef,
   isSelected,
-  dropSize,
+  dropType,
   openSheetRef,
   editId,
   inputValue,
@@ -31,6 +34,8 @@ const SizingControlBar = ({
   searchInputValue,
   setSearchInputValue,
   refetch,
+  brandImageToShow,
+  setBrandImageToShow,
 }: controlBar) => {
   return (
     <div className=" flex justify-between">
@@ -53,29 +58,31 @@ const SizingControlBar = ({
               confirmTitle={"Are you sure?"}
               confirmDescription={"This action can't be undone!"}
               confirmButtonText={"Yes, delete this."}
-              run={dropSize}
+              run={dropType}
             />
           </>
         )}
       </div>
       <InventoryControlSheet
-        buttonName="Size"
+        buttonName="Brand"
         openSheetRef={openSheetRef}
-        title={"Add Size"}
-        description="Make new sizes here. Click save when you're done."
+        title={"Add Brand"}
+        description="Make new brand here. Click save when you're done."
         resetValue={resetValue}
         closeRef={closeRef}
       >
-        <SizeForm
+        <BrandForm
           closeRef={closeRef}
           editId={editId}
           inputValue={inputValue}
           resetValue={resetValue}
           refetch={refetch}
+          brandImageToShow={brandImageToShow}
+          setBrandImageToShow={setBrandImageToShow}
         />
       </InventoryControlSheet>
     </div>
   );
 };
 
-export default SizingControlBar;
+export default BrandControlBar;

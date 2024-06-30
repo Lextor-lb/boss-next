@@ -18,7 +18,7 @@ import useSWR from "swr";
 type SizeTable = {
   data: [];
   handleCheckboxChange: (e: any) => void;
-  dropSize: () => void;
+  dropType: () => void;
   setIdsToDelete: Dispatch<SetStateAction<number[]>>;
   openSheetRef: any;
   setInputValue: any;
@@ -26,26 +26,28 @@ type SizeTable = {
   handleEdit: (id: number) => void;
   filterTable: (value: string) => void;
   refetch: () => void;
+  setBrandImageToShow: any;
 };
 
-const SizingTable = ({
+const BrandTable = ({
   data,
   handleCheckboxChange,
-  dropSize,
+  dropType,
   openSheetRef,
   setInputValue,
   editId,
   handleEdit,
   filterTable,
   refetch,
+  setBrandImageToShow,
 }: SizeTable) => {
-  const getSize = (url: string) => {
+  const getBrand = (url: string) => {
     return getFetch(url);
   };
 
-  const { data: sizeData } = useSWR(
-    editId.status ? `${Backend_URL}/product-sizings/${editId.id}` : null,
-    getSize,
+  const { data: brandData } = useSWR(
+    editId.status ? `${Backend_URL}/product-brands/${editId.id}` : null,
+    getBrand,
     {
       revalidateIfStale: false,
       revalidateOnFocus: false,
@@ -56,10 +58,13 @@ const SizingTable = ({
   );
 
   useEffect(() => {
-    if (sizeData && editId.status) {
-      setInputValue(sizeData.name);
+    if (brandData && editId.status) {
+      setInputValue(brandData.name);
+      setBrandImageToShow(brandData.media.url);
     }
-  }, [sizeData]);
+  }, [brandData]);
+
+  console.log(brandData);
 
   return (
     <div className=" min-h-[780px]">
@@ -75,7 +80,7 @@ const SizingTable = ({
                 onClick={() => filterTable("name")}
                 className="flex gap-1 cursor-pointer select-none items-center"
               >
-                <span>Size</span> <CaretSortIcon />
+                <span>Brand</span> <CaretSortIcon />
               </div>
             </TableHead>
             <TableHead>
@@ -90,7 +95,7 @@ const SizingTable = ({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data?.map(({ id, name, date }, index) => (
+          {data?.map(({ id, name, date, media: { url } }, index) => (
             <TableRow className=" bg-white hover:bg-white/50" key={id}>
               <TableCell>
                 <div className="flex items-center gap-3">
@@ -98,12 +103,20 @@ const SizingTable = ({
                     id={id}
                     value={id}
                     onClick={(e) => handleCheckboxChange(e)}
-                    // data-state={selectedSizes.includes(id)}
                   />
                   <span>{index + 1}</span>
                 </div>
               </TableCell>
-              <TableCell>{name}</TableCell>
+              <TableCell>
+                <div className=" capitalize flex gap-3 items-center">
+                  <img
+                    src={url}
+                    alt={""}
+                    className=" w-12 h-12 object-cover bg-black/20 rounded-full"
+                  />
+                  {name}
+                </div>
+              </TableCell>
               <TableCell>{date}</TableCell>
               <TableCell>
                 <div className="flex items-center justify-end">
@@ -122,7 +135,7 @@ const SizingTable = ({
                     confirmTitle={"Are you sure?"}
                     confirmDescription={"This action can't be undone!"}
                     confirmButtonText={"Yes, delete this."}
-                    run={dropSize}
+                    run={dropType}
                   />
                 </div>
               </TableCell>
@@ -134,4 +147,4 @@ const SizingTable = ({
   );
 };
 
-export default SizingTable;
+export default BrandTable;

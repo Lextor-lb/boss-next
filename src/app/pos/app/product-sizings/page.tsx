@@ -1,49 +1,172 @@
 "use client";
+
+import { useEffect, useRef, useState } from "react";
+import useSWR from "swr";
+import useSWRMutation from "swr/mutation";
 import Container from "@/components/Container.components";
 import TableSkeletonLoader from "@/components/TableSkeletonLoader";
 import { SizeControlBar, SizingTable } from "@/components/pos/sizing";
-import { Backend_URL, fetchApi } from "@/lib/api";
-import { useEffect, useState } from "react";
-import useSWR from "swr";
+import { Backend_URL } from "@/lib/api";
+import { deleteFetch, getFetch } from "@/lib/fetch";
+import { PaginationComponent } from "@/components/pos/inventory";
+
 export default function ProductSizingsPage() {
-	const [isLoading, setIsLoading] = useState(true);
-	const getSizes = (url: string) => {
-		return fetchApi(url, "GET");
-	};
+  // const [isLoading, setIsLoading] = useState(true);
+  const [idsToDelete, setIdsToDelete] = useState<number[]>([]);
+  const [inputValue, setInputValue] = useState("");
+  const [searchInputValue, setSearchInputValue] = useState("");
 
-	const { data, error } = useSWR(
-		`${Backend_URL}/product-sizings`,
-		getSizes,
-		{
-			revalidateIfStale: false,
-			revalidateOnFocus: false,
-			revalidateOnReconnect: false,
-			errorRetryInterval: 1000,
-			// revalidateOnMount: false,
-		}
-	);
+  const closeSheetRef = useRef();
+  const openSheetRef = useRef<HTMLDivElement>(null);
 
-	console.log(data);
+  // for fetching
+  const [currentPage, setCurrentPage] = useState(1);
 
-	useEffect(() => {
-		if (data) setIsLoading(false);
-	}, [data]);
+  const [filterType, setFilterType] = useState("name");
+  const [sortBy, setSortBy] = useState("asc");
 
-	return (
-		<Container>
-			<div className=" space-y-3">
-				<p>ProductSizingsPage</p>
+  const filterTable = (value: string) => {
+    setSortBy(sortBy === "asc" ? "desc" : "asc");
+    setFilterType(value);
+  };
 
-				<SizeControlBar />
+  const getSizes = (url: string) => {
+    return getFetch(url);
+  };
 
-				{/* <p>{error && <p>{data?.message}</p>}</p> */}
+  // for pagination
+  const incrementPage = () => {
+    setCurrentPage(currentPage + 1);
+  };
 
-				{isLoading ? (
-					<TableSkeletonLoader />
-				) : (
-					<SizingTable data={data?.data} />
-				)}
-			</div>
-		</Container>
-	);
+  const decrementPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const goToLastPage = () => {
+    setCurrentPage(data?.meta?.last_page);
+  };
+
+  const goToFirstPage = () => {
+    setCurrentPage(1);
+  };
+
+  const { data, error, isLoading, mutate, isValidating } = useSWR(
+    `${Backend_URL}/product-sizings?page=${currentPage}&search=${searchInputValue}&orderDirection=${sortBy}&orderBy=${filterType}`,
+    getSizes,
+    {
+      revalidateIfStale: true,
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+      errorRetryInterval: 5000,
+      revalidateOnMount: true,
+    }
+  );
+
+  const refetch = () => {
+    return mutate(
+      `${Backend_URL}/product-sizings?page=${currentPage}&search=${searchInputValue}&orderDirection=${sortBy}&orderBy=${filterType}`
+    );
+  };
+
+  // delete
+
+  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const size = parseInt(event.target.id);
+
+    setIdsToDelete((prevIds) => {
+      if (prevIds.includes(size)) {
+        return prevIds.filter((item) => item !== size);
+      } else {
+        return [...prevIds, size];
+      }
+    });
+  };
+
+  const fetcher = async (url: string, { arg }: { arg: { ids: number[] } }) => {
+    return deleteFetch(url, arg);
+  };
+
+  const { error: deleteError, trigger: drop } = useSWRMutation(
+    `${Backend_URL}/product-sizings`,
+    fetcher
+  );
+
+  const handleDelete = async () => {
+    const data = await drop({ ids: idsToDelete });
+    if (data.status) setIdsToDelete([]);
+    refetch();
+  };
+
+  const [editId, setEditId] = useState({
+    status: false,
+    id: "",
+  });
+
+  const handleEdit = (id: any): void => {
+    setEditId({
+      status: true,
+      id,
+    });
+  };
+
+  const resetValue = () => {
+    setEditId({
+      status: false,
+      id: "",
+    });
+    setInputValue("");
+  };
+
+  return (
+    <Container>
+      <div className="space-y-3">
+        <p>Product Sizings Page</p>
+
+        <SizeControlBar
+          isSelected={idsToDelete.length > 0}
+          closeRef={closeSheetRef}
+          dropSize={handleDelete}
+          openSheetRef={openSheetRef}
+          editId={editId}
+          setEditId={setEditId}
+          inputValue={inputValue}
+          setInputValue={setInputValue}
+          resetValue={resetValue}
+          searchInputValue={searchInputValue}
+          setSearchInputValue={setSearchInputValue}
+          refetch={refetch}
+        />
+
+        {isLoading || isValidating ? (
+          <TableSkeletonLoader />
+        ) : (
+          <div className="space-y-5">
+            <SizingTable
+              dropSize={handleDelete}
+              data={data?.data}
+              setIdsToDelete={setIdsToDelete}
+              handleCheckboxChange={handleCheckboxChange}
+              openSheetRef={openSheetRef}
+              setInputValue={setInputValue}
+              editId={editId}
+              handleEdit={handleEdit}
+              filterTable={filterTable}
+              refetch={refetch}
+            />
+            <PaginationComponent
+              goToFirstPage={goToFirstPage}
+              currentPage={currentPage}
+              decrementPage={decrementPage}
+              incrementPage={incrementPage}
+              goToLastPage={goToLastPage}
+              lastPage={currentPage}
+            />
+          </div>
+        )}
+      </div>
+    </Container>
+  );
 }
