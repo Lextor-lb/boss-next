@@ -1,9 +1,9 @@
 import React from "react";
 import { Input } from "../../ui/input";
 import { Trash2 } from "lucide-react";
-import SizeForm from "./ProductTypeForm";
 import ConfirmBox from "@/components/ConfirmBox";
 import { InventoryControlSheet } from "../inventory";
+import ProductTypeForm from "./ProductTypeForm";
 
 type controlBar = {
   closeRef: any;
@@ -66,7 +66,7 @@ const ProductTypeControlBar = ({
         resetValue={resetValue}
         closeRef={closeRef}
       >
-        <SizeForm
+        <ProductTypeForm
           closeRef={closeRef}
           editId={editId}
           inputValue={inputValue}

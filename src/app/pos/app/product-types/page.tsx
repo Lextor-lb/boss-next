@@ -8,7 +8,7 @@ import {
   ProductTypeTable,
 } from "@/components/pos/product-type";
 import { Backend_URL } from "@/lib/api";
-import { deleteFetch, getFetch } from "@/lib/fetch";
+import { deleteFetch, deleteSingleFetch, getFetch } from "@/lib/fetch";
 import { useRef, useState } from "react";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
@@ -18,6 +18,7 @@ export default function ProductTypesPage() {
   const [idsToDelete, setIdsToDelete] = useState<number[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [searchInputValue, setSearchInputValue] = useState("");
+  const [deleteId, setDeleteId] = useState<number | undefined>();
 
   const closeSheetRef = useRef();
   const openSheetRef = useRef<HTMLDivElement>(null);
@@ -101,6 +102,22 @@ export default function ProductTypesPage() {
     refetch();
   };
 
+  // single delete
+  const singleDeleteFetcher = async (url: string) => {
+    return deleteSingleFetch(url);
+  };
+
+  const { error: singleDeleteError, trigger: singleDrop } = useSWRMutation(
+    `${Backend_URL}/product-types/${deleteId}`,
+    singleDeleteFetcher
+  );
+
+  const handleSingleDelete = async () => {
+    const data = await singleDrop();
+    if (data.status) setDeleteId(undefined);
+    refetch();
+  };
+
   const [editId, setEditId] = useState({
     status: false,
     id: "",
@@ -156,6 +173,8 @@ export default function ProductTypesPage() {
               handleEdit={handleEdit}
               filterTable={filterTable}
               refetch={refetch}
+              handleSingleDelete={handleSingleDelete}
+              setDeleteId={setDeleteId}
             />
             <PaginationComponent
               goToFirstPage={goToFirstPage}

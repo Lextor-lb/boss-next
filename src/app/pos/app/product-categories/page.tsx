@@ -6,19 +6,20 @@ import useSWRMutation from "swr/mutation";
 import Container from "@/components/Container.components";
 import TableSkeletonLoader from "@/components/TableSkeletonLoader";
 import { Backend_URL } from "@/lib/api";
-import { deleteFetch, getFetch } from "@/lib/fetch";
+import { deleteFetch, deleteSingleFetch, getFetch } from "@/lib/fetch";
 import { PaginationComponent } from "@/components/pos/inventory";
 import {
   ProductCategoryControlBar,
   ProductCategoryTable,
 } from "@/components/pos/product-categories";
-
 export default function ProductCategoriesPage() {
   // const [isLoading, setIsLoading] = useState(true);
   const [idsToDelete, setIdsToDelete] = useState<number[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [searchInputValue, setSearchInputValue] = useState("");
-  const [productSizingIds, setProductSizingIds] = useState<number[]>([]);
+  const [productFittingIds, setProductFittingIds] = useState<number[]>([]);
+  const [productTypeId, setProductTypeId] = useState<number | undefined>();
+  const [deleteId, setDeleteId] = useState<number | undefined>();
 
   const closeSheetRef = useRef();
   const openSheetRef = useRef<HTMLDivElement>(null);
@@ -70,10 +71,22 @@ export default function ProductCategoriesPage() {
   );
 
   const {
-    data: sizeData,
-    error: sizeError,
-    isLoading: isSizeLoading,
-  } = useSWR(`${Backend_URL}/product-sizings/all`, getCategories, {
+    data: fittingData,
+    error: fittingError,
+    isLoading: isFittingLoading,
+  } = useSWR(`${Backend_URL}/product-fittings/all`, getCategories, {
+    revalidateIfStale: true,
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+    errorRetryInterval: 5000,
+    revalidateOnMount: true,
+  });
+
+  const {
+    data: typesData,
+    error: typesError,
+    isLoading: isTypesLoading,
+  } = useSWR(`${Backend_URL}/product-types/all`, getCategories, {
     revalidateIfStale: true,
     revalidateOnFocus: false,
     revalidateOnReconnect: false,
@@ -116,6 +129,22 @@ export default function ProductCategoriesPage() {
     refetch();
   };
 
+  // single delete
+  const singleDeleteFetcher = async (url: string) => {
+    return deleteSingleFetch(url);
+  };
+
+  const { error: singleDeleteError, trigger: singleDrop } = useSWRMutation(
+    `${Backend_URL}/product-categories/${deleteId}`,
+    singleDeleteFetcher
+  );
+
+  const handleSingleDelete = async () => {
+    const data = await singleDrop();
+    if (data.status) setDeleteId(undefined);
+    refetch();
+  };
+
   const [editId, setEditId] = useState({
     status: false,
     id: "",
@@ -136,8 +165,6 @@ export default function ProductCategoriesPage() {
     setInputValue("");
   };
 
-  console.log(data);
-
   return (
     <Container>
       <div className="space-y-3">
@@ -156,9 +183,12 @@ export default function ProductCategoriesPage() {
           searchInputValue={searchInputValue}
           setSearchInputValue={setSearchInputValue}
           refetch={refetch}
-          //   sizeData={isSizeLoading ? [] : sizeData.data}
-          //   productSizingIds={productSizingIds}
-          //   setProductSizingIds={setProductSizingIds}
+          fittingData={isFittingLoading ? [] : fittingData?.data}
+          typesData={isTypesLoading ? [] : typesData.data}
+          productFittingIds={productFittingIds}
+          setProductFittingIds={setProductFittingIds}
+          productTypeId={productTypeId}
+          setProductTypeId={setProductTypeId}
         />
 
         {isLoading || isValidating ? (
@@ -176,7 +206,10 @@ export default function ProductCategoriesPage() {
               handleEdit={handleEdit}
               filterTable={filterTable}
               refetch={refetch}
-              //   setProductSizingIds={setProductSizingIds}
+              setProductFittingIds={setProductFittingIds}
+              setProductTypeId={setProductTypeId}
+              handleSingleDelete={handleSingleDelete}
+              setDeleteId={setDeleteId}
             />
             <PaginationComponent
               goToFirstPage={goToFirstPage}

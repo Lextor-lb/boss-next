@@ -26,6 +26,8 @@ type SizeTable = {
   handleEdit: (id: number) => void;
   filterTable: (value: string) => void;
   refetch: () => void;
+  handleSingleDelete: () => void;
+  setDeleteId: any;
 };
 
 const SizingTable = ({
@@ -38,6 +40,8 @@ const SizingTable = ({
   handleEdit,
   filterTable,
   refetch,
+  handleSingleDelete,
+  setDeleteId,
 }: SizeTable) => {
   const getSize = (url: string) => {
     return getFetch(url);
@@ -51,12 +55,12 @@ const SizingTable = ({
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
       errorRetryInterval: 5000,
-      onSuccess: () => editId.status && openSheetRef.current.click(),
     }
   );
 
   useEffect(() => {
     if (sizeData && editId.status) {
+      openSheetRef.current.click();
       setInputValue(sizeData.name);
     }
   }, [sizeData]);
@@ -80,7 +84,7 @@ const SizingTable = ({
             </TableHead>
             <TableHead>
               <div
-                onClick={() => filterTable("created_at")}
+                onClick={() => filterTable("createdAt")}
                 className="flex gap-1 cursor-pointer select-none items-center"
               >
                 <span>Date</span> <CaretSortIcon />
@@ -122,7 +126,10 @@ const SizingTable = ({
                     confirmTitle={"Are you sure?"}
                     confirmDescription={"This action can't be undone!"}
                     confirmButtonText={"Yes, delete this."}
-                    run={dropSize}
+                    run={async () => {
+                      await setDeleteId(id);
+                      handleSingleDelete();
+                    }}
                   />
                 </div>
               </TableCell>

@@ -7,7 +7,7 @@ import Container from "@/components/Container.components";
 import TableSkeletonLoader from "@/components/TableSkeletonLoader";
 import { SizeControlBar, SizingTable } from "@/components/pos/sizing";
 import { Backend_URL } from "@/lib/api";
-import { deleteFetch, getFetch } from "@/lib/fetch";
+import { deleteFetch, deleteSingleFetch, getFetch } from "@/lib/fetch";
 import { PaginationComponent } from "@/components/pos/inventory";
 import { FittingControlBar, FittingTable } from "@/components/pos/fitting";
 
@@ -17,6 +17,7 @@ export default function ProductFittingsPage() {
   const [inputValue, setInputValue] = useState("");
   const [searchInputValue, setSearchInputValue] = useState("");
   const [productSizingIds, setProductSizingIds] = useState<number[]>([]);
+  const [deleteId, setDeleteId] = useState<number | undefined>();
 
   const closeSheetRef = useRef();
   const openSheetRef = useRef<HTMLDivElement>(null);
@@ -114,6 +115,22 @@ export default function ProductFittingsPage() {
     refetch();
   };
 
+  // single delete
+  const singleDeleteFetcher = async (url: string) => {
+    return deleteSingleFetch(url);
+  };
+
+  const { error: singleDeleteError, trigger: singleDrop } = useSWRMutation(
+    `${Backend_URL}/product-fittings/${deleteId}`,
+    singleDeleteFetcher
+  );
+
+  const handleSingleDelete = async () => {
+    const data = await singleDrop();
+    if (data.status) setDeleteId(undefined);
+    refetch();
+  };
+
   const [editId, setEditId] = useState({
     status: false,
     id: "",
@@ -173,6 +190,8 @@ export default function ProductFittingsPage() {
               filterTable={filterTable}
               refetch={refetch}
               setProductSizingIds={setProductSizingIds}
+              handleSingleDelete={handleSingleDelete}
+              setDeleteId={setDeleteId}
             />
             <PaginationComponent
               goToFirstPage={goToFirstPage}

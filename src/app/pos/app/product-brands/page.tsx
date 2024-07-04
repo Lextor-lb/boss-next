@@ -5,7 +5,7 @@ import TableSkeletonLoader from "@/components/TableSkeletonLoader";
 import { BrandControlBar, BrandTable } from "@/components/pos/brand";
 import { PaginationComponent } from "@/components/pos/inventory";
 import { Backend_URL } from "@/lib/api";
-import { deleteFetch, getFetch } from "@/lib/fetch";
+import { deleteFetch, deleteSingleFetch, getFetch } from "@/lib/fetch";
 import { useRef, useState } from "react";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
@@ -16,6 +16,7 @@ export default function ProductBrandsPage() {
   const [inputValue, setInputValue] = useState("");
   const [brandImageToShow, setBrandImageToShow] = useState<string | File>("");
   const [searchInputValue, setSearchInputValue] = useState("");
+  const [deleteId, setDeleteId] = useState<number | undefined>();
 
   const closeSheetRef = useRef();
   const openSheetRef = useRef<HTMLDivElement>(null);
@@ -31,7 +32,7 @@ export default function ProductBrandsPage() {
     setFilterType(value);
   };
 
-  const getTypes = (url: string) => {
+  const getBrands = (url: string) => {
     return getFetch(url);
   };
 
@@ -56,7 +57,7 @@ export default function ProductBrandsPage() {
 
   const { data, error, isLoading, mutate, isValidating } = useSWR(
     `${Backend_URL}/product-brands?page=${currentPage}&search=${searchInputValue}&orderDirection=${sortBy}&orderBy=${filterType}`,
-    getTypes,
+    getBrands,
     {
       revalidateIfStale: true,
       revalidateOnFocus: false,
@@ -100,6 +101,23 @@ export default function ProductBrandsPage() {
     refetch();
   };
 
+  // single delete
+
+  const singleDeleteFetcher = async (url: string) => {
+    return deleteSingleFetch(url);
+  };
+
+  const { error: singleDeleteError, trigger: singleDrop } = useSWRMutation(
+    `${Backend_URL}/product-brands/${deleteId}`,
+    singleDeleteFetcher
+  );
+
+  const handleSingleDelete = async () => {
+    const data = await singleDrop();
+    if (data.status) setDeleteId(undefined);
+    refetch();
+  };
+
   const [editId, setEditId] = useState({
     status: false,
     id: "",
@@ -124,7 +142,6 @@ export default function ProductBrandsPage() {
     <Container>
       <div className="space-y-3">
         <p>Product Brand Page</p>
-
         <BrandControlBar
           isSelected={idsToDelete.length > 0}
           closeRef={closeSheetRef}
@@ -158,6 +175,8 @@ export default function ProductBrandsPage() {
               filterTable={filterTable}
               refetch={refetch}
               setBrandImageToShow={setBrandImageToShow}
+              handleSingleDelete={handleSingleDelete}
+              setDeleteId={setDeleteId}
             />
             <PaginationComponent
               goToFirstPage={goToFirstPage}
