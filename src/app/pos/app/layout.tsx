@@ -1,5 +1,5 @@
 "use client";
-import Sidebar from "@/components/pos/dashboard/Sidebar.dashboard";
+import Sidebar from "@/components/pos/dashboard/sidebar.dashboard";
 import { Button } from "@/components/ui/button";
 import { logout } from "@/lib/lib";
 import { useRouter } from "next/navigation";
