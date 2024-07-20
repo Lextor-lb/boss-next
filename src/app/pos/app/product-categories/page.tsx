@@ -14,7 +14,7 @@ import {
 } from "@/components/pos/product-categories";
 
 export default function ProductCategoriesPage() {
-  // const [isLoading, setIsLoading] = useState(true);
+
   const [idsToDelete, setIdsToDelete] = useState<number[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [searchInputValue, setSearchInputValue] = useState("");

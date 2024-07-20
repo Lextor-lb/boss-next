@@ -1,78 +1,108 @@
-"use server";
-import { SignJWT, jwtVerify } from "jose";
-import { cookies } from "next/headers";
-import { NextRequest, NextResponse } from "next/server";
-import { Backend_URL } from "./api";
+// lib/auth.ts
 
-const secretKey =
-  process.env.JWT_SECRET ||
-  "RFiwOjIkevdeknXIJr6S+ti6ofI18+k656d5UHJJfDEOiCez/WW6prw2fqzN6rpSyv4GOWqOfuWBamwIJ6Qz6Q==";
-const key = new TextEncoder().encode(secretKey);
+import axios from 'axios';
+import Cookies from 'js-cookie';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 
-// JWT encryption and decryption functions
-export async function encrypt(payload: any) {
-  return await new SignJWT(payload)
-    .setProtectedHeader({ alg: "HS256" })
-    .setIssuedAt()
-    .setExpirationTime("3d")
-    .sign(key);
+const Backend_URL = process.env.NEXT_PUBLIC_BACKEND_URL; // Replace with your API URL
+
+interface Tokens {
+  accessToken: string;
+  refreshToken: string;
 }
 
-export async function decrypt(input: string): Promise<any> {
-  const { payload } = await jwtVerify(input, key, {
-    algorithms: ["HS256"],
-  });
-  return payload;
+interface LoginResponse {
+  accessToken: string;
+  refreshToken: string;
+  user: {
+    id: number;
+    name: string;
+    email: string;
+  };
 }
 
-// Authentication functions
-export async function login(email: string, password: string) {
-  const res = await fetch(`${Backend_URL}/auth/login`, {
-    method: "POST",
-    body: JSON.stringify({ email, password }),
-    headers: { "Content-Type": "application/json" },
-  });
+export function setTokens({ accessToken, refreshToken }: Tokens): void {
+  Cookies.set('accessToken', accessToken);
+  Cookies.set('refreshToken', refreshToken);
+}
 
-  if (res.status !== 201) {
-    throw new Error("Login failed");
+export function getAccessToken(): string | undefined {
+  return Cookies.get('accessToken');
+}
+
+export function getRefreshToken(): string | undefined {
+  return Cookies.get('refreshToken');
+}
+
+export function clearTokens(): void {
+  Cookies.remove('accessToken');
+  Cookies.remove('refreshToken');
+}
+
+export function decodeToken(token: string): JwtPayload | null {
+  try {
+    return jwt.decode(token) as JwtPayload;
+  } catch {
+    return null;
   }
-
-  const { user, accessToken } = await res.json();
-
-  const expires = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
-  const session = await encrypt({ user, accessToken, expires });
-
-  cookies().set("session", session, { expires, httpOnly: true });
-  return { isSuccess: true };
 }
 
-export async function logout() {
-  cookies().set("session", "", { expires: new Date(0) });
+function isJwtPayload(token: any): token is JwtPayload {
+  return typeof token === 'object' && token !== null && 'exp' in token;
+}
+
+export function isAccessTokenExpired(token: string): boolean {
+  const decoded = decodeToken(token);
+
+  if (!decoded || !isJwtPayload(decoded) || !decoded.exp) return true;
+
+  return decoded.exp * 1000 < Date.now();
+}
+
+export async function refreshAccessToken(): Promise<string | null> {
+  const refreshToken = getRefreshToken();
+  if (!refreshToken) return null;
+
+  try {
+    const res = await axios.post<{ accessToken: string }>(`${Backend_URL}/auth/refreshToken`, { refreshToken });
+    const { accessToken } = res.data;
+    setTokens({ accessToken, refreshToken });
+    return accessToken;
+  } catch (error) {
+    clearTokens();
+    return null;
+  }
+}
+
+export async function login(email: string, password: string): Promise<LoginResponse | null> {
+  try {
+    const res = await axios.post<LoginResponse>(`${Backend_URL}/auth/login`, { email, password });
+    const { accessToken, refreshToken } = res.data;
+    setTokens({ accessToken, refreshToken });
+    return res.data;
+  } catch (error) {
+    console.error('Login failed', error);
+    return null;
+  }
 }
 
 export async function getSession() {
-  const session = cookies().get("session")?.value;
-  if (!session) {
-    console.log("cookie gone");
-    return null;
-  }
-  return await decrypt(session);
-}
 
-export async function updateSession(request: NextRequest) {
-  const session = request.cookies.get("session")?.value;
-  if (!session) {
-    console.warn("No session cookie found.");
-    return NextResponse.next(); // No session to update
+  let accessToken = getAccessToken();
+
+  if (!accessToken || isAccessTokenExpired(accessToken)) {
+
+    const newAccessToken = await refreshAccessToken();
+
+    if (newAccessToken) {
+      accessToken = newAccessToken;
+    } 
+
   }
-  const parsed = await decrypt(session);
-  parsed.expires = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
-  const res = NextResponse.next();
-  res.cookies.set({
-    name: "session",
-    value: await encrypt(parsed),
-    httpOnly: true,
-    expires: parsed.expires,
-  });
-  return res;
+
+  if (accessToken) {
+    return { accessToken };
+  }
+
+  return null;
 }

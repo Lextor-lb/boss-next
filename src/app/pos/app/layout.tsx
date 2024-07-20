@@ -1,7 +1,7 @@
 "use client";
 import Sidebar from "@/components/pos/dashboard/sidebar.dashboard";
 import { Button } from "@/components/ui/button";
-import { logout } from "@/lib/lib";
+import { clearTokens } from "@/lib/lib";
 import { useRouter } from "next/navigation";
 
 export default function BackofficeLayout({
@@ -12,7 +12,7 @@ export default function BackofficeLayout({
 	const router = useRouter(); // Use the useRouter hook
 
 	const handleSubmit = async () => {
-		const result = await logout();
+		const result = await clearTokens();
 		router.push("/pos/login");
 	};
 
