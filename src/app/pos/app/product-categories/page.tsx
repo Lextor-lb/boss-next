@@ -86,7 +86,7 @@ export default function ProductCategoriesPage() {
     data: typesData,
     error: typesError,
     isLoading: isTypesLoading,
-  } = useSWR(`${Backend_URL}/product-types/all`, getCategories, {
+  } = useSWR(`${Backend_URL}/product-types/alls`, getCategories, {
     revalidateIfStale: true,
     revalidateOnFocus: false,
     revalidateOnReconnect: false,

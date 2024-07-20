@@ -14,8 +14,6 @@ import {
   Crown,
 } from "lucide-react";
 import { RulerSquareIcon } from "@radix-ui/react-icons";
-
-import Link from "next/link";
 import { ReactNode } from "react";
 
 export interface menu {
@@ -33,7 +31,7 @@ export const sidebarMenuItems: menuItems = [
     id: 1,
     group: "control",
     pageName: "Dashboard",
-    path: "/pos",
+    path: "/pos/app/dashboard",
     icon: <Store size={20} strokeWidth={1.5} />,
   },
   {

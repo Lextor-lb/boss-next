@@ -89,7 +89,6 @@ const FittingForm = ({
   );
 
   const onSubmit: SubmitHandler<FormData> = async (value) => {
-    console.log(value);
     try {
       const res = editId.status ? await edit(value) : await add(value);
       if (res.status) {

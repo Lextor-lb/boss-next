@@ -22,7 +22,7 @@ type FormProps = {
 };
 
 const validImageTypes = ["image/jpeg", "image/png", "image/jpg"];
-const MAX_FILE_SIZE = 2000000;
+const MAX_FILE_SIZE = 100000;
 
 const BrandForm: React.FC<FormProps> = ({
   closeRef,
@@ -33,6 +33,7 @@ const BrandForm: React.FC<FormProps> = ({
   brandImageToShow,
   setBrandImageToShow,
 }) => {
+  // schema
   const schema = z.object({
     name: z.string().min(1, { message: "This field cannot be empty!" }),
     brand: editId?.status
@@ -145,9 +146,11 @@ const BrandForm: React.FC<FormProps> = ({
               className=" w-[500px] h-[500px]  object-contain"
             />
           )}
+
           {errors.brand && (
             <p className="text-red-600 text-xs">{errors.brand.message}</p>
           )}
+
           <FormInput
             id="size"
             label="Brand Name"

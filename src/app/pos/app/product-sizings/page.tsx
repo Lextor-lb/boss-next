@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
 import Container from "@/components/Container.components";
@@ -31,10 +31,6 @@ export default function ProductSizingsPage() {
     setFilterType(value);
   };
 
-  const getSizes = (url: string) => {
-    return getFetch(url);
-  };
-
   // for pagination
   const incrementPage = () => {
     setCurrentPage(currentPage + 1);
@@ -52,6 +48,10 @@ export default function ProductSizingsPage() {
 
   const goToFirstPage = () => {
     setCurrentPage(1);
+  };
+
+  const getSizes = (url: string) => {
+    return getFetch(url);
   };
 
   const { data, error, isLoading, mutate, isValidating } = useSWR(
@@ -138,8 +138,6 @@ export default function ProductSizingsPage() {
     setInputValue("");
   };
 
-  console.log(deleteId);
-
   return (
     <Container>
       <div className="space-y-3">
@@ -161,7 +159,7 @@ export default function ProductSizingsPage() {
         />
 
         {error ? (
-          <ErrorComponent />
+          <ErrorComponent refetch={() => {}} />
         ) : (
           <>
             {isLoading || isValidating ? (

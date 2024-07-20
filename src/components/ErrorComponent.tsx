@@ -1,6 +1,6 @@
 import React from "react";
 
-const ErrorComponent = () => {
+const ErrorComponent = ({ refetch }: { refetch: () => void }) => {
   return (
     <div>
       <p>Something bad bad happened</p>

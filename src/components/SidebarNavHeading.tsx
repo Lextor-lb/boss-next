@@ -37,14 +37,14 @@ const SidebarNavHeading = ({
       {isOpen && (
         <>
           {routes.map(({ id, path, pageName, icon }) => {
-            const isActive = pathName == path;
+            const isActive = pathName.includes(path);
             return (
               <Link
                 key={id}
                 href={path}
                 className={`flex gap-2 ${
                   isActive && " bg-secondary"
-                } items-center cursor-pointer select-none hover:bg-secondary capitalize text-sm px-3 py-2 mb-2 rounded-md`}
+                } items-center cursor-pointer  select-none hover:bg-secondary capitalize text-sm px-3 py-2 mb-2 rounded-md`}
               >
                 {icon} {pageName}
               </Link>
