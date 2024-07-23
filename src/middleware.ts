@@ -1,32 +1,28 @@
-import { getServerSession } from "next-auth";
-import { NextRequest, NextResponse } from "next/server";
-import { cookies } from "next/headers";
-import { getSession, updateSession } from "./lib/lib";
-const Frontend_URL = process.env.FRONTEND_URL;
+// middleware.ts
+
+import { NextRequest, NextResponse } from 'next/server';
+
+const FRONTEND_URL = process.env.NEXT_PUBLIC_FRONTEND_URL || 'http://localhost:3000';
 
 export async function middleware(req: NextRequest) {
-	const sessionCookie = req.cookies.get("session")?.value;
-	// const session = await getSession();
-	// const expire = JSON.stringify(session?.expires, null, 2);
-
 	const { pathname } = req.nextUrl;
 
-	if (sessionCookie && pathname == "/pos/login") {
-		return NextResponse.redirect(`${Frontend_URL}/pos/app`);
+	// Allow public access to the login page
+	if (pathname.startsWith('/_next/') || pathname.startsWith('/static/') || pathname === "/pos/login") {
+		return NextResponse.next();
+	  }
+  
+	// Check for the presence of the token
+	const token = req.cookies.get('accessToken');
+  
+	if (!token) {
+	  // Redirect to login page if no token is present
+	  const loginUrl = new URL('/pos/login', FRONTEND_URL);
+	  return NextResponse.redirect(loginUrl);
 	}
-
-	const appPathRegex = /^\/pos\/app(\/.*)?$/;
-	if (!sessionCookie && appPathRegex.test(pathname)) {
-		return NextResponse.redirect(`${Frontend_URL}/pos/login`);
-	}
-
-	return await updateSession(req);
-	// return NextResponse.next();
+  
+	// Token exists, proceed to the next middleware or request handler
+	return NextResponse.next();
 }
 
-// export const config = {
-// 	api: {
-// 		bodyParser: false,
-// 		matcher: "/app/(:path*)", // Example matcher for API routes
-// 	},
-// };
+

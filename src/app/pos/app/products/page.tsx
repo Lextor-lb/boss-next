@@ -149,6 +149,7 @@ export default function ProductPage() {
           setSearchInputValue={setSearchInputValue}
           drop={handleDelete}
         />
+export default function ProductsPage() {
 
         {error ? (
           <ErrorComponent refetch={refetch} />
