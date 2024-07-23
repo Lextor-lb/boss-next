@@ -1,18 +1,19 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
 import Container from "@/components/Container.components";
 import TableSkeletonLoader from "@/components/TableSkeletonLoader";
 import { SizeControlBar, SizingTable } from "@/components/pos/sizing";
 import { Backend_URL } from "@/lib/api";
-import { deleteFetch, getFetch } from "@/lib/fetch";
+import { deleteFetch, deleteSingleFetch, getFetch } from "@/lib/fetch";
 import { PaginationComponent } from "@/components/pos/inventory";
+import ErrorComponent from "@/components/ErrorComponent";
 
 export default function ProductSizingsPage() {
-  // const [isLoading, setIsLoading] = useState(true);
   const [idsToDelete, setIdsToDelete] = useState<number[]>([]);
+  const [deleteId, setDeleteId] = useState<number | undefined>();
   const [inputValue, setInputValue] = useState("");
   const [searchInputValue, setSearchInputValue] = useState("");
 
@@ -28,10 +29,6 @@ export default function ProductSizingsPage() {
   const filterTable = (value: string) => {
     setSortBy(sortBy === "asc" ? "desc" : "asc");
     setFilterType(value);
-  };
-
-  const getSizes = (url: string) => {
-    return getFetch(url);
   };
 
   // for pagination
@@ -51,6 +48,10 @@ export default function ProductSizingsPage() {
 
   const goToFirstPage = () => {
     setCurrentPage(1);
+  };
+
+  const getSizes = (url: string) => {
+    return getFetch(url);
   };
 
   const { data, error, isLoading, mutate, isValidating } = useSWR(
@@ -100,6 +101,23 @@ export default function ProductSizingsPage() {
     refetch();
   };
 
+  // single delete
+
+  const singleDeleteFetcher = async (url: string) => {
+    return deleteSingleFetch(url);
+  };
+
+  const { error: singleDeleteError, trigger: singleDrop } = useSWRMutation(
+    `${Backend_URL}/product-sizings/${deleteId}`,
+    singleDeleteFetcher
+  );
+
+  const handleSingleDelete = async () => {
+    const data = await singleDrop();
+    if (data.status) setDeleteId(undefined);
+    refetch();
+  };
+
   const [editId, setEditId] = useState({
     status: false,
     id: "",
@@ -140,31 +158,39 @@ export default function ProductSizingsPage() {
           refetch={refetch}
         />
 
-        {isLoading || isValidating ? (
-          <TableSkeletonLoader />
+        {error ? (
+          <ErrorComponent refetch={() => {}} />
         ) : (
-          <div className="space-y-5">
-            <SizingTable
-              dropSize={handleDelete}
-              data={data?.data}
-              setIdsToDelete={setIdsToDelete}
-              handleCheckboxChange={handleCheckboxChange}
-              openSheetRef={openSheetRef}
-              setInputValue={setInputValue}
-              editId={editId}
-              handleEdit={handleEdit}
-              filterTable={filterTable}
-              refetch={refetch}
-            />
-            <PaginationComponent
-              goToFirstPage={goToFirstPage}
-              currentPage={currentPage}
-              decrementPage={decrementPage}
-              incrementPage={incrementPage}
-              goToLastPage={goToLastPage}
-              lastPage={currentPage}
-            />
-          </div>
+          <>
+            {isLoading || isValidating ? (
+              <TableSkeletonLoader />
+            ) : (
+              <div className="space-y-5">
+                <SizingTable
+                  dropSize={handleDelete}
+                  data={data?.data}
+                  setIdsToDelete={setIdsToDelete}
+                  handleCheckboxChange={handleCheckboxChange}
+                  openSheetRef={openSheetRef}
+                  setInputValue={setInputValue}
+                  editId={editId}
+                  handleEdit={handleEdit}
+                  filterTable={filterTable}
+                  refetch={refetch}
+                  handleSingleDelete={handleSingleDelete}
+                  setDeleteId={setDeleteId}
+                />
+                <PaginationComponent
+                  goToFirstPage={goToFirstPage}
+                  currentPage={currentPage}
+                  decrementPage={decrementPage}
+                  incrementPage={incrementPage}
+                  goToLastPage={goToLastPage}
+                  lastPage={currentPage}
+                />
+              </div>
+            )}
+          </>
         )}
       </div>
     </Container>

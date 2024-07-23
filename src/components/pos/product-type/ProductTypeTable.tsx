@@ -26,6 +26,8 @@ type TypeTable = {
   handleEdit: (id: number) => void;
   filterTable: (value: string) => void;
   refetch: () => void;
+  handleSingleDelete: () => void;
+  setDeleteId: any;
 };
 
 const ProductTypeTable = ({
@@ -38,6 +40,8 @@ const ProductTypeTable = ({
   handleEdit,
   filterTable,
   refetch,
+  setDeleteId,
+  handleSingleDelete,
 }: TypeTable) => {
   const getSize = (url: string) => {
     return getFetch(url);
@@ -51,13 +55,13 @@ const ProductTypeTable = ({
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
       errorRetryInterval: 5000,
-      onSuccess: () => editId.status && openSheetRef.current.click(),
     }
   );
 
   useEffect(() => {
     if (sizeData && editId.status) {
-      setInputValue(sizeData.name);
+      openSheetRef.current.click();
+      return setInputValue(sizeData.name);
     }
   }, [sizeData]);
 
@@ -75,12 +79,12 @@ const ProductTypeTable = ({
                 onClick={() => filterTable("name")}
                 className="flex gap-1 cursor-pointer select-none items-center"
               >
-                <span>Size</span> <CaretSortIcon />
+                <span>Product Type</span> <CaretSortIcon />
               </div>
             </TableHead>
             <TableHead>
               <div
-                onClick={() => filterTable("created_at")}
+                onClick={() => filterTable("createdAt")}
                 className="flex gap-1 cursor-pointer select-none items-center"
               >
                 <span>Date</span> <CaretSortIcon />
@@ -122,7 +126,10 @@ const ProductTypeTable = ({
                     confirmTitle={"Are you sure?"}
                     confirmDescription={"This action can't be undone!"}
                     confirmButtonText={"Yes, delete this."}
-                    run={dropType}
+                    run={async () => {
+                      await setDeleteId(id);
+                      handleSingleDelete();
+                    }}
                   />
                 </div>
               </TableCell>

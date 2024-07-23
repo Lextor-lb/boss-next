@@ -26,6 +26,10 @@ type TypeTable = {
   handleEdit: (id: number) => void;
   filterTable: (value: string) => void;
   refetch: () => void;
+  setProductFittingIds: any;
+  setProductTypeId: any;
+  handleSingleDelete: () => void;
+  setDeleteId: any;
 };
 
 const ProductCategoryTable = ({
@@ -38,28 +42,36 @@ const ProductCategoryTable = ({
   handleEdit,
   filterTable,
   refetch,
+  setProductFittingIds,
+  setProductTypeId,
+  setDeleteId,
+  handleSingleDelete,
 }: TypeTable) => {
-  const getSize = (url: string) => {
+  const getCategory = (url: string) => {
     return getFetch(url);
   };
 
-  const { data: sizeData } = useSWR(
-    editId.status ? `${Backend_URL}/product-types/${editId.id}` : null,
-    getSize,
+  const { data: categoryData } = useSWR(
+    editId.status ? `${Backend_URL}/product-categories/${editId.id}` : null,
+    getCategory,
     {
       revalidateIfStale: false,
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
       errorRetryInterval: 5000,
-      onSuccess: () => editId.status && openSheetRef.current.click(),
     }
   );
 
   useEffect(() => {
-    if (sizeData && editId.status) {
-      setInputValue(sizeData.name);
+    if (categoryData && editId.status) {
+      setInputValue(categoryData.name);
+      setProductFittingIds(
+        categoryData.productFittings.map(({ id }: { id: number }) => id)
+      );
+      setProductTypeId(categoryData.productType.id);
+      openSheetRef.current.click();
     }
-  }, [sizeData]);
+  }, [categoryData]);
 
   return (
     <div className=" min-h-[780px]">
@@ -75,12 +87,13 @@ const ProductCategoryTable = ({
                 onClick={() => filterTable("name")}
                 className="flex gap-1 cursor-pointer select-none items-center"
               >
-                <span>Size</span> <CaretSortIcon />
+                <span>Category</span> <CaretSortIcon />
               </div>
             </TableHead>
+            <TableHead>Product Type</TableHead>
             <TableHead>
               <div
-                onClick={() => filterTable("created_at")}
+                onClick={() => filterTable("createdAt")}
                 className="flex gap-1 cursor-pointer select-none items-center"
               >
                 <span>Date</span> <CaretSortIcon />
@@ -90,44 +103,65 @@ const ProductCategoryTable = ({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data?.map(({ id, name, date }, index) => (
-            <TableRow className=" bg-white hover:bg-white/50" key={id}>
-              <TableCell>
-                <div className="flex items-center gap-3">
-                  <Checkbox
-                    id={id}
-                    value={id}
-                    onClick={(e) => handleCheckboxChange(e)}
-                    // data-state={selectedSizes.includes(id)}
-                  />
-                  <span>{index + 1}</span>
-                </div>
-              </TableCell>
-              <TableCell>{name}</TableCell>
-              <TableCell>{date}</TableCell>
-              <TableCell>
-                <div className="flex items-center justify-end">
-                  <Button
-                    variant={"ghost"}
-                    className="!p-0"
-                    onClick={() => handleEdit(id)}
-                  >
-                    <Edit2 />
-                  </Button>
+          {data?.map(
+            (
+              {
+                id,
+                name,
+                date,
+                productType,
+              }: {
+                id: number;
+                name: string;
+                date: string;
+                productType: {
+                  name: string;
+                };
+              },
+              index
+            ) => (
+              <TableRow className="bg-white hover:bg-white/50" key={id}>
+                <TableCell>
+                  <div className="flex items-center gap-3">
+                    <Checkbox
+                      id={`${id}`}
+                      value={id}
+                      onClick={(e) => handleCheckboxChange(e)}
+                      // data-state={selectedSizes.includes(id)}
+                    />
+                    <span>{index + 1}</span>
+                  </div>
+                </TableCell>
+                <TableCell>{name}</TableCell>
+                <TableCell>{productType.name}</TableCell>
+                <TableCell>{date}</TableCell>
+                <TableCell>
+                  <div className="flex items-center justify-end">
+                    <Button
+                      variant="ghost"
+                      className="!p-0"
+                      onClick={() => handleEdit(id)}
+                    >
+                      <Edit2 />
+                    </Button>
 
-                  <ConfirmBox
-                    buttonName={<MinusCircle />}
-                    buttonSize="sm"
-                    buttonVariant={"ghost"}
-                    confirmTitle={"Are you sure?"}
-                    confirmDescription={"This action can't be undone!"}
-                    confirmButtonText={"Yes, delete this."}
-                    run={dropCategory}
-                  />
-                </div>
-              </TableCell>
-            </TableRow>
-          ))}
+                    <ConfirmBox
+                      buttonName={<MinusCircle />}
+                      buttonSize="sm"
+                      buttonVariant="ghost"
+                      confirmTitle="Are you sure?"
+                      confirmDescription="This action can't be undone!"
+                      confirmButtonText="Yes, delete this."
+                      run={async () => {
+                        await setDeleteId(id);
+                        handleSingleDelete();
+                      }}
+                    />
+                  </div>
+                </TableCell>
+              </TableRow>
+            )
+          )}
         </TableBody>
       </Table>
     </div>

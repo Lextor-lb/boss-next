@@ -22,7 +22,7 @@ type FormProps = {
 };
 
 const validImageTypes = ["image/jpeg", "image/png", "image/jpg"];
-const MAX_FILE_SIZE = 10000000;
+const MAX_FILE_SIZE = 100000;
 
 const BrandForm: React.FC<FormProps> = ({
   closeRef,
@@ -33,19 +33,22 @@ const BrandForm: React.FC<FormProps> = ({
   brandImageToShow,
   setBrandImageToShow,
 }) => {
+  // schema
   const schema = z.object({
     name: z.string().min(1, { message: "This field cannot be empty!" }),
-    brand: z
-      .any()
-      .refine((files) => files?.length == 1, "Image is required.")
-      .refine(
-        (files) => files?.[0]?.size <= MAX_FILE_SIZE,
-        `Max file size is 5MB.`
-      )
-      .refine(
-        (files) => validImageTypes.includes(files?.[0]?.type),
-        ".jpg, .jpeg and .png  files are accepted."
-      ),
+    brand: editId?.status
+      ? z.union([z.string().nullable(), z.any()])
+      : z
+          .any()
+          .refine((files) => files?.length == 1, "Image is required.")
+          .refine(
+            (files) => files?.[0]?.size <= MAX_FILE_SIZE,
+            `Max file size is 2MB.`
+          )
+          .refine(
+            (files) => validImageTypes.includes(files?.[0]?.type),
+            ".jpg, .jpeg and .png files are accepted."
+          ),
   });
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -143,9 +146,11 @@ const BrandForm: React.FC<FormProps> = ({
               className=" w-[500px] h-[500px]  object-contain"
             />
           )}
+
           {errors.brand && (
             <p className="text-red-600 text-xs">{errors.brand.message}</p>
           )}
+
           <FormInput
             id="size"
             label="Brand Name"
@@ -167,7 +172,11 @@ const BrandForm: React.FC<FormProps> = ({
           >
             Cancel
           </Button>
-          <Button disabled={isMutating} type="submit" className="block">
+          <Button
+            disabled={isMutating || editMutating}
+            type="submit"
+            className="block"
+          >
             {isMutating ? "Saving" : "Save Changes"}
           </Button>
         </div>

@@ -27,6 +27,8 @@ type SizeTable = {
   filterTable: (value: string) => void;
   refetch: () => void;
   setBrandImageToShow: any;
+  handleSingleDelete: () => void;
+  setDeleteId: any;
 };
 
 const BrandTable = ({
@@ -40,6 +42,8 @@ const BrandTable = ({
   filterTable,
   refetch,
   setBrandImageToShow,
+  setDeleteId,
+  handleSingleDelete,
 }: SizeTable) => {
   const getBrand = (url: string) => {
     return getFetch(url);
@@ -53,12 +57,12 @@ const BrandTable = ({
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
       errorRetryInterval: 5000,
-      onSuccess: () => editId.status && openSheetRef.current.click(),
     }
   );
 
   useEffect(() => {
     if (brandData && editId.status) {
+      openSheetRef.current.click();
       setInputValue(brandData.name);
       setBrandImageToShow(brandData.media.url);
     }
@@ -85,7 +89,7 @@ const BrandTable = ({
             </TableHead>
             <TableHead>
               <div
-                onClick={() => filterTable("created_at")}
+                onClick={() => filterTable("createdAt")}
                 className="flex gap-1 cursor-pointer select-none items-center"
               >
                 <span>Date</span> <CaretSortIcon />
@@ -135,7 +139,10 @@ const BrandTable = ({
                     confirmTitle={"Are you sure?"}
                     confirmDescription={"This action can't be undone!"}
                     confirmButtonText={"Yes, delete this."}
-                    run={dropType}
+                    run={async () => {
+                      await setDeleteId(id);
+                      handleSingleDelete();
+                    }}
                   />
                 </div>
               </TableCell>

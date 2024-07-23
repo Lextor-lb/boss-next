@@ -7,14 +7,27 @@ type InputProps = {
   id: any;
   type: string;
   className?: string;
+  min?: any;
+  max?: any;
+  value?: any;
+  name?: string;
 };
 
 const FormInput = forwardRef<HTMLInputElement, InputProps>(
-  ({ label, id, className, type, ...rest }, ref) => {
+  ({ label, id, className, type, min, value, max, ...rest }, ref) => {
     return (
       <div className={`space-y-1.5 ${className}`}>
         <Label htmlFor={id}>{label}</Label>
-        <Input type={type} id={id} ref={ref} {...rest} className="h-9" />
+        <Input
+          min={min}
+          max={max}
+          type={type}
+          id={id}
+          value={value}
+          ref={ref}
+          {...rest}
+          className="h-9"
+        />
       </div>
     );
   }

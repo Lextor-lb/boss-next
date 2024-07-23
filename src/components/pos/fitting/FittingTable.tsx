@@ -27,6 +27,8 @@ type FittingTableType = {
   filterTable: (value: string) => void;
   refetch: () => void;
   setProductSizingIds: any;
+  handleSingleDelete: () => void;
+  setDeleteId: any;
 };
 
 const FittingTable = ({
@@ -40,6 +42,8 @@ const FittingTable = ({
   filterTable,
   refetch,
   setProductSizingIds,
+  handleSingleDelete,
+  setDeleteId,
 }: FittingTableType) => {
   const getFitting = (url: string) => {
     return getFetch(url);
@@ -53,7 +57,6 @@ const FittingTable = ({
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
       errorRetryInterval: 5000,
-      onSuccess: () => editId.status && openSheetRef.current.click(),
     }
   );
 
@@ -61,6 +64,7 @@ const FittingTable = ({
     if (fittingData && editId.status) {
       setInputValue(fittingData.name);
       setProductSizingIds(fittingData.productSizings.map((el: any) => el.id));
+      openSheetRef.current.click();
     }
   }, [fittingData]);
 
@@ -84,7 +88,7 @@ const FittingTable = ({
             <TableHead>Sizes</TableHead>
             <TableHead>
               <div
-                onClick={() => filterTable("created_at")}
+                onClick={() => filterTable("createdAt")}
                 className="flex gap-1 cursor-pointer select-none items-center"
               >
                 <span>Date</span> <CaretSortIcon />
@@ -143,7 +147,10 @@ const FittingTable = ({
                       confirmTitle={"Are you sure?"}
                       confirmDescription={"This action can't be undone!"}
                       confirmButtonText={"Yes, delete this."}
-                      run={dropFitting}
+                      run={async () => {
+                        await setDeleteId(id);
+                        handleSingleDelete();
+                      }}
                     />
                   </div>
                 </TableCell>

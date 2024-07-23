@@ -1,9 +1,9 @@
 import React from "react";
 import { Input } from "../../ui/input";
 import { Trash2 } from "lucide-react";
-import SizeForm from "./ProductCategoryForm";
 import ConfirmBox from "@/components/ConfirmBox";
 import { InventoryControlSheet } from "../inventory";
+import ProductCategoryForm from "./ProductCategoryForm";
 
 type controlBar = {
   closeRef: any;
@@ -18,6 +18,12 @@ type controlBar = {
   searchInputValue: string;
   setSearchInputValue: any;
   refetch: () => void;
+  fittingData: [];
+  productFittingIds: number[];
+  setProductFittingIds: any;
+  typesData: [];
+  productTypeId: number | undefined;
+  setProductTypeId: any;
 };
 
 const ProductCategoryControlBar = ({
@@ -31,6 +37,12 @@ const ProductCategoryControlBar = ({
   searchInputValue,
   setSearchInputValue,
   refetch,
+  fittingData,
+  productFittingIds,
+  setProductFittingIds,
+  typesData,
+  productTypeId,
+  setProductTypeId,
 }: controlBar) => {
   return (
     <div className=" flex justify-between">
@@ -59,19 +71,25 @@ const ProductCategoryControlBar = ({
         )}
       </div>
       <InventoryControlSheet
-        buttonName="Product Type"
+        buttonName="Category"
         openSheetRef={openSheetRef}
-        title={"Add Product Type"}
-        description="Make new product types here. Click save when you're done."
+        title={"Add Product Category"}
+        description="Make new product category here. Click save when you're done."
         resetValue={resetValue}
         closeRef={closeRef}
       >
-        <SizeForm
+        <ProductCategoryForm
           closeRef={closeRef}
           editId={editId}
           inputValue={inputValue}
           resetValue={resetValue}
           refetch={refetch}
+          fittingData={fittingData}
+          productFittingIds={productFittingIds}
+          setProductFittingIds={setProductFittingIds}
+          typesData={typesData}
+          productTypeId={productTypeId}
+          setProductTypeId={setProductTypeId}
         />
       </InventoryControlSheet>
     </div>

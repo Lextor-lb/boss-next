@@ -161,6 +161,41 @@ export const deleteFetch = async (
   }
 };
 
+export const deleteSingleFetch = async (
+  url: string,
+  headers: Record<string, string> = {}
+) => {
+  try {
+    const token = await findToken();
+    if (!token) {
+      throw new Error("No access token found");
+    }
+    const options: RequestInit = {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "multipart/form-data",
+        Authorization: `Bearer ${token}`,
+        ...headers,
+      },
+    };
+
+    const response = await fetch(url, options);
+    const data = await response.json();
+
+    console.log("Response data:", data);
+
+    if (!response.ok) {
+      throw new Error(data.message || "An error occurred");
+    }
+
+    return data;
+  } catch (error: any) {
+    console.error("Fetch API Error:", error.message);
+    throw new Error(error.message || "An error occurred");
+  }
+};
+
 export const putFetch = async (
   url: string,
   body: any,

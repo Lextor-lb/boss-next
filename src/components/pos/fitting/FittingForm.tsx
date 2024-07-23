@@ -70,6 +70,7 @@ const FittingForm = ({
     trigger: add,
   } = useSWRMutation(`${Backend_URL}/product-fittings`, postFetcher);
 
+  // edit
   const editFetcher = async (
     url: string,
     { arg }: { arg: { name: string; productSizingIds: number[] } }
@@ -88,7 +89,6 @@ const FittingForm = ({
   );
 
   const onSubmit: SubmitHandler<FormData> = async (value) => {
-    console.log(value);
     try {
       const res = editId.status ? await edit(value) : await add(value);
       if (res.status) {
@@ -103,8 +103,6 @@ const FittingForm = ({
       console.error("Submit Error:", error);
     }
   };
-
-  console.log(productSizingIds);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
