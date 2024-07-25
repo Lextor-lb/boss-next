@@ -37,9 +37,8 @@ export default function Login() {
 
   const onSubmit = async (data: { email: string; password: string }) => {
     const res = await trigger({ email: data.email, password: data.password });
-    if (res) 
-    {
-      router.push("/pos/app");
+    if (res) {
+      router.push("/pos/app/dashboard");
     }
   };
 

@@ -1,7 +1,7 @@
 "use client";
 
 import FormInput from "@/components/FormInput.components";
-import { AddProductControlBar } from "@/components/pos/products";
+import { EditProductControlBar } from "@/components/pos/products";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
@@ -10,14 +10,11 @@ import { useProductProvider } from "@/app/pos/app/products/Provider/ProductProvi
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Backend_URL, editProductFetch } from "@/lib/fetch";
+import useSWRMutation from "swr/mutation";
 
-const AddProductPageOne = () => {
-  const {
-    navigateForward,
-    navigateBackward,
-    addProductFormData,
-    setAddProductFormData,
-  } = useProductProvider();
+const EditProductPageOne = () => {
+  const { editProductFormData, setEditProductFormData } = useProductProvider();
 
   const schema = z.object({
     name: z.string().min(3, { message: "This field cannot be empty!" }),
@@ -46,28 +43,56 @@ const AddProductPageOne = () => {
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
-      name: addProductFormData.name,
-      productCode: addProductFormData.productCode,
-      description: addProductFormData.description,
-      addTo: addProductFormData.addTo,
+      name: editProductFormData.name,
+      productCode: editProductFormData.productCode,
+      description: editProductFormData.description,
+      addTo: editProductFormData.addTo,
     },
   });
 
-  const onSubmit = (data: FormData) => {
-    setAddProductFormData({
-      ...addProductFormData,
+  // Fetcher function to make API requests
+  const putFetcher = async (url: string, { arg }: { arg: any }) => {
+    return editProductFetch(url, arg);
+  };
+
+  const {
+    data,
+    error,
+    isMutating,
+    trigger: edit,
+  } = useSWRMutation(
+    `${Backend_URL}/products/${editProductFormData.id}`,
+    putFetcher
+  );
+
+  const onSubmit = async (data: FormData) => {
+    setEditProductFormData({
+      ...editProductFormData,
       ...data,
     });
-    navigateForward(2);
+
+    const editedData = {
+      isEcommerce: data.addTo.eCommerce ? 1 : 0,
+      isPos: data.addTo.pos ? 1 : 0,
+      name: data.name,
+      productCode: data.productCode,
+      description: data.description,
+    };
+
+    console.log(editedData);
+
+    const res = await edit(editedData);
+    console.log(res);
   };
+
+  console.log(error);
 
   return (
     <div className="space-y-4">
-      <AddProductControlBar
-        goBackward={navigateBackward}
-        goForward={handleSubmit(onSubmit)}
-      />
-
+      <div>
+        <EditProductControlBar run={handleSubmit(onSubmit)} />
+        <hr className=" py-1" />
+      </div>
       <div className=" w-3/4 space-y-4">
         {/* Multiple toggle switches */}
         <div className="space-y-1.5">
@@ -82,10 +107,10 @@ const AddProductPageOne = () => {
               </div>
               <Switch
                 id="e-commerce"
-                checked={addProductFormData.addTo.eCommerce}
+                checked={editProductFormData.addTo.eCommerce}
                 onCheckedChange={(isChecked) => {
                   setValue("addTo.eCommerce", isChecked);
-                  setAddProductFormData((prev) => ({
+                  setEditProductFormData((prev) => ({
                     ...prev,
                     addTo: {
                       ...prev.addTo,
@@ -105,10 +130,10 @@ const AddProductPageOne = () => {
               </div>
               <Switch
                 id="pos"
-                checked={addProductFormData.addTo.pos}
+                checked={editProductFormData.addTo.pos}
                 onCheckedChange={(isChecked) => {
                   setValue("addTo.pos", isChecked);
-                  setAddProductFormData((prev) => ({
+                  setEditProductFormData((prev) => ({
                     ...prev,
                     addTo: {
                       ...prev.addTo,
@@ -168,4 +193,4 @@ const AddProductPageOne = () => {
   );
 };
 
-export default AddProductPageOne;
+export default EditProductPageOne;

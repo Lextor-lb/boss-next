@@ -10,7 +10,7 @@ const AddProductControlBar = ({
   goBackward: () => void;
 }) => {
   return (
-    <div className="">
+    <div>
       <div className="pb-4 flex justify-between items-center">
         <div className=" space-y-2">
           <p className=" font-bold text-xl">Add Product</p>

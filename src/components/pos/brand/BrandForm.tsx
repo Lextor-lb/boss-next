@@ -41,10 +41,7 @@ const BrandForm: React.FC<FormProps> = ({
       : z
           .any()
           .refine((files) => files?.length == 1, "Image is required.")
-          .refine(
-            (files) => files?.[0]?.size <= MAX_FILE_SIZE,
-            `Max file size is 2MB.`
-          )
+
           .refine(
             (files) => validImageTypes.includes(files?.[0]?.type),
             ".jpg, .jpeg and .png files are accepted."

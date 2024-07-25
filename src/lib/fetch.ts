@@ -3,8 +3,7 @@ import { getSession } from "./lib";
 
 export const Backend_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
-const findToken = async () => 
-{
+const findToken = async () => {
   const session = await getSession();
   const token = session?.accessToken;
   return token;
@@ -62,7 +61,7 @@ export const postFetch = async (
         Authorization: `Bearer ${token}`,
         ...headers,
       },
-      body: JSON.stringify(body), // Directly stringify the provided body
+      body: JSON.stringify(body),
     };
 
     console.log("Request options:", options);
@@ -236,6 +235,43 @@ export const putFetch = async (
   }
 };
 
+export const editProductFetch = async (
+  url: string,
+  body: any,
+  headers: Record<string, string> = {}
+) => {
+  try {
+    const token = await findToken();
+    if (!token) {
+      throw new Error("No access token found");
+    }
+
+    const options: RequestInit = {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "multipart/form-data",
+        Authorization: `Bearer ${token}`,
+        ...headers,
+      },
+      body: JSON.stringify(body),
+    };
+
+    const response = await fetch(url, options);
+    const data = await response.json();
+
+    console.log("Response data:", response);
+
+    if (!response.ok) {
+      throw new Error(data.message || "An error occurred");
+    }
+
+    return data;
+  } catch (error: any) {
+    console.log(error);
+  }
+};
+
 export const putMediaFetch = async (
   url: string,
   body: FormData,
@@ -255,8 +291,6 @@ export const putMediaFetch = async (
       },
       body: body,
     };
-
-    console.log("Request options:", options);
 
     const response = await fetch(url, options);
     const data = await response.json();
