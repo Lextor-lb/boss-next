@@ -10,10 +10,11 @@ import { useProductProvider } from "@/app/pos/app/products/Provider/ProductProvi
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Backend_URL, editProductFetch } from "@/lib/fetch";
+import { Backend_URL, editProductFetch, editProductFormFetch } from "@/lib/fetch";
 import useSWRMutation from "swr/mutation";
 
 const EditProductPageOne = () => {
+
   const { editProductFormData, setEditProductFormData } = useProductProvider();
 
   const schema = z.object({
@@ -50,9 +51,14 @@ const EditProductPageOne = () => {
     },
   });
 
+
+
+ 
+
+
   // Fetcher function to make API requests
   const putFetcher = async (url: string, { arg }: { arg: any }) => {
-    return editProductFetch(url, arg);
+    return editProductFormFetch(url, arg);
   };
 
   const {

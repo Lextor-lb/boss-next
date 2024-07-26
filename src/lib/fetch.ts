@@ -272,6 +272,57 @@ export const editProductFetch = async (
   }
 };
 
+
+export const editProductFormFetch = async (
+  url: string,
+  body: any,
+  headers: Record<string, string> = {}
+) => {
+  try {
+    const token = await findToken();
+    if (!token) {
+      throw new Error("No access token found");
+    }
+
+    // Create a FormData object
+    const formData = new FormData();
+    
+    // Append non-file fields
+    formData.append('name', body.name);
+    formData.append('productCode', body.productCode);
+    formData.append('description', body.description);
+    formData.append('isEcommerce', body.isEcommerce.toString());
+    formData.append('isPos', body.isPos.toString());
+     
+    const options: RequestInit = {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        ...headers,
+      },
+      body: formData, // Use FormData object
+    };
+
+    const response = await fetch(url, options);
+    const data = await response.json();
+
+    console.log("Response data:", data);
+
+    if (!response.ok) {
+      throw new Error(data.message || "An error occurred");
+    }
+
+    return data;
+  } catch (error: any) {
+    console.log(error);
+    throw new Error(error.message || "An error occurred");
+  }
+};
+
+
+
+
+
 export const putMediaFetch = async (
   url: string,
   body: FormData,
