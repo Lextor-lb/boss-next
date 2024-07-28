@@ -71,7 +71,9 @@ const EditProductPageOne = () => {
     putFetcher
   );
 
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = async (data: FormData) => 
+  {
+    
     setEditProductFormData({
       ...editProductFormData,
       ...data,
