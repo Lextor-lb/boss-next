@@ -19,7 +19,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { getFetch, postMediaFetch, putMediaFetch } from "@/lib/fetch";
+import {
+  deleteSingleFetch,
+  getFetch,
+  postMediaFetch,
+  putMediaFetch,
+} from "@/lib/fetch";
 import { cn } from "@/lib/utils";
 import { useForm, UseFormRegisterReturn } from "react-hook-form";
 import { useProductProvider } from "@/app/pos/app/products/Provider/ProductProvider";
@@ -48,8 +53,14 @@ type ProductVariant = {
 const validImageTypes = ["image/jpeg", "image/png", "image/jpg"];
 
 const EditProductPageFive = () => {
-  const { editProductFormData, setEditProductFormData } = useProductProvider();
+  const {
+    editProductFormData,
+    setEditProductFormData,
+    swalProps,
+    setSwalProps,
+  } = useProductProvider();
 
+  const [variants, setVariants] = useState<any[]>([]);
   const [open, setOpen] = useState(false);
   const [image, setImage] = useState<File | undefined | string>(undefined);
   const [size, setSize] = useState<string>("");
@@ -58,10 +69,16 @@ const EditProductPageFive = () => {
     id: "",
   });
 
+  console.log(variants);
+
   const getData = async (url: string) => {
     const response = await getFetch(url);
     return response;
   };
+
+  useEffect(() => {
+    setVariants(editProductFormData.productVariants);
+  }, []);
 
   const { data } = useSWR(`${Backend_URL}/product-sizings/all`, getData);
 
@@ -71,7 +88,8 @@ const EditProductPageFive = () => {
       .refine(
         (file) => validImageTypes.includes(file.type),
         ".jpg, .jpeg and .png files are accepted."
-      ),
+      )
+      .optional(),
     shopCode: z.string().min(2, { message: "This field cannot be empty!" }),
     colorCode: z.string().min(2, { message: "This field cannot be empty!" }),
     barcode: z.string().min(2, { message: "This field cannot be empty!" }),
@@ -133,11 +151,53 @@ const EditProductPageFive = () => {
 
     if (editMode.status) {
       const res = await edit(formData);
-      console.log(res);
+      if (res.status) {
+        // setVariants(
+        //   variants.map((el) => (el.id == editMode.id ? res.data : el))
+        // );
+        setImage(undefined);
+        reset({
+          image: undefined,
+          shopCode: "",
+          colorCode: "",
+          barcode: "",
+          productSizingId: parseInt(""),
+        });
+        setEditMode({
+          status: false,
+          id: "",
+        });
+      }
     } else {
       const res = await add(formData);
-      console.log(res);
+      if (res.status) {
+        setVariants([...variants, res.data]);
+        setImage(undefined);
+        reset({
+          image: undefined,
+          shopCode: "",
+          colorCode: "",
+          barcode: "",
+          productSizingId: parseInt(""),
+        });
+      }
     }
+  };
+
+  const [idToDelete, setIdToDelete] = useState<number | undefined>();
+
+  const { data: deleteData, trigger: drop } = useSWRMutation(
+    `${Backend_URL}/product-variants/${idToDelete}`,
+    deleteSingleFetch
+  );
+
+  const handleDelete = async (id: number) => {
+    await setIdToDelete(id);
+    const data = await drop();
+    if (data.status) {
+      setIdToDelete(undefined);
+    }
+    setVariants(variants.filter((el) => el.id !== id));
   };
 
   const handleEdit = (id: number) => {
@@ -145,8 +205,9 @@ const EditProductPageFive = () => {
       status: true,
       id: `${id}`,
     });
+
     const data = editProductFormData.productVariants.find((el) => el.id == id);
-    console.log(data);
+
     reset({
       image: data.image,
       shopCode: data.shopCode,
@@ -161,7 +222,14 @@ const EditProductPageFive = () => {
   return (
     <div className="space-y-4">
       <div>
-        <EditProductControlBar run={() => {}} />
+        <EditProductControlBar
+          run={() =>
+            setSwalProps({
+              ...swalProps,
+              show: true,
+            })
+          }
+        />
 
         <hr className="py-3" />
 
@@ -302,9 +370,9 @@ const EditProductPageFive = () => {
           </div>
           <ProductVariantTable
             step={5}
-            handleDelete={() => {}}
+            handleDelete={handleDelete}
             handleEdit={handleEdit}
-            variant={editProductFormData.productVariants}
+            variant={variants}
           />
         </div>
       </div>

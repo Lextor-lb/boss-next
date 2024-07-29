@@ -21,7 +21,12 @@ import useSWRMutation from "swr/mutation";
 import { z } from "zod";
 
 const EditProductPageThree = () => {
-  const { editProductFormData, setEditProductFormData } = useProductProvider();
+  const {
+    editProductFormData,
+    setEditProductFormData,
+    setSwalProps,
+    swalProps,
+  } = useProductProvider();
 
   // to display
   const [images, setImages] = useState<File[]>([]);
@@ -112,12 +117,17 @@ const EditProductPageThree = () => {
   );
 
   const onSubmit = async (data: FormData) => {
+    const formData = new FormData();
     console.log(data);
-    const res = await add(data);
-    console.log(res);
+    data.images.forEach((img) => formData.append("images", img.file));
+    const res = await add(formData);
+    if (res.status) {
+      setSwalProps({
+        ...swalProps,
+        show: true,
+      });
+    }
   };
-
-  console.log(error);
 
   return (
     <div className="space-y-4 ">

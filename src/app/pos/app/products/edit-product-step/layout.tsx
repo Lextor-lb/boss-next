@@ -1,16 +1,57 @@
 "use client";
 import Container from "@/components/Container.components";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useProductProvider } from "../Provider/ProductProvider";
 import Link from "next/link";
+import SweetAlert2 from "react-sweetalert2";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import NavHeader from "@/components/pos/NavHeader";
 
 const layout = ({ children }: { children: React.ReactNode }) => {
-  const { editProductStages } = useProductProvider();
+  const { editProductStages, swalProps, setSwalProps } = useProductProvider();
+  const router = useRouter();
+
+  const [countdown, setCountdown] = useState(4);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout | null = null;
+
+    if (swalProps.show) {
+      timer = setInterval(() => {
+        setCountdown((prevCount) =>
+          prevCount > 0 ? prevCount - 1 : prevCount
+        );
+      }, 1000);
+    }
+
+    return () => {
+      if (timer) clearInterval(timer);
+      setCountdown(4);
+    };
+  }, [swalProps.show]);
+
+  useEffect(() => {
+    if (countdown == 0) {
+      (async () => {
+        await setSwalProps({
+          ...swalProps,
+          show: false,
+        });
+        await router.push("/pos/app/products");
+        await setCountdown(8);
+      })();
+    }
+  }, [countdown]);
 
   return (
     <Container>
+      <NavHeader
+        parentPage="Product"
+        path="Products"
+        currentPage="Edit Product"
+      />
       <div className=" space-y-4">
-        <p>Edit new product</p>
         <Container>
           <div className=" grid grid-cols-12 ">
             <div className=" col-span-3">
@@ -45,6 +86,50 @@ const layout = ({ children }: { children: React.ReactNode }) => {
           </div>
         </Container>
       </div>
+
+      <SweetAlert2
+        timer={countdown * 1000}
+        iconColor="black"
+        icon="success"
+        {...swalProps}
+      >
+        <p className="text-xl font-bold pb-1 text-black">
+          Product Edit Success!
+        </p>
+        <p className="text-xs pb-1 font-medium text-black/80">
+          Are you done editing product?
+        </p>
+        <p className="text-xs pb-3 font-light">
+          Redirect to Product Page in {countdown}
+        </p>
+        <div className=" flex gap-3 justify-center ">
+          <Button
+            size={"sm"}
+            variant={"outline"}
+            onClick={() => {
+              setCountdown(0);
+              setSwalProps({
+                ...swalProps,
+                show: false,
+              });
+              router.push("/pos/app/products");
+            }}
+          >
+            Go To Home Now
+          </Button>
+          <Button
+            size={"sm"}
+            onClick={() => {
+              setSwalProps({
+                ...swalProps,
+                show: false,
+              });
+            }}
+          >
+            Continue Edit
+          </Button>
+        </div>
+      </SweetAlert2>
     </Container>
   );
 };

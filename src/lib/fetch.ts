@@ -237,94 +237,6 @@ export const putFetch = async (
 
 export const editProductFetch = async (
   url: string,
-  body: any,
-  headers: Record<string, string> = {}
-) => {
-  try {
-    const token = await findToken();
-    if (!token) {
-      throw new Error("No access token found");
-    }
-
-    const options: RequestInit = {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "multipart/form-data",
-        Authorization: `Bearer ${token}`,
-        ...headers,
-      },
-      body: JSON.stringify(body),
-    };
-
-    const response = await fetch(url, options);
-    const data = await response.json();
-
-    console.log("Response data:", response);
-
-    if (!response.ok) {
-      throw new Error(data.message || "An error occurred");
-    }
-
-    return data;
-  } catch (error: any) {
-    console.log(error);
-  }
-};
-
-
-export const editProductFormFetch = async (
-  url: string,
-  body: any,
-  headers: Record<string, string> = {}
-) => {
-  try {
-    const token = await findToken();
-    if (!token) {
-      throw new Error("No access token found");
-    }
-
-    // Create a FormData object
-    const formData = new FormData();
-    
-    // Append non-file fields
-    formData.append('name', body.name);
-    formData.append('productCode', body.productCode);
-    formData.append('description', body.description);
-    formData.append('isEcommerce', body.isEcommerce.toString());
-    formData.append('isPos', body.isPos.toString());
-     
-    const options: RequestInit = {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        ...headers,
-      },
-      body: formData, // Use FormData object
-    };
-
-    const response = await fetch(url, options);
-    const data = await response.json();
-
-    console.log("Response data:", data);
-
-    if (!response.ok) {
-      throw new Error(data.message || "An error occurred");
-    }
-
-    return data;
-  } catch (error: any) {
-    console.log(error);
-    throw new Error(error.message || "An error occurred");
-  }
-};
-
-
-
-
-
-export const putMediaFetch = async (
-  url: string,
   body: FormData,
   headers: Record<string, string> = {}
 ) => {
@@ -344,6 +256,53 @@ export const putMediaFetch = async (
     };
 
     const response = await fetch(url, options);
+
+    // Check if the response is in JSON format
+    const contentType = response.headers.get("Content-Type");
+    let data;
+
+    if (contentType && contentType.includes("application/json")) {
+      data = await response.json();
+    } else {
+      // Handle non-JSON response (e.g., text or HTML)
+      data = await response.text();
+    }
+
+    console.log("Response data:", data);
+
+    if (!response.ok) {
+      throw new Error(data.message || "An error occurred");
+    }
+
+    return data;
+  } catch (error: any) {
+    console.error("Error during fetch:", error);
+    throw error;
+  }
+};
+
+export const putMediaFetch = async (
+  url: string,
+  body: FormData,
+  headers: Record<string, string> = {}
+) => {
+  try {
+    const token = await findToken();
+    if (!token) {
+      throw new Error("No access token found");
+    }
+
+    const options: RequestInit = {
+      method: "PUT",
+      headers: {
+        Accept: "application/json", // Expect JSON response from the server
+        Authorization: `Bearer ${token}`,
+        ...headers,
+      },
+      body: body,
+    };
+
+    const response = await fetch(url, options);
     const data = await response.json();
 
     console.log("Response data:", data);
@@ -354,7 +313,6 @@ export const putMediaFetch = async (
 
     return data;
   } catch (error: any) {
-    console.error("Fetch API Error:", error.message);
-    throw new Error(error.message || "An error occurred");
+    console.log(error);
   }
 };

@@ -31,6 +31,8 @@ type ProductContextType = {
     path: string;
     active: boolean;
   }[];
+  swalProps: any;
+  setSwalProps: any;
 };
 
 type AddProductFormData = {
@@ -91,6 +93,11 @@ export const ProductProvider = ({
   const [path, setPath] = useState<number | undefined>(undefined);
   const [categoryData, setCategoryData] = useState<any[]>([]);
   const [fittingData, setFittingData] = useState<any[]>([]);
+
+  const [swalProps, setSwalProps] = useState({
+    show: false,
+    showConfirmButton: false,
+  });
 
   useEffect(() => {
     const match = pathName.match(/\/(\d+)$/);
@@ -388,6 +395,8 @@ export const ProductProvider = ({
     editProductStages,
     editProductFormData,
     setEditProductFormData,
+    swalProps,
+    setSwalProps,
   };
   return <Provider.Provider value={contextValue}>{children}</Provider.Provider>;
 };
@@ -397,5 +406,6 @@ export const useProductProvider = () => {
   if (!context) {
     throw new Error("useProductProvider must be used within a ProductProvider");
   }
+
   return context;
 };

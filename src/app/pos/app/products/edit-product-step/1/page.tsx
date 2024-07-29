@@ -10,12 +10,16 @@ import { useProductProvider } from "@/app/pos/app/products/Provider/ProductProvi
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Backend_URL, editProductFetch, editProductFormFetch } from "@/lib/fetch";
+import { Backend_URL, editProductFetch } from "@/lib/fetch";
 import useSWRMutation from "swr/mutation";
 
 const EditProductPageOne = () => {
-
-  const { editProductFormData, setEditProductFormData } = useProductProvider();
+  const {
+    editProductFormData,
+    setEditProductFormData,
+    swalProps,
+    setSwalProps,
+  } = useProductProvider();
 
   const schema = z.object({
     name: z.string().min(3, { message: "This field cannot be empty!" }),
@@ -51,14 +55,9 @@ const EditProductPageOne = () => {
     },
   });
 
-
-
- 
-
-
   // Fetcher function to make API requests
   const putFetcher = async (url: string, { arg }: { arg: any }) => {
-    return editProductFormFetch(url, arg);
+    return editProductFetch(url, arg);
   };
 
   const {
@@ -71,9 +70,7 @@ const EditProductPageOne = () => {
     putFetcher
   );
 
-  const onSubmit = async (data: FormData) => 
-  {
-    
+  const onSubmit = async (data: FormData) => {
     setEditProductFormData({
       ...editProductFormData,
       ...data,
@@ -87,13 +84,22 @@ const EditProductPageOne = () => {
       description: data.description,
     };
 
-    console.log(editedData);
+    const formData = new FormData();
 
-    const res = await edit(editedData);
-    console.log(res);
+    formData.append("name", editedData.name);
+    formData.append("productCode", editedData.productCode);
+    formData.append("description", editedData.description || "");
+    formData.append("isEcommerce", editedData.isEcommerce.toString());
+    formData.append("isPos", editedData.isPos.toString());
+
+    const res = await edit(formData);
+    if (res.status) {
+      setSwalProps({
+        ...swalProps,
+        show: true,
+      });
+    }
   };
-
-  console.log(error);
 
   return (
     <div className="space-y-4">

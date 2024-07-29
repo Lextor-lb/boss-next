@@ -28,6 +28,8 @@ const EditProductPageTwo = () => {
     setCategoryData,
     fittingData,
     setFittingData,
+    setSwalProps,
+    swalProps,
   } = useProductProvider();
 
   // form validation
@@ -134,8 +136,12 @@ const EditProductPageTwo = () => {
 
   const onSubmit = async (data: FormData) => {
     const res = await edit(data);
-    console.log(data);
-    console.log(res);
+    if (res.status) {
+      setSwalProps({
+        ...swalProps,
+        show: true,
+      });
+    }
   };
 
   return (

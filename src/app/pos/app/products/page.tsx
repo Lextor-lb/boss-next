@@ -16,6 +16,7 @@ import {
 import SweetAlert2 from "react-sweetalert2";
 import { useRouter } from "next/navigation";
 import { useProductProvider } from "@/app/pos/app/products/Provider/ProductProvider";
+import NavHeader from "@/components/pos/NavHeader";
 
 export default function ProductPage() {
   const router = useRouter();
@@ -68,15 +69,16 @@ export default function ProductPage() {
     getProducts,
     {
       revalidateIfStale: true,
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
+      revalidateOnFocus: true,
+      revalidateOnReconnect: true,
       errorRetryInterval: 5000,
       revalidateOnMount: true,
+      refreshWhenHidden: true,
     }
   );
 
   const refetch = () => {
-    return mutate(
+    mutate(
       `${Backend_URL}/products?page=${currentPage}&search=${searchInputValue}&orderDirection=${sortBy}&orderBy=${filterType}`
     );
   };
@@ -152,8 +154,8 @@ export default function ProductPage() {
     singleId ? `${Backend_URL}/products/${singleId}` : null,
     getFetch,
     {
-      revalidateIfStale: false,
-      revalidateOnFocus: false,
+      revalidateIfStale: true,
+      revalidateOnFocus: true,
       revalidateOnReconnect: false,
       errorRetryInterval: 5000,
     }
@@ -192,15 +194,17 @@ export default function ProductPage() {
         productVariants: singleData.productVariants,
       });
       router.push("/pos/app/products/edit-product-step/1");
-      console.log(singleData);
     }
   }, [editId, singleData]);
 
   return (
     <Container>
+      <NavHeader
+        parentPage="Product"
+        path="Products"
+        currentPage="Product Lists"
+      />
       <div className="space-y-5">
-        <p className=" text-xl font-semibold">Products Page</p>
-
         <ProductControlBar
           isSelected={idsToDelete.length > 0}
           searchInputValue={searchInputValue}

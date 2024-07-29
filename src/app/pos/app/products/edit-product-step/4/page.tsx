@@ -15,7 +15,12 @@ import { editProductFetch } from "@/lib/fetch";
 import { Backend_URL } from "@/lib/api";
 
 const EditProductPageFour = () => {
-  const { editProductFormData, setEditProductFormData } = useProductProvider();
+  const {
+    editProductFormData,
+    setEditProductFormData,
+    setSwalProps,
+    swalProps,
+  } = useProductProvider();
 
   const [profitPercentage, setProfitPercentage] = useState({
     profitInPercent: 0,
@@ -68,11 +73,18 @@ const EditProductPageFour = () => {
   );
 
   const onSubmit = async (data: any) => {
-    const res = await edit(data);
-    console.log(res);
+    const formData = new FormData();
+    formData.append("salePrice", data.salePrice);
+    formData.append("stockPrice", data.stockPrice);
+    formData.append("discountPrice", data.discountPrice);
+    const res = await edit(formData);
+    if (res.status) {
+      setSwalProps({
+        ...swalProps,
+        show: true,
+      });
+    }
   };
-
-  console.log(error);
 
   useEffect(() => {
     if (watch("salePrice") < watch("stockPrice")) {
