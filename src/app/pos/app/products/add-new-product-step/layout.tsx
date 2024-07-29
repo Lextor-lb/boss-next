@@ -4,7 +4,7 @@ import React from "react";
 import { useProductProvider } from "../Provider/ProductProvider";
 import Link from "next/link";
 
-const layout = ({ children }: { children: React.ReactNode }) => {
+const Layout = ({ children }: { children: React.ReactNode }) => {
   const { addProductStages } = useProductProvider();
 
   return (
@@ -52,4 +52,4 @@ const layout = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-export default layout;
+export default Layout;
