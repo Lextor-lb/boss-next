@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
 import Container from "@/components/Container.components";
@@ -8,21 +8,31 @@ import TableSkeletonLoader from "@/components/TableSkeletonLoader";
 import { Backend_URL } from "@/lib/api";
 import { deleteFetch, deleteSingleFetch, getFetch } from "@/lib/fetch";
 import ErrorComponent from "@/components/ErrorComponent";
-import { ProductControlBar, ProductTable } from "@/components/pos/products";
-import { ProductProvider } from "./Provider/ProductProvider";
+import {
+  ProductControlBar,
+  ProductDetailBox,
+  ProductTable,
+} from "@/components/pos/products";
+import SweetAlert2 from "react-sweetalert2";
+import { useRouter } from "next/navigation";
+import { useProductProvider } from "@/app/pos/app/products/Provider/ProductProvider";
+import NavHeader from "@/components/pos/NavHeader";
 
 export default function ProductPage() {
+  const router = useRouter();
   const [idsToDelete, setIdsToDelete] = useState<number[]>([]);
   const [deleteId, setDeleteId] = useState<number | undefined>();
-  const [inputValue, setInputValue] = useState("");
   const [searchInputValue, setSearchInputValue] = useState<string>("");
+  const [singleId, setSingleId] = useState<number | undefined>();
+  const { editProductFormData, setEditProductFormData } = useProductProvider();
 
-  const closeSheetRef = useRef();
-  const openSheetRef = useRef<HTMLDivElement>(null);
+  const [swalProps, setSwalProps] = useState({
+    show: false,
+    showConfirmButton: false,
+  });
 
   // for fetching
   const [currentPage, setCurrentPage] = useState(1);
-
   const [filterType, setFilterType] = useState("name");
   const [sortBy, setSortBy] = useState("asc");
 
@@ -59,21 +69,21 @@ export default function ProductPage() {
     getProducts,
     {
       revalidateIfStale: true,
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
+      revalidateOnFocus: true,
+      revalidateOnReconnect: true,
       errorRetryInterval: 5000,
       revalidateOnMount: true,
+      refreshWhenHidden: true,
     }
   );
 
   const refetch = () => {
-    return mutate(
+    mutate(
       `${Backend_URL}/products?page=${currentPage}&search=${searchInputValue}&orderDirection=${sortBy}&orderBy=${filterType}`
     );
   };
 
   // delete
-
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const product = parseInt(event.target.id);
 
@@ -92,7 +102,10 @@ export default function ProductPage() {
 
   const { error: deleteError, trigger: drop } = useSWRMutation(
     `${Backend_URL}/products`,
-    fetcher
+    fetcher,
+    {
+      onSuccess: () => setEditId({ ...editId, status: false }),
+    }
   );
 
   const handleDelete = async () => {
@@ -102,7 +115,6 @@ export default function ProductPage() {
   };
 
   // single delete
-
   const singleDeleteFetcher = async (url: string) => {
     return deleteSingleFetch(url);
   };
@@ -123,26 +135,76 @@ export default function ProductPage() {
     id: "",
   });
 
-  const handleEdit = (id: any): void => {
+  const handleOpenDetailBox = (id: number) => {
+    setSwalProps({
+      ...swalProps,
+      show: true,
+    });
+    setSingleId(id);
+  };
+
+  const closeDetailBox = () => {
+    setSwalProps({
+      ...swalProps,
+      show: false,
+    });
+  };
+
+  const { data: singleData, isLoading: singleLoading } = useSWR(
+    singleId ? `${Backend_URL}/products/${singleId}` : null,
+    getFetch,
+    {
+      revalidateIfStale: true,
+      revalidateOnFocus: true,
+      revalidateOnReconnect: false,
+      errorRetryInterval: 5000,
+    }
+  );
+
+  const handleEdit = async (id: any) => {
     setEditId({
       status: true,
       id,
     });
+    setSingleId(id);
   };
 
-  const resetValue = () => {
-    setEditId({
-      status: false,
-      id: "",
-    });
-    setInputValue("");
-  };
+  useEffect(() => {
+    if (editId.status && singleData) {
+      setEditProductFormData({
+        id: singleId as number,
+        addTo: {
+          eCommerce: singleData.isEcommerce,
+          pos: singleData.isPos,
+        },
+        name: singleData.name,
+        description: singleData.description,
+        gender: singleData.gender,
+        brand: singleData.productBrand.id,
+        productCode: singleData.productCode,
+        productTypeId: singleData.productType.id,
+        productCategoryId: singleData.productCategory.id,
+        productFittingId: singleData.productFitting.id,
+        medias: singleData.medias,
+        stockPrice: singleData.stockPrice,
+        salePrice: singleData.salePrice,
+        discount: singleData.discountPrice,
+        profitInPercent: singleData.percentage,
+        profitInDigit: singleData.profitValue,
+        productVariants: singleData.productVariants,
+      });
+      router.push("/pos/app/products/edit-product-step/1");
+    }
+  }, [editId, singleData]);
 
   return (
     <Container>
+      <NavHeader
+        parentPage="Product"
+        path="Products"
+        currentPage="Product Lists"
+      />
       <div className="space-y-5">
-        <p className=" text-xl font-semibold">Products Page</p>
-
         <ProductControlBar
           isSelected={idsToDelete.length > 0}
           searchInputValue={searchInputValue}
@@ -159,6 +221,7 @@ export default function ProductPage() {
             ) : (
               <ProductTable
                 data={data?.data}
+                openDetail={handleOpenDetailBox}
                 setIdsToDelete={setIdsToDelete}
                 handleCheckboxChange={handleCheckboxChange}
                 editId={editId}
@@ -172,6 +235,19 @@ export default function ProductPage() {
           </>
         )}
       </div>
+      <SweetAlert2
+        customClass={{
+          popup: " !w-screen !h-screen ",
+        }}
+        {...swalProps}
+        didClose={() => closeDetailBox()}
+      >
+        <ProductDetailBox
+          isLoading={singleLoading}
+          data={singleData}
+          handleClose={closeDetailBox}
+        />
+      </SweetAlert2>
     </Container>
   );
 }

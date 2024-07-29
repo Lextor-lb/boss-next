@@ -12,8 +12,8 @@ import {
   ProductCategoryControlBar,
   ProductCategoryTable,
 } from "@/components/pos/product-categories";
-export default function ProductCategoriesPage() {
 
+export default function ProductCategoriesPage() {
   const [idsToDelete, setIdsToDelete] = useState<number[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [searchInputValue, setSearchInputValue] = useState("");
@@ -163,6 +163,7 @@ export default function ProductCategoriesPage() {
       id: "",
     });
     setInputValue("");
+    setProductFittingIds([]);
   };
 
   return (

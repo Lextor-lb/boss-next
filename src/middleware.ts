@@ -8,7 +8,7 @@ export async function middleware(req: NextRequest) {
 	const { pathname } = req.nextUrl;
 
 	// Allow public access to the login page
-	if (pathname.startsWith('/_next/') || pathname.startsWith('/static/') || pathname === "/pos/login") {
+	if (pathname.startsWith('/_next/') || pathname.startsWith('/static/') || pathname === "/pos/login" || pathname === "/") {
 		return NextResponse.next();
 	  }
   

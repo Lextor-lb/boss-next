@@ -19,7 +19,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { getFetch } from "@/lib/fetch";
+import {
+  deleteSingleFetch,
+  getFetch,
+  postMediaFetch,
+  putMediaFetch,
+} from "@/lib/fetch";
 import { cn } from "@/lib/utils";
 import { useForm, UseFormRegisterReturn } from "react-hook-form";
 import { useProductProvider } from "@/app/pos/app/products/Provider/ProductProvider";
@@ -28,8 +33,12 @@ import FormInput from "@/components/FormInput.components";
 import { object, z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import { ProductVariantTable } from "@/components/pos/products";
+import {
+  EditProductControlBar,
+  ProductVariantTable,
+} from "@/components/pos/products";
 import { Label } from "@/components/ui/label";
+import useSWRMutation from "swr/mutation";
 
 type ProductVariant = {
   id: number;
@@ -43,28 +52,33 @@ type ProductVariant = {
 
 const validImageTypes = ["image/jpeg", "image/png", "image/jpg"];
 
-const AddProductPageFive = () => {
-  const [readyToProceed, setReadyToProceed] = useState(false);
-
+const EditProductPageFive = () => {
   const {
-    navigateForward,
-    navigateBackward,
-    addProductFormData,
-    setAddProductFormData,
+    editProductFormData,
+    setEditProductFormData,
+    swalProps,
+    setSwalProps,
   } = useProductProvider();
 
+  const [variants, setVariants] = useState<any[]>([]);
   const [open, setOpen] = useState(false);
-  const [image, setImage] = useState<File | undefined>(undefined);
+  const [image, setImage] = useState<File | undefined | string>(undefined);
   const [size, setSize] = useState<string>("");
   const [editMode, setEditMode] = useState({
     status: false,
     id: "",
   });
 
+  console.log(variants);
+
   const getData = async (url: string) => {
     const response = await getFetch(url);
     return response;
   };
+
+  useEffect(() => {
+    setVariants(editProductFormData.productVariants);
+  }, []);
 
   const { data } = useSWR(`${Backend_URL}/product-sizings/all`, getData);
 
@@ -74,10 +88,11 @@ const AddProductPageFive = () => {
       .refine(
         (file) => validImageTypes.includes(file.type),
         ".jpg, .jpeg and .png files are accepted."
-      ),
-    shopCode: z.string().min(3, { message: "This field cannot be empty!" }),
-    colorCode: z.string().min(3, { message: "This field cannot be empty!" }),
-    barcode: z.string().min(3, { message: "This field cannot be empty!" }),
+      )
+      .optional(),
+    shopCode: z.string().min(2, { message: "This field cannot be empty!" }),
+    colorCode: z.string().min(2, { message: "This field cannot be empty!" }),
+    barcode: z.string().min(2, { message: "This field cannot be empty!" }),
     productSizingId: z
       .number()
       .min(1, { message: "This field cannot be empty!" }),
@@ -93,6 +108,7 @@ const AddProductPageFive = () => {
     setValue,
     formState: { errors },
     reset,
+    getValues,
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -100,114 +116,120 @@ const AddProductPageFive = () => {
       shopCode: "",
       colorCode: "",
       barcode: "",
-      productSizingId: 0,
+      productSizingId: parseInt(""),
     },
   });
 
   const { name } = register("image");
 
-  const onSubmit = (formData: FormData) => {
-    const imageFile = formData.image as File;
-    const updatedData: ProductVariant = {
-      ...formData,
-      id: editMode.status ? Number(editMode.id) : Date.now(),
-      image: imageFile,
-      sizeName:
-        data?.data.find((el: any) => el.id === formData.productSizingId)
-          ?.name || "",
-    };
-
-    const updatedVariants = editMode.status
-      ? addProductFormData.productVariants.map((el: ProductVariant) =>
-          el.id === updatedData.id ? updatedData : el
-        )
-      : [...addProductFormData.productVariants, updatedData];
-
-    setAddProductFormData({
-      ...addProductFormData,
-      productVariants: updatedVariants,
-    });
-
-    reset({
-      image: undefined,
-      shopCode: "",
-      colorCode: "",
-      barcode: "",
-    });
-    setImage(undefined);
-    setEditMode({ status: false, id: "" });
+  const putFetcher = async (url: string, { arg }: { arg: any }) => {
+    return putMediaFetch(url, arg);
   };
 
-  const handleProceed = () => {
-    setAddProductFormData({
-      ...addProductFormData,
-      productVariants: addProductFormData.productVariants,
-    });
+  const { data: putData, trigger: edit } = useSWRMutation(
+    `${Backend_URL}/product-variants/${editMode.id}`,
+    putFetcher
+  );
+
+  const postFetcher = async (url: string, { arg }: { arg: any }) => {
+    return postMediaFetch(url, arg);
   };
 
-  const handleEdit = (id: number) => {
-    const variantToEdit = addProductFormData.productVariants.find(
-      (el) => el.id === id
-    );
+  const { data: postData, trigger: add } = useSWRMutation(
+    `${Backend_URL}/product-variants`,
+    postFetcher
+  );
 
-    if (variantToEdit) {
-      setEditMode({
-        status: true,
-        id: `${id}`,
-      });
-      reset({
-        image: variantToEdit.image,
-        shopCode: variantToEdit.shopCode,
-        colorCode: variantToEdit.colorCode,
-        barcode: variantToEdit.barcode,
-        productSizingId: variantToEdit.productSizingId,
-      });
-      setImage(variantToEdit.image);
+  const onSubmit = async (value: any) => {
+    const formData = new FormData();
+    formData.append("image", value.image);
+    formData.append("shopCode", value.shopCode);
+    formData.append("colorCode", value.colorCode);
+    formData.append("barcode", value.barcode);
+    formData.append("productSizingId", value.productSizingId);
+    formData.append("productId", `${editProductFormData.id}`);
+
+    if (editMode.status) {
+      const res = await edit(formData);
+      if (res.status) {
+        // setVariants(
+        //   variants.map((el) => (el.id == editMode.id ? res.data : el))
+        // );
+        setImage(undefined);
+        reset({
+          image: undefined,
+          shopCode: "",
+          colorCode: "",
+          barcode: "",
+          productSizingId: parseInt(""),
+        });
+        setEditMode({
+          status: false,
+          id: "",
+        });
+      }
+    } else {
+      const res = await add(formData);
+      if (res.status) {
+        setVariants([...variants, res.data]);
+        setImage(undefined);
+        reset({
+          image: undefined,
+          shopCode: "",
+          colorCode: "",
+          barcode: "",
+          productSizingId: parseInt(""),
+        });
+      }
     }
   };
 
-  const handleDelete = (id: number) => {
-    const updatedVariants = addProductFormData.productVariants.filter(
-      (el) => el.id !== id
-    );
-    setAddProductFormData({
-      ...addProductFormData,
-      productVariants: updatedVariants,
-    });
+  const [idToDelete, setIdToDelete] = useState<number | undefined>();
+
+  const { data: deleteData, trigger: drop } = useSWRMutation(
+    `${Backend_URL}/product-variants/${idToDelete}`,
+    deleteSingleFetch
+  );
+
+  const handleDelete = async (id: number) => {
+    await setIdToDelete(id);
+    const data = await drop();
+    if (data.status) {
+      setIdToDelete(undefined);
+    }
+    setVariants(variants.filter((el) => el.id !== id));
   };
 
-  useEffect(() => {
-    if (addProductFormData.productVariants.length > 0) setReadyToProceed(true);
-  }, [addProductFormData.productVariants, setReadyToProceed]);
+  const handleEdit = (id: number) => {
+    setEditMode({
+      status: true,
+      id: `${id}`,
+    });
+
+    const data = editProductFormData.productVariants.find((el) => el.id == id);
+
+    reset({
+      image: data.image,
+      shopCode: data.shopCode,
+      colorCode: data.colorCode,
+      barcode: data.barcode,
+      productSizingId: data.productSizing.id,
+    });
+    setSize(data.productSizing.name);
+    setImage(data.media.url);
+  };
 
   return (
     <div className="space-y-4">
       <div>
-        <div className="pb-4 flex justify-between items-center">
-          <div className="space-y-2">
-            <p className="font-bold text-xl">Add Product</p>
-            <p className="font-normal text-primary/60 text-sm">
-              Products Information placed across your store.
-            </p>
-          </div>
-          <div className="flex gap-2">
-            <Button onClick={() => navigateBackward()} type="button" size="sm">
-              <ArrowLeft size={24} />
-            </Button>
-            <Button
-              onClick={() => {
-                if (readyToProceed) {
-                  handleProceed();
-                  navigateForward(6);
-                }
-              }}
-              type="button"
-              size="sm"
-            >
-              <ArrowRight size={24} />
-            </Button>
-          </div>
-        </div>
+        <EditProductControlBar
+          run={() =>
+            setSwalProps({
+              ...swalProps,
+              show: true,
+            })
+          }
+        />
 
         <hr className="py-3" />
 
@@ -224,12 +246,21 @@ const AddProductPageFive = () => {
                     className="flex justify-center items-center cursor-pointer h-10 w-10 bg-white rounded-full"
                   >
                     {image ? (
-                      <Avatar>
-                        <AvatarImage
-                          className="object-cover"
-                          src={URL.createObjectURL(image)}
-                        />
-                      </Avatar>
+                      typeof image === "string" ? (
+                        <Avatar>
+                          <AvatarImage
+                            className="object-cover"
+                            src={image as string}
+                          />
+                        </Avatar>
+                      ) : (
+                        <Avatar>
+                          <AvatarImage
+                            className="object-cover"
+                            src={URL.createObjectURL(image as File)}
+                          />
+                        </Avatar>
+                      )
                     ) : (
                       <Camera />
                     )}
@@ -282,7 +313,7 @@ const AddProductPageFive = () => {
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-[200px] p-0">
-                      <Command defaultValue="">
+                      <Command defaultValue={`${getValues("productSizingId")}`}>
                         <CommandInput
                           placeholder="Search Size..."
                           className="h-9"
@@ -341,7 +372,7 @@ const AddProductPageFive = () => {
             step={5}
             handleDelete={handleDelete}
             handleEdit={handleEdit}
-            variant={addProductFormData.productVariants}
+            variant={variants}
           />
         </div>
       </div>
@@ -349,4 +380,4 @@ const AddProductPageFive = () => {
   );
 };
 
-export default AddProductPageFive;
+export default EditProductPageFive;

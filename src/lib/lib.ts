@@ -99,7 +99,6 @@ export async function getSession() {
     } 
 
   }
-
   if (accessToken) {
     return { accessToken };
   }

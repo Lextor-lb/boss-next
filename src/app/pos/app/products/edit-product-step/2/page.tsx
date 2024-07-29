@@ -13,21 +13,23 @@ import { useProductProvider } from "@/app/pos/app/products/Provider/ProductProvi
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AddProductControlBar } from "@/components/pos/products";
-import { getFetch } from "@/lib/fetch";
+import { EditProductControlBar } from "@/components/pos/products";
+import { editProductFetch, getFetch } from "@/lib/fetch";
 import { Backend_URL } from "@/lib/api";
 import useSWR from "swr";
+import { useEffect } from "react";
+import useSWRMutation from "swr/mutation";
 
-const AddProductPageTwo = () => {
+const EditProductPageTwo = () => {
   const {
-    navigateForward,
-    navigateBackward,
-    addProductFormData,
-    setAddProductFormData,
+    editProductFormData,
+    setEditProductFormData,
     categoryData,
     setCategoryData,
     fittingData,
     setFittingData,
+    setSwalProps,
+    swalProps,
   } = useProductProvider();
 
   // form validation
@@ -42,19 +44,19 @@ const AddProductPageTwo = () => {
       })
       .min(1, { message: "This field cannot be empty!" }),
 
-    product_type_id: z
+    productTypeId: z
       .number({
         required_error: "This field cannot be empty!",
       })
       .min(1, { message: "This field cannot be empty!" }),
 
-    product_category_id: z
+    productCategoryId: z
       .number({
         required_error: "This field cannot be empty!",
       })
       .min(1, { message: "This field cannot be empty!" }),
 
-    product_fitting_id: z
+    productFittingId: z
       .number({
         required_error: "This field cannot be empty!",
       })
@@ -71,21 +73,13 @@ const AddProductPageTwo = () => {
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
-      gender: addProductFormData.gender || undefined,
-      brand: addProductFormData.brand || undefined,
-      product_category_id: addProductFormData.product_category_id || undefined,
-      product_type_id: addProductFormData.product_type_id || undefined,
-      product_fitting_id: addProductFormData.product_fitting_id || undefined,
+      gender: editProductFormData.gender,
+      brand: editProductFormData.brand,
+      productCategoryId: editProductFormData.productCategoryId,
+      productTypeId: editProductFormData.productTypeId,
+      productFittingId: editProductFormData.productFittingId,
     },
   });
-
-  const onSubmit = (data: FormData) => {
-    setAddProductFormData({
-      ...addProductFormData,
-      ...data,
-    });
-    navigateForward(3);
-  };
 
   // get brands
   const getData = (url: string) => {
@@ -102,19 +96,64 @@ const AddProductPageTwo = () => {
     getData
   );
 
+  const { data: categoriesData } = useSWR(
+    `${Backend_URL}/product-categories/all`,
+    getData
+  );
+
+  const { data: fittingsData } = useSWR(
+    `${Backend_URL}/product-fittings/all`,
+    getData
+  );
+
+  useEffect(() => {
+    if (categoriesData) {
+      setCategoryData(
+        categoriesData.data.find(
+          ({ id }: { id: number }) =>
+            id == editProductFormData.productCategoryId
+        )
+      );
+    }
+  }, [categoriesData, fittingsData]);
+
+  console.log(fittingsData);
+
+  // Fetcher function to make API requests
+  const putFetcher = async (url: string, { arg }: { arg: any }) => {
+    return editProductFetch(url, arg);
+  };
+
+  const {
+    data,
+    error,
+    isMutating,
+    trigger: edit,
+  } = useSWRMutation(
+    `${Backend_URL}/products/${editProductFormData.id}`,
+    putFetcher
+  );
+
+  const onSubmit = async (data: FormData) => {
+    const res = await edit(data);
+    if (res.status) {
+      setSwalProps({
+        ...swalProps,
+        show: true,
+      });
+    }
+  };
+
   return (
     <div className=" space-y-4">
-      <AddProductControlBar
-        goBackward={navigateBackward}
-        goForward={handleSubmit(onSubmit)}
-      />
+      <EditProductControlBar run={handleSubmit(onSubmit)} />
 
       <div className=" w-3/4 space-y-4">
         {/* gender */}
         <div className=" space-y-1.5">
           <Label>Gender</Label>
           <RadioGroup
-            defaultValue={addProductFormData.gender}
+            defaultValue={editProductFormData.gender}
             name="gender"
             onValueChange={(e) => setValue("gender", e)}
             className=" bg-white rounded-md border p-3 flex justify-around"
@@ -144,7 +183,7 @@ const AddProductPageTwo = () => {
           <div className=" space-y-1.5">
             <Label>Brand</Label>
             <Select
-              defaultValue={`${addProductFormData.brand}`}
+              defaultValue={`${editProductFormData.brand}`}
               onValueChange={(e) => setValue("brand", parseInt(e))}
             >
               <SelectTrigger>
@@ -168,15 +207,14 @@ const AddProductPageTwo = () => {
           </div>
 
           {/* product type */}
-
           <div className=" space-y-6">
             <div className=" flex gap-3 justify-normal">
               <div className=" space-y-1.5 basis-1/2">
                 <Label>Product Type</Label>
                 <Select
-                  defaultValue={`${addProductFormData.product_type_id}`}
+                  defaultValue={`${editProductFormData.productTypeId}`}
                   onValueChange={(e) => {
-                    setValue("product_type_id", parseInt(e));
+                    setValue("productTypeId", parseInt(e));
                     setCategoryData(
                       typeData.data.find(({ id }: any) => id == e)
                         .productCategories
@@ -198,9 +236,9 @@ const AddProductPageTwo = () => {
                     )}
                   </SelectContent>
                 </Select>
-                {errors.product_type_id && (
+                {errors.productTypeId && (
                   <p className="text-sm text-red-500">
-                    {errors.product_type_id.message}
+                    {errors.productTypeId.message}
                   </p>
                 )}
               </div>
@@ -209,9 +247,9 @@ const AddProductPageTwo = () => {
                 <div className=" space-y-1.5 basis-1/2">
                   <Label>Product Categories</Label>
                   <Select
-                    defaultValue={`${addProductFormData.product_category_id}`}
+                    defaultValue={`${editProductFormData.productCategoryId}`}
                     onValueChange={(e) => {
-                      setValue("product_category_id", parseInt(e));
+                      setValue("productCategoryId", parseInt(e));
                       setFittingData(
                         categoryData.find(({ id }) => id == e).productFittings
                       );
@@ -239,9 +277,9 @@ const AddProductPageTwo = () => {
               <div className=" space-y-1.5">
                 <Label>Fitting</Label>
                 <Select
-                  defaultValue={`${addProductFormData.product_fitting_id}`}
+                  defaultValue={`${editProductFormData.productFittingId}`}
                   onValueChange={(e) =>
-                    setValue("product_fitting_id", parseInt(e))
+                    setValue("productFittingId", parseInt(e))
                   }
                 >
                   <SelectTrigger>
@@ -259,9 +297,9 @@ const AddProductPageTwo = () => {
                     )}
                   </SelectContent>
                 </Select>
-                {errors.product_fitting_id && (
+                {errors.productFittingId && (
                   <p className="text-sm text-red-500">
-                    {errors.product_fitting_id.message}
+                    {errors.productFittingId.message}
                   </p>
                 )}
               </div>
@@ -273,4 +311,4 @@ const AddProductPageTwo = () => {
   );
 };
 
-export default AddProductPageTwo;
+export default EditProductPageTwo;

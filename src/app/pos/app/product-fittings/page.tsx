@@ -149,6 +149,7 @@ export default function ProductFittingsPage() {
       id: "",
     });
     setInputValue("");
+    setProductSizingIds([]);
   };
 
   return (

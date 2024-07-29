@@ -20,7 +20,6 @@ const ProductVariableTable = ({
   handleEdit,
   handleDelete,
 }: any) => {
-  console.log(variant);
   return (
     <>
       {variant == undefined ? null : (
@@ -35,7 +34,6 @@ const ProductVariableTable = ({
               </TableHead>
               <TableHead>Image</TableHead>
               <TableHead>Shop Code</TableHead>
-              <TableHead>Product Code</TableHead>
               <TableHead>Color Code</TableHead>
               <TableHead>Size</TableHead>
               <TableHead>Barcode</TableHead>
@@ -44,56 +42,56 @@ const ProductVariableTable = ({
           </TableHeader>
           <TableBody>
             {variant.map(
-              ({
-                image,
-                shopCode,
-                id,
-                productCode,
-                colorCode,
-                barcode,
-                sizeName,
-                stock_status,
-              }: any) => (
+              (
+                {
+                  image,
+                  media,
+                  shopCode,
+                  id,
+                  colorCode,
+                  barcode,
+                  sizeName,
+                  statusStock,
+                  productSizing,
+                }: any,
+                index: any
+              ) => (
                 <TableRow key={id}>
                   <TableCell>
                     <div className="flex items-center gap-3">
-                      <span>1</span>
+                      <span>{index + 1} </span>
                     </div>
                   </TableCell>
-                  {/* <TableCell>
+                  <TableCell>
                     {image && (
-                      <>
-                        {typeof image == "string" ? (
-                          <>
-                            <Avatar>
-                              <AvatarImage
-                                className=" object-cover"
-                                src={image}
-                              />
-                            </Avatar>
-                          </>
-                        ) : (
-                          <Avatar>
-                            <AvatarImage
-                              className=" object-cover"
-                              src={URL.createObjectURL(image[0])}
-                            />
-                          </Avatar>
-                        )}
-                      </>
+                      <Avatar>
+                        <AvatarImage
+                          className=" object-cover"
+                          src={URL.createObjectURL(image)}
+                        />
+                      </Avatar>
                     )}
-                  </TableCell> */}
-                  <TableCell className=" text-start">{""}</TableCell>
+                    {media && (
+                      <Avatar>
+                        <AvatarImage
+                          className=" object-cover"
+                          src={media.url}
+                        />
+                      </Avatar>
+                    )}
+                  </TableCell>
                   <TableCell className=" text-start">{shopCode}</TableCell>
-                  <TableCell className=" text-start">{productCode}</TableCell>
                   <TableCell className=" text-start">{colorCode}</TableCell>
-                  <TableCell className=" text-start">{sizeName}</TableCell>
+                  <TableCell className=" text-start">
+                    {sizeName && sizeName}
+                    {productSizing && productSizing.name}
+                  </TableCell>
                   <TableCell className=" text-start">{barcode}</TableCell>
                   <TableCell className=" text-start">
                     {step !== 5 && (
                       <>
-                        {stock_status == "soldOut" && (
-                          <Badge variant={"destructive"}>Sold Out</Badge>
+                        {statusStock == "soldOut" && (
+                          <Badge variant={"destructive"}>statusStock</Badge>
                         )}
                       </>
                     )}
@@ -108,13 +106,16 @@ const ProductVariableTable = ({
                           confirmTitle={"Are you sure?"}
                           confirmDescription={"This action can't be undone!"}
                           confirmButtonText={"Yes, delete this."}
-                          run={() => {}}
+                          run={() => handleDelete(id)}
                         />
 
                         <Button
                           variant={"ghost"}
                           className="!p-0"
-                          onClick={() => handleEdit(id)}
+                          onClick={() => {
+                            handleEdit(id);
+                            console.log("clicked", id);
+                          }}
                         >
                           <Edit2 />
                         </Button>

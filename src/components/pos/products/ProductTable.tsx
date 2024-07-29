@@ -25,6 +25,7 @@ type ProductTableType = {
   refetch: () => void;
   handleSingleDelete: () => void;
   setDeleteId: any;
+  openDetail: (id: number) => void;
 };
 
 const ProductTable = ({
@@ -33,25 +34,10 @@ const ProductTable = ({
   editId,
   handleEdit,
   filterTable,
-  refetch,
   handleSingleDelete,
   setDeleteId,
+  openDetail,
 }: ProductTableType) => {
-  const getProduct = (url: string) => {
-    return getFetch(url);
-  };
-
-  const { data: ProductData } = useSWR(
-    editId.status ? `${Backend_URL}/products/${editId.id}` : null,
-    getProduct,
-    {
-      revalidateIfStale: false,
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-      errorRetryInterval: 5000,
-    }
-  );
-
   return (
     <div className=" min-h-[780px]">
       <Table>
@@ -111,7 +97,7 @@ const ProductTable = ({
                 productCategory: { name: string };
                 productFitting: { name: string };
                 productType: { name: string };
-                medias: { url: string };
+                medias: any;
                 time: string;
               },
               index
@@ -119,14 +105,17 @@ const ProductTable = ({
               <TableRow
                 className=" bg-white cursor-pointer hover:bg-white/50"
                 key={id}
+                onClick={() => openDetail(id)}
               >
                 <TableCell>
                   <div className="flex items-center gap-3">
                     <Checkbox
                       id={id}
                       value={id}
-                      onClick={(e) => handleCheckboxChange(e)}
-                      // data-state={selectedSizes.includes(id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleCheckboxChange(e);
+                      }}
                     />
                     <span>{index + 1}</span>
                   </div>
@@ -136,7 +125,7 @@ const ProductTable = ({
                     <div className="w-9 h-9 rounded-md">
                       <img
                         className="object-cover w-9 h-9 rounded-md"
-                        src={medias.url}
+                        src={medias[0].url}
                       />
                     </div>
                     <div className=" flex gap-1.5 flex-col">
@@ -179,7 +168,7 @@ const ProductTable = ({
                     </div>
                   </div>
                 </TableCell>
-                <TableCell>
+                <TableCell onClick={(e) => e.stopPropagation()}>
                   <div className="flex items-center justify-end">
                     <Button
                       variant={"ghost"}

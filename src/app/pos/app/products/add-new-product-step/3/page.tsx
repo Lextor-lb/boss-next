@@ -21,7 +21,6 @@ const AddProductPageThree = () => {
   const handleFileUpdate = (fileItems: any) => {
     const validFiles = fileItems.map((fileItem: any) => fileItem.file);
 
-    // Update state or perform other operations with validFiles array
     setImages(validFiles);
   };
 
