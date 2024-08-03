@@ -104,6 +104,7 @@ const AddProductPageThree = () => {
           <p className="text-sm text-red-500">{errors.image.message as never}</p>
         )}
       </div>
+      
 
       <div className=" w-full overflow-auto">
         <div className=" flex gap-3 justify-start items-center">
