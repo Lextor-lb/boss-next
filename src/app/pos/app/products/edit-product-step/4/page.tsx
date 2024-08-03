@@ -86,8 +86,57 @@ const EditProductPageFour = () => {
     }
   };
 
+  // useEffect(() => {
+
+  //   if (watch("salePrice") < watch("stockPrice")) {
+  //     setEditProductFormData((prevData) => ({
+  //       ...prevData,
+  //       profitInPercent: 0,
+  //       profitInDigit: 0,
+  //     }));
+  //     setProfitPercentage({
+  //       profitInPercent: 0,
+  //       profitInDigit: 0,
+  //     });
+  //     return;
+  //   }
+  //   if (watch("salePrice") > watch("stockPrice")) {
+  //     const stockPrice = watch("stockPrice");
+  //     const salePrice = watch("salePrice");
+  //     const discountPrice = watch("discountPrice") || 0;
+
+  //     const effectiveSalePrice = salePrice * (1 - discountPrice / 100);
+
+  //     if (effectiveSalePrice > stockPrice) {
+  //       const profitValue = effectiveSalePrice - stockPrice;
+  //       const percentage = (profitValue / stockPrice) * 100;
+  //       setEditProductFormData((prevData) => ({
+  //         ...prevData,
+  //         profitInPercent: parseInt(percentage.toFixed(0)),
+  //         profitInDigit: parseInt(profitValue.toFixed(0)),
+  //       }));
+  //       setProfitPercentage({
+  //         profitInPercent: parseInt(percentage.toFixed(0)),
+  //         profitInDigit: parseInt(profitValue.toFixed(0)),
+  //       });
+  //     } else {
+  //       setProfitPercentage({
+  //         profitInPercent: 0,
+  //         profitInDigit: 0,
+  //       });
+  //     }
+  //   }
+
+
+  // }, [watch("stockPrice"), watch("salePrice"), watch("discountPrice")]);
+
   useEffect(() => {
-    if (watch("salePrice") < watch("stockPrice")) {
+    const stockPrice = watch("stockPrice");
+    const salePrice = watch("salePrice");
+    const discountPrice = watch("discountPrice") || 0;
+    const effectiveSalePrice = salePrice * (1 - discountPrice / 100);
+
+    if (salePrice < stockPrice) {
       setEditProductFormData((prevData) => ({
         ...prevData,
         profitInPercent: 0,
@@ -99,13 +148,8 @@ const EditProductPageFour = () => {
       });
       return;
     }
-    if (watch("salePrice") > watch("stockPrice")) {
-      const stockPrice = watch("stockPrice");
-      const salePrice = watch("salePrice");
-      const discountPrice = watch("discountPrice") || 0;
 
-      const effectiveSalePrice = salePrice * (1 - discountPrice / 100);
-
+    if (salePrice > stockPrice) {
       if (effectiveSalePrice > stockPrice) {
         const profitValue = effectiveSalePrice - stockPrice;
         const percentage = (profitValue / stockPrice) * 100;
@@ -125,7 +169,7 @@ const EditProductPageFour = () => {
         });
       }
     }
-  }, [watch("stockPrice"), watch("salePrice"), watch("discountPrice")]);
+  }, [setEditProductFormData, watch("stockPrice"), watch("salePrice"), watch("discountPrice")]);
 
   return (
     <div className="space-y-4">
