@@ -19,6 +19,12 @@ import { useProductProvider } from "@/app/pos/app/products/Provider/ProductProvi
 import NavHeader from "@/components/pos/NavHeader";
 
 export default function ProductPage() {
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   const router = useRouter();
   const [idsToDelete, setIdsToDelete] = useState<number[]>([]);
   const [deleteId, setDeleteId] = useState<number | undefined>();
@@ -235,19 +241,21 @@ export default function ProductPage() {
           </>
         )}
       </div>
-      <SweetAlert2
-        customClass={{
-          popup: " !w-screen !h-screen ",
-        }}
-        {...swalProps}
-        didClose={() => closeDetailBox()}
-      >
-        <ProductDetailBox
-          isLoading={singleLoading}
-          data={singleData}
-          handleClose={closeDetailBox}
-        />
-      </SweetAlert2>
+      {isClient && (
+        <SweetAlert2
+          customClass={{
+            popup: " !w-screen !h-screen ",
+          }}
+          {...swalProps}
+          didClose={() => closeDetailBox()}
+        >
+          <ProductDetailBox
+            isLoading={singleLoading}
+            data={singleData}
+            handleClose={closeDetailBox}
+          />
+        </SweetAlert2>
+      )}
     </Container>
   );
 }

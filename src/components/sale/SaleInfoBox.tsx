@@ -35,14 +35,19 @@ const SaleInfoBox = ({
   });
 
   const [change, setChange] = useState(0);
-  const charge = useRef<HTMLInputElement>(null);
+  const [chargeValue, setChargeValue] = useState(0);
 
   useEffect(() => {
     const totalCost = data.reduce((pv, cv) => pv + cv.cost, 0);
-    const chargeValue = parseFloat(charge.current?.value ?? "0");
     const newChange = chargeValue > totalCost ? chargeValue - totalCost : 0;
     setChange(newChange);
-  }, [data, charge.current?.value]);
+  }, [data, chargeValue, setChargeValue]);
+
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   return (
     <>
@@ -88,7 +93,8 @@ const SaleInfoBox = ({
                 <Input
                   id="charge"
                   type="number"
-                  ref={charge}
+                  value={chargeValue}
+                  onChange={(e) => setChargeValue(parseInt(e.target.value))}
                   className="text-end h-8"
                 />
               </div>
@@ -106,7 +112,8 @@ const SaleInfoBox = ({
           </div>
         </div>
       </form>
-      {swalProps.show && (
+
+      {isClient && (
         <SweetAlert2
           didClose={() =>
             setSwalProps({

@@ -13,6 +13,11 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
 
   const [countdown, setCountdown] = useState(4);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   useEffect(() => {
     let timer: NodeJS.Timeout | null = null;
@@ -87,49 +92,51 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         </Container>
       </div>
 
-      <SweetAlert2
-        timer={countdown * 1000}
-        iconColor="black"
-        icon="success"
-        {...swalProps}
-      >
-        <p className="text-xl font-bold pb-1 text-black">
-          Product Edit Success!
-        </p>
-        <p className="text-xs pb-1 font-medium text-black/80">
-          Are you done editing product?
-        </p>
-        <p className="text-xs pb-3 font-light">
-          Redirect to Product Page in {countdown}
-        </p>
-        <div className=" flex gap-3 justify-center ">
-          <Button
-            size={"sm"}
-            variant={"outline"}
-            onClick={() => {
-              setCountdown(0);
-              setSwalProps({
-                ...swalProps,
-                show: false,
-              });
-              router.push("/pos/app/products");
-            }}
-          >
-            Go To Home Now
-          </Button>
-          <Button
-            size={"sm"}
-            onClick={() => {
-              setSwalProps({
-                ...swalProps,
-                show: false,
-              });
-            }}
-          >
-            Continue Edit
-          </Button>
-        </div>
-      </SweetAlert2>
+      {isClient && (
+        <SweetAlert2
+          timer={countdown * 1000}
+          iconColor="black"
+          icon="success"
+          {...swalProps}
+        >
+          <p className="text-xl font-bold pb-1 text-black">
+            Product Edit Success!
+          </p>
+          <p className="text-xs pb-1 font-medium text-black/80">
+            Are you done editing product?
+          </p>
+          <p className="text-xs pb-3 font-light">
+            Redirect to Product Page in {countdown}
+          </p>
+          <div className=" flex gap-3 justify-center ">
+            <Button
+              size={"sm"}
+              variant={"outline"}
+              onClick={() => {
+                setCountdown(0);
+                setSwalProps({
+                  ...swalProps,
+                  show: false,
+                });
+                router.push("/pos/app/products");
+              }}
+            >
+              Go To Home Now
+            </Button>
+            <Button
+              size={"sm"}
+              onClick={() => {
+                setSwalProps({
+                  ...swalProps,
+                  show: false,
+                });
+              }}
+            >
+              Continue Edit
+            </Button>
+          </div>
+        </SweetAlert2>
+      )}
     </Container>
   );
 };
