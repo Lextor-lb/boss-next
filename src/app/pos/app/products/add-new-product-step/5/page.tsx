@@ -69,19 +69,16 @@ const AddProductPageFive = () => {
   const { data } = useSWR(`${Backend_URL}/product-sizings/all`, getData);
 
   const schema = z.object({
-    image: z
-      .instanceof(File)
-      .refine(
+    image: typeof window !== 'undefined' ? z.instanceof(File).refine(
         (file) => validImageTypes.includes(file.type),
         ".jpg, .jpeg and .png files are accepted."
-      ),
+      ) : z.any(),
     shopCode: z.string().min(3, { message: "This field cannot be empty!" }),
     colorCode: z.string().min(3, { message: "This field cannot be empty!" }),
     barcode: z.string().min(3, { message: "This field cannot be empty!" }),
-    productSizingId: z
-      .number()
-      .min(1, { message: "This field cannot be empty!" }),
+    productSizingId: z.number().min(1, { message: "This field cannot be empty!" }),
   });
+
 
   const inputRef = useRef<HTMLInputElement>(null);
 

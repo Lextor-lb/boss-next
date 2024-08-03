@@ -84,11 +84,21 @@ const EditProductPageFive = () => {
 
   const schema = z.object({
     image: z
-      .instanceof(File)
-      .refine(
-        (file) => validImageTypes.includes(file.type),
-        ".jpg, .jpeg and .png files are accepted."
-      )
+      // .instanceof(typeof window !== 'undefined' ? File : Object)
+      // .refine(
+      //   (file) => validImageTypes.includes(file.type),
+      //   ".jpg, .jpeg and .png files are accepted."
+      // )
+      .union([
+        z.instanceof(File).refine(
+          (file) => validImageTypes.includes(file.type),
+          ".jpg, .jpeg and .png files are accepted."
+        ),
+        z.string().refine(
+          (value) => validImageTypes.includes(value),
+          ".jpg, .jpeg and .png files are accepted."
+        ),
+      ])
       .optional(),
     shopCode: z.string().min(2, { message: "This field cannot be empty!" }),
     colorCode: z.string().min(2, { message: "This field cannot be empty!" }),
