@@ -79,6 +79,7 @@ const AddProductPageFive = () => {
     productSizingId: z.number().min(1, { message: "This field cannot be empty!" }),
   });
 
+  
 
   const inputRef = useRef<HTMLInputElement>(null);
 
