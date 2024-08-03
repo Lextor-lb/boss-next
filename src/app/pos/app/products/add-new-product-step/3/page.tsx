@@ -1,4 +1,5 @@
 "use client";
+
 import { useProductProvider } from "@/app/pos/app/products/Provider/ProductProvider";
 import { AddProductControlBar } from "@/components/pos/products";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,11 +18,10 @@ const AddProductPageThree = () => {
   } = useProductProvider();
 
   // to display
-  const [images, setImages] = useState<File[]>([]);
+  const [images, setImages] = useState<any[]>([]);
 
   const handleFileUpdate = (fileItems: any) => {
     const validFiles = fileItems.map((fileItem: any) => fileItem.file);
-
     setImages(validFiles);
   };
 
@@ -33,13 +33,22 @@ const AddProductPageThree = () => {
       .array(
         z.object({
           file: z
-            .instanceof(File)
-            .refine((file) => validImageTypes.includes(file.type), {
-              message: "Invalid file type",
-            })
-            .refine((file) => file.size <= MAX_FILE_SIZE, {
-              message: "File size too large",
-            }),
+            .any()
+            .refine(
+              (file) =>
+                typeof File !== "undefined" &&
+                file instanceof File &&
+                validImageTypes.includes(file.type),
+              {
+                message: "Invalid file type",
+              }
+            )
+            .refine(
+              (file) => typeof File !== "undefined" && file.size <= MAX_FILE_SIZE,
+              {
+                message: "File size too large",
+              }
+            ),
         })
       )
       .min(1, { message: "At least one image is required" })
@@ -61,10 +70,11 @@ const AddProductPageThree = () => {
   });
 
   const onSubmit = (data: FormData) => {
-    setAddProductFormData({
-      ...addProductFormData,
-      ...data,
-    });
+    // setAddProductFormData({
+    //   ...addProductFormData,
+    //   ...data,
+    //   name: ""
+    // });
     navigateForward(4);
   };
 
@@ -83,7 +93,7 @@ const AddProductPageThree = () => {
             handleFileUpdate(fileItems);
             const validFiles = fileItems.map((fileItem: any) => ({
               file:
-                fileItem.file instanceof File
+                typeof File !== "undefined" && fileItem.file instanceof File
                   ? fileItem.file
                   : (fileItem.file.file as File),
             }));

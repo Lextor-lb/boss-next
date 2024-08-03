@@ -21,11 +21,11 @@ import {
 } from "@/components/ui/popover";
 import { getFetch } from "@/lib/fetch";
 import { cn } from "@/lib/utils";
-import { useForm, UseFormRegisterReturn } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { useProductProvider } from "@/app/pos/app/products/Provider/ProductProvider";
 import useSWR from "swr";
 import FormInput from "@/components/FormInput.components";
-import { object, z } from "zod";
+import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { ProductVariantTable } from "@/components/pos/products";
@@ -78,8 +78,6 @@ const AddProductPageFive = () => {
     barcode: z.string().min(3, { message: "This field cannot be empty!" }),
     productSizingId: z.number().min(1, { message: "This field cannot be empty!" }),
   });
-
-  
 
   const inputRef = useRef<HTMLInputElement>(null);
 
