@@ -108,17 +108,12 @@ const AddProductPageThree = () => {
           {images.map((file, index) => (
             <Image
               key={index}
-<<<<<<< Updated upstream
               className=" object-cover"
               src={URL.createObjectURL(file)}
               alt=""
               width={400}
               height={400}
             />
-=======
-              className="h-[400px] object-cover"
-              src={URL.createObjectURL(file)} alt={""}            />
->>>>>>> Stashed changes
           ))}
         </div>
       </div>
