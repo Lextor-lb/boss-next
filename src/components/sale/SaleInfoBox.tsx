@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import SweetAlert2 from "react-sweetalert2";
+// import SweetAlert2 from "react-sweetalert2";
 
 interface Product {
   id: number;
@@ -106,7 +106,7 @@ const SaleInfoBox = ({
           </div>
         </div>
       </form>
-      {swalProps.show && (
+      {/* {swalProps.show && (
         <SweetAlert2
           didClose={() =>
             setSwalProps({
@@ -116,7 +116,7 @@ const SaleInfoBox = ({
           }
           {...swalProps}
         >
-          <p>Voucher content here</p>
+          <p>Voucher content here</p> */}
           {/* <Voucher
             data={data}
             total={total}
@@ -126,8 +126,8 @@ const SaleInfoBox = ({
             overallDiscount={paymentInfo.overallDiscount}
             loyaltyDiscount={paymentInfo.customer}
           /> */}
-        </SweetAlert2>
-      )}
+        {/* </SweetAlert2> */}
+      {/* )} */}
     </>
   );
 };

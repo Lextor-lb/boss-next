@@ -3,7 +3,7 @@ import Container from "@/components/Container.components";
 import React, { useEffect, useState } from "react";
 import { useProductProvider } from "../Provider/ProductProvider";
 import Link from "next/link";
-import SweetAlert2 from "react-sweetalert2";
+// import SweetAlert2 from "react-sweetalert2";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import NavHeader from "@/components/pos/NavHeader";
@@ -87,7 +87,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         </Container>
       </div>
 
-      <SweetAlert2
+      {/* <SweetAlert2
         timer={countdown * 1000}
         iconColor="black"
         icon="success"
@@ -129,7 +129,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             Continue Edit
           </Button>
         </div>
-      </SweetAlert2>
+      </SweetAlert2> */}
     </Container>
   );
 };

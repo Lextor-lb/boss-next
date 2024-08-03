@@ -13,7 +13,7 @@ import {
   ProductDetailBox,
   ProductTable,
 } from "@/components/pos/products";
-import SweetAlert2 from "react-sweetalert2";
+// import SweetAlert2 from "react-sweetalert2";
 import { useRouter } from "next/navigation";
 import { useProductProvider } from "@/app/pos/app/products/Provider/ProductProvider";
 import NavHeader from "@/components/pos/NavHeader";
@@ -235,7 +235,7 @@ export default function ProductPage() {
           </>
         )}
       </div>
-      <SweetAlert2
+      {/* <SweetAlert2
         customClass={{
           popup: " !w-screen !h-screen ",
         }}
@@ -247,7 +247,7 @@ export default function ProductPage() {
           data={singleData}
           handleClose={closeDetailBox}
         />
-      </SweetAlert2>
+      </SweetAlert2> */}
     </Container>
   );
 }
