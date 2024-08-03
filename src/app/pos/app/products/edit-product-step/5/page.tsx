@@ -52,7 +52,7 @@
 
 // const validImageTypes = ["image/jpeg", "image/png", "image/jpg"];
 
-// const EditProductPageFive = () => {
+const EditProductPageFive = () => {
 //   const {
 //     editProductFormData,
 //     setEditProductFormData,
