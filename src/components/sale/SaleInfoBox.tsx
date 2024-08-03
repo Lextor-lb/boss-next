@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-// import SweetAlert2 from "react-sweetalert2";
+import SweetAlert2 from "react-sweetalert2";
 
 interface Product {
   id: number;
@@ -35,14 +35,19 @@ const SaleInfoBox = ({
   });
 
   const [change, setChange] = useState(0);
-  const charge = useRef<HTMLInputElement>(null);
+  const [chargeValue, setChargeValue] = useState(0);
 
   useEffect(() => {
     const totalCost = data.reduce((pv, cv) => pv + cv.cost, 0);
-    const chargeValue = parseFloat(charge.current?.value ?? "0");
     const newChange = chargeValue > totalCost ? chargeValue - totalCost : 0;
     setChange(newChange);
-  }, [data, charge.current?.value]);
+  }, [data, chargeValue, setChargeValue]);
+
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   return (
     <>
@@ -88,7 +93,8 @@ const SaleInfoBox = ({
                 <Input
                   id="charge"
                   type="number"
-                  ref={charge}
+                  value={chargeValue}
+                  onChange={(e) => setChargeValue(parseInt(e.target.value))}
                   className="text-end h-8"
                 />
               </div>
@@ -106,7 +112,8 @@ const SaleInfoBox = ({
           </div>
         </div>
       </form>
-      {/* {swalProps.show && (
+
+      {isClient && (
         <SweetAlert2
           didClose={() =>
             setSwalProps({
@@ -116,7 +123,7 @@ const SaleInfoBox = ({
           }
           {...swalProps}
         >
-          <p>Voucher content here</p> */}
+          <p>Voucher content here</p>
           {/* <Voucher
             data={data}
             total={total}
@@ -126,8 +133,8 @@ const SaleInfoBox = ({
             overallDiscount={paymentInfo.overallDiscount}
             loyaltyDiscount={paymentInfo.customer}
           /> */}
-        {/* </SweetAlert2> */}
-      {/* )} */}
+        </SweetAlert2>
+      )}
     </>
   );
 };
