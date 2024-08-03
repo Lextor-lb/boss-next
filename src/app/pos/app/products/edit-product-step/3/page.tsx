@@ -135,7 +135,8 @@ const EditProductPageThree = () => {
       <EditProductControlBar run={handleSubmit(onSubmit)} />
 
       <div className="w-1/2">
-        <FilePond
+      
+        {/* <FilePond
           className="!bg-white !rounded-md"
           allowMultiple={true}
           onupdatefiles={(fileItems: any) => {
@@ -153,6 +154,30 @@ const EditProductPageThree = () => {
           server={null}
           instantUpload={false}
         />
+        {errors.images && (
+          <p className="text-sm text-red-500">{errors.images.message}</p>
+        )} */}
+
+{typeof window !== 'undefined' && (
+          <FilePond
+            className="!bg-white !rounded-md"
+            allowMultiple={true}
+            onupdatefiles={(fileItems: any) => {
+              handleFileUpdate(fileItems);
+              const validFiles = fileItems.map((fileItem: any) => ({
+                file:
+                  fileItem.file instanceof File
+                    ? fileItem.file
+                    : (fileItem.file.file as File),
+              }));
+              setValue("images", validFiles, { shouldValidate: true });
+            }}
+            allowDrop={true}
+            maxFiles={5}
+            server={null}
+            instantUpload={false}
+          />
+        )}
         {errors.images && (
           <p className="text-sm text-red-500">{errors.images.message}</p>
         )}
