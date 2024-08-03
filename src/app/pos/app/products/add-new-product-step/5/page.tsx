@@ -43,6 +43,7 @@
 
 // const validImageTypes = ["image/jpeg", "image/png", "image/jpg"];
 
+
 const AddProductPageFive = () => {
   // const [readyToProceed, setReadyToProceed] = useState(false);
 
