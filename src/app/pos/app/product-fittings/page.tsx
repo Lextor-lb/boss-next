@@ -10,6 +10,7 @@ import { Backend_URL } from "@/lib/api";
 import { deleteFetch, deleteSingleFetch, getFetch } from "@/lib/fetch";
 import { PaginationComponent } from "@/components/pos/inventory";
 import { FittingControlBar, FittingTable } from "@/components/pos/fitting";
+import NavHeader from "@/components/pos/NavHeader";
 
 export default function ProductFittingsPage() {
   // const [isLoading, setIsLoading] = useState(true);
@@ -155,7 +156,7 @@ export default function ProductFittingsPage() {
   return (
     <Container>
       <div className="space-y-3">
-        <p>Product fittings Page</p>
+        <NavHeader parentPage="Fitting" path="Product" currentPage="Fitting" />
 
         <FittingControlBar
           isSelected={idsToDelete.length > 0}

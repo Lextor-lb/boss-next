@@ -12,6 +12,7 @@ import {
   ProductCategoryControlBar,
   ProductCategoryTable,
 } from "@/components/pos/product-categories";
+import NavHeader from "@/components/pos/NavHeader";
 
 export default function ProductCategoriesPage() {
   const [idsToDelete, setIdsToDelete] = useState<number[]>([]);
@@ -169,7 +170,7 @@ export default function ProductCategoriesPage() {
   return (
     <Container>
       <div className="space-y-3">
-        <p>Product categories Page</p>
+        <NavHeader parentPage="Categories" path="Product" currentPage="Categories" />
 
         <ProductCategoryControlBar
           isSelected={idsToDelete.length > 0}

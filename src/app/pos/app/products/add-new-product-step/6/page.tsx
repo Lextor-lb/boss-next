@@ -9,6 +9,7 @@ import { ArrowLeft } from "lucide-react";
 import useSWRMutation from "swr/mutation";
 import { Backend_URL, postFetch, postMediaFetch } from "@/lib/fetch";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 const AddProductPageSix = () => {
   const { addProductFormData, navigateBackward } = useProductProvider();
@@ -120,10 +121,13 @@ const AddProductPageSix = () => {
         {addProductFormData.image && (
           <div className=" w-full justify-start overflow-x-auto flex gap-3">
             {addProductFormData.image?.map((image, index) => (
-              <img
+              <Image
                 key={index}
                 className="h-[400px] object-cover"
                 src={URL.createObjectURL(image.file)}
+                alt=""
+                width={400}
+                height={400}
               />
             ))}
           </div>

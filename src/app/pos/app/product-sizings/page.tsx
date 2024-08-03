@@ -10,6 +10,7 @@ import { Backend_URL } from "@/lib/api";
 import { deleteFetch, deleteSingleFetch, getFetch } from "@/lib/fetch";
 import { PaginationComponent } from "@/components/pos/inventory";
 import ErrorComponent from "@/components/ErrorComponent";
+import NavHeader from "@/components/pos/NavHeader";
 
 export default function ProductSizingsPage() {
   const [idsToDelete, setIdsToDelete] = useState<number[]>([]);
@@ -141,7 +142,7 @@ export default function ProductSizingsPage() {
   return (
     <Container>
       <div className="space-y-3">
-        <p>Product Sizings Page</p>
+        <NavHeader parentPage="Size" path="Product" currentPage="Size" />
 
         <SizeControlBar
           isSelected={idsToDelete.length > 0}

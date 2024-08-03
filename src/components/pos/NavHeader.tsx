@@ -15,8 +15,8 @@ const NavHeader = ({
   currentPage,
 }: {
   parentPage: string;
-  path: string;
-  currentPage: string;
+  path?: string;
+  currentPage?: string;
 }) => {
   return (
     <div className=" flex justify-between mb-3 items-center">
@@ -27,7 +27,9 @@ const NavHeader = ({
             <BreadcrumbItem>
               <BreadcrumbLink>{path}</BreadcrumbLink>
             </BreadcrumbItem>
-            {path !== "" && <BreadcrumbSeparator>/</BreadcrumbSeparator>}
+            {currentPage !== undefined && (
+              <BreadcrumbSeparator>/</BreadcrumbSeparator>
+            )}
             <BreadcrumbItem>
               <BreadcrumbPage>{currentPage}</BreadcrumbPage>
             </BreadcrumbItem>

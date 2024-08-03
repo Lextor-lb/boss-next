@@ -2,6 +2,7 @@
 
 import Container from "@/components/Container.components";
 import TableSkeletonLoader from "@/components/TableSkeletonLoader";
+import NavHeader from "@/components/pos/NavHeader";
 import { PaginationComponent } from "@/components/pos/inventory";
 import {
   ProductTypeControlBar,
@@ -141,7 +142,11 @@ export default function ProductTypesPage() {
   return (
     <Container>
       <div className="space-y-3">
-        <p>Product Type Page</p>
+        <NavHeader
+          parentPage="Product Types"
+          path="Product"
+          currentPage="Product Types"
+        />
 
         <ProductTypeControlBar
           isSelected={idsToDelete.length > 0}

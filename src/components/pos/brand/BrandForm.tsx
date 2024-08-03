@@ -10,6 +10,7 @@ import useSWRMutation from "swr/mutation";
 import { mutate } from "swr";
 import { postMediaFetch, putMediaFetch } from "@/lib/fetch";
 import { Input } from "@/components/ui/input";
+import Image from "next/image";
 
 type FormProps = {
   closeRef: any;
@@ -137,15 +138,19 @@ const BrandForm: React.FC<FormProps> = ({
             onChange={handleImageChange}
           />
           {brandImageToShow && (
-            <img
+            <Image
               src={brandImageToShow}
               alt="Image Preview"
-              className=" w-[500px] h-[500px]  object-contain"
+              className=" object-contain"
+              width={500}
+              height={500}
             />
           )}
 
           {errors.brand && (
-            <p className="text-red-600 text-xs">{errors.brand.message}</p>
+            <p className="text-red-600 text-xs">
+              {errors.brand.message as never}
+            </p>
           )}
 
           <FormInput

@@ -2,6 +2,7 @@
 import { useProductProvider } from "@/app/pos/app/products/Provider/ProductProvider";
 import { AddProductControlBar } from "@/components/pos/products";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Image from "next/image";
 import { useState } from "react";
 import { FilePond } from "react-filepond";
 import { useForm } from "react-hook-form";
@@ -105,10 +106,13 @@ const AddProductPageThree = () => {
       <div className=" w-full overflow-auto">
         <div className=" flex gap-3 justify-start items-center">
           {images.map((file, index) => (
-            <img
+            <Image
               key={index}
-              className="h-[400px] object-cover"
+              className=" object-cover"
               src={URL.createObjectURL(file)}
+              alt=""
+              width={400}
+              height={400}
             />
           ))}
         </div>
