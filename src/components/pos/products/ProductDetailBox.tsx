@@ -16,8 +16,6 @@ const ProductDetailBox = ({
   handleClose,
   isLoading,
 }: ProductDetailBoxTypes) => {
-  console.log(data);
-
   return (
     <>
       {isLoading ? (
@@ -30,7 +28,13 @@ const ProductDetailBox = ({
                 <div className=" md:h-[600px] xl:h-[900px] space-y-2 overflow-scroll">
                   {data.medias.map(
                     ({ id, url }: { id: number; url: string }) => (
-                      <Image alt="" src={url} key={id} />
+                      <Image
+                        alt=""
+                        src={url}
+                        key={id}
+                        width={300}
+                        height={300}
+                      />
                     )
                   )}
                 </div>

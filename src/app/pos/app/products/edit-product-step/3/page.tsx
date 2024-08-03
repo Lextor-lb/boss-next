@@ -178,8 +178,10 @@ const EditProductPageThree = () => {
                   </div>
                   <Image
                     alt=""
-                    className="h-[400px] w-full object-cover"
+                    className="w-full object-cover"
                     src={url}
+                    width={400}
+                    height={400}
                   />
                 </div>
               ))}
@@ -193,8 +195,10 @@ const EditProductPageThree = () => {
               <Image
                 alt=""
                 key={index}
-                className="h-[400px] object-cover"
+                className=" object-cover"
                 src={URL.createObjectURL(file)}
+                width={400}
+                height={400}
               />
             ))}
           </div>

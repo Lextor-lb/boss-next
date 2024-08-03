@@ -14,6 +14,7 @@ import ConfirmBox from "@/components/ConfirmBox";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Backend_URL, getFetch } from "@/lib/fetch";
 import useSWR from "swr";
+import Image from "next/image";
 
 type SizeTable = {
   data: [];
@@ -117,6 +118,8 @@ const BrandTable = ({
                     src={url}
                     alt={""}
                     className=" w-12 h-12 object-cover bg-black/20 rounded-full"
+                    width={300}
+                    height={300}
                   />
                   {name}
                 </div>

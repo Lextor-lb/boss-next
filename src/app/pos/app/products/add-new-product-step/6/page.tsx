@@ -126,6 +126,8 @@ const AddProductPageSix = () => {
                 className="h-[400px] object-cover"
                 src={URL.createObjectURL(image.file)}
                 alt=""
+                width={400}
+                height={400}
               />
             ))}
           </div>

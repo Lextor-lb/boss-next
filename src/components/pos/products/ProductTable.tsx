@@ -125,9 +125,11 @@ const ProductTable = ({
                   <div className=" flex items-center gap-3">
                     <div className="w-9 h-9 rounded-md">
                       <Image
-                      alt=""
+                        alt=""
                         className="object-cover w-9 h-9 rounded-md"
                         src={medias[0].url}
+                        width={300}
+                        height={300}
                       />
                     </div>
                     <div className=" flex gap-1.5 flex-col">

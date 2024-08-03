@@ -108,9 +108,11 @@ const AddProductPageThree = () => {
           {images.map((file, index) => (
             <Image
               key={index}
-              className="h-[400px] object-cover"
+              className=" object-cover"
               src={URL.createObjectURL(file)}
               alt=""
+              width={400}
+              height={400}
             />
           ))}
         </div>
