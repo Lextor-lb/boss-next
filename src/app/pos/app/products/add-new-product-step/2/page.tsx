@@ -120,12 +120,12 @@ const AddProductPageTwo = () => {
             className=" bg-white rounded-md border p-3 flex justify-around"
           >
             <div className="flex items-center space-x-2">
-              <RadioGroupItem value="MAN" id="r1" />
+              <RadioGroupItem value="MEN" id="r1" />
               <Label htmlFor="r1">Man</Label>
             </div>
 
             <div className="flex items-center space-x-2">
-              <RadioGroupItem value="LADY" id="r2" />
+              <RadioGroupItem value="WOMEN" id="r2" />
               <Label htmlFor="r2">Woman</Label>
             </div>
 

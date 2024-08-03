@@ -47,8 +47,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <Container>
       <NavHeader
-        parentPage="Product"
-        path="Products"
+        parentPage="Products"
+        path="Product List"
         currentPage="Edit Product"
       />
       <div className=" space-y-4">

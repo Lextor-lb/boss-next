@@ -113,7 +113,7 @@ const BrandTable = ({
               </TableCell>
               <TableCell>
                 <div className=" capitalize flex gap-3 items-center">
-                  <img
+                  <Image
                     src={url}
                     alt={""}
                     className=" w-12 h-12 object-cover bg-black/20 rounded-full"

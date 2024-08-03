@@ -14,6 +14,7 @@ import ConfirmBox from "@/components/ConfirmBox";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Backend_URL, getFetch } from "@/lib/fetch";
 import useSWR from "swr";
+import Image from "next/image";
 
 type ProductTableType = {
   data: [];
@@ -123,7 +124,8 @@ const ProductTable = ({
                 <TableCell>
                   <div className=" flex items-center gap-3">
                     <div className="w-9 h-9 rounded-md">
-                      <img
+                      <Image
+                      alt=""
                         className="object-cover w-9 h-9 rounded-md"
                         src={medias[0].url}
                       />
@@ -158,10 +160,7 @@ const ProductTable = ({
                       <p className=" text-sm">{date}</p>
                     </div>
                     <div className="flex  ">
-                      <div
-                        onClick={() => console.log(time)}
-                        className=" bg-muted flex rounded items-center p-0.5 ps-0.5 px-1 text-xs gap-1"
-                      >
+                      <div className=" bg-muted flex rounded items-center p-0.5 ps-0.5 px-1 text-xs gap-1">
                         <Clock1 width={18} height={18} />
                         <p className=" text-xs">{time}</p>
                       </div>

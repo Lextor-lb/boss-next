@@ -2,6 +2,7 @@
 
 import Container from "@/components/Container.components";
 import TableSkeletonLoader from "@/components/TableSkeletonLoader";
+import NavHeader from "@/components/pos/NavHeader";
 import { BrandControlBar, BrandTable } from "@/components/pos/brand";
 import { PaginationComponent } from "@/components/pos/inventory";
 import { Backend_URL } from "@/lib/api";
@@ -141,7 +142,8 @@ export default function ProductBrandsPage() {
   return (
     <Container>
       <div className="space-y-3">
-        <p>Product Brand Page</p>
+        <NavHeader parentPage="Brand" path="Product" currentPage="Brand" />
+
         <BrandControlBar
           isSelected={idsToDelete.length > 0}
           closeRef={closeSheetRef}

@@ -4,6 +4,7 @@ import { X } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import ProductVariableTable from "./ProductVariantTable";
 import { CaretUpIcon } from "@radix-ui/react-icons";
+import Image from "next/image";
 
 type ProductDetailBoxTypes = {
   data: { [key: string]: any };
@@ -29,7 +30,7 @@ const ProductDetailBox = ({
                 <div className=" md:h-[600px] xl:h-[900px] space-y-2 overflow-scroll">
                   {data.medias.map(
                     ({ id, url }: { id: number; url: string }) => (
-                      <img src={url} key={id} />
+                      <Image alt="" src={url} key={id} />
                     )
                   )}
                 </div>

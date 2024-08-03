@@ -137,7 +137,7 @@ const BrandForm: React.FC<FormProps> = ({
             onChange={handleImageChange}
           />
           {brandImageToShow && (
-            <img
+            <Image
               src={brandImageToShow}
               alt="Image Preview"
               className=" w-[500px] h-[500px]  object-contain"

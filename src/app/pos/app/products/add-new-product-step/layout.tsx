@@ -3,14 +3,19 @@ import Container from "@/components/Container.components";
 import React from "react";
 import { useProductProvider } from "../Provider/ProductProvider";
 import Link from "next/link";
+import NavHeader from "@/components/pos/NavHeader";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const { addProductStages } = useProductProvider();
 
   return (
     <Container>
-      <div className=" space-y-4">
-        <p>Add new product</p>
+      <div className=" space-y-8">
+        <NavHeader
+          parentPage="Products"
+          path="Product List"
+          currentPage="Add Product"
+        />
         <Container>
           <div className=" grid grid-cols-12">
             <div className=" col-span-3">

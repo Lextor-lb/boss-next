@@ -14,6 +14,7 @@ import {
 } from "@/lib/fetch";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CloudFog, X } from "lucide-react";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { FilePond } from "react-filepond";
 import { useForm } from "react-hook-form";
@@ -175,7 +176,11 @@ const EditProductPageThree = () => {
                       buttonSize={"icon"}
                     />
                   </div>
-                  <img className="h-[400px] w-full object-cover" src={url} />
+                  <Image
+                    alt=""
+                    className="h-[400px] w-full object-cover"
+                    src={url}
+                  />
                 </div>
               ))}
             </div>
@@ -185,7 +190,8 @@ const EditProductPageThree = () => {
           <p className=" text-lg font-semibold">New Photos</p>
           <div className=" flex gap-3 justify-start items-center">
             {images.map((file: any, index) => (
-              <img
+              <Image
+                alt=""
                 key={index}
                 className="h-[400px] object-cover"
                 src={URL.createObjectURL(file)}
