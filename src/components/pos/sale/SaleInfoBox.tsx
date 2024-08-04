@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
-import SweetAlert2 from "react-sweetalert2";
+
 import Voucher from "./Voucher";
 import { Backend_URL, postFetch } from "@/lib/fetch";
 import useSWRMutation from "swr/mutation";
 import { useRouter } from "next/navigation";
+import SweetAlert2 from "react-sweetalert2";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 interface Product {
   id: number;
