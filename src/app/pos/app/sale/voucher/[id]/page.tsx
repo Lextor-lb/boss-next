@@ -1,13 +1,13 @@
 "use client";
 
 import React, { useRef } from "react";
-import Voucher from "@/components/sale/Voucher";
 import { Backend_URL, getFetch } from "@/lib/fetch";
 import useSWR from "swr";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import Container from "@/components/Container.components";
 import NavHeader from "@/components/pos/NavHeader";
+import Voucher from "@/components/pos/sale/Voucher";
 
 const VoucherPage = ({ params }: { params: { id: string } }) => {
   const getData = (url: string) => {

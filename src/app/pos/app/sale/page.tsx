@@ -2,8 +2,8 @@
 
 import Container from "@/components/Container.components";
 import NavHeader from "@/components/pos/NavHeader";
-import SaleInfoBox from "@/components/sale/SaleInfoBox";
-import SaleTable from "@/components/sale/SaleTable";
+import SaleInfoBox from "@/components/pos/sale/SaleInfoBox";
+import SaleTable from "@/components/pos/sale/SaleTable";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
