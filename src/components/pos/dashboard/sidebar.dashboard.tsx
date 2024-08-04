@@ -10,12 +10,15 @@ export default function Sidebar() {
     sidebarMenuItems.filter((el) => el.group === group);
 
   // State for controlling open/close state
-  const [open, setOpen] = useState(localStorage.getItem("open"));
+  // const [open, setOpen] = useState(
+  //   localStorage.getItem("open"));
+
+    const [open, setOpen] = useState("open");
 
   // Function to handle opening/closing of sidebar nav
   const handleOpen = (value: any) => () => {
     setOpen(open === value ? open : value);
-    localStorage.setItem("open", value);
+    // localStorage.setItem("open", value);
   };
 
   // Define filtered routes

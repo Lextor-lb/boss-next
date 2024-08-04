@@ -21,11 +21,11 @@ import {
 } from "@/components/ui/popover";
 import { getFetch } from "@/lib/fetch";
 import { cn } from "@/lib/utils";
-import { useForm, UseFormRegisterReturn } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { useProductProvider } from "@/app/pos/app/products/Provider/ProductProvider";
 import useSWR from "swr";
 import FormInput from "@/components/FormInput.components";
-import { object, z } from "zod";
+import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { ProductVariantTable } from "@/components/pos/products";
@@ -42,6 +42,7 @@ type ProductVariant = {
 };
 
 const validImageTypes = ["image/jpeg", "image/png", "image/jpg"];
+
 
 const AddProductPageFive = () => {
   const [readyToProceed, setReadyToProceed] = useState(false);
@@ -69,18 +70,14 @@ const AddProductPageFive = () => {
   const { data } = useSWR(`${Backend_URL}/product-sizings/all`, getData);
 
   const schema = z.object({
-    image: z
-      .instanceof(File)
-      .refine(
+    image: typeof window !== 'undefined' ? z.instanceof(File).refine(
         (file) => validImageTypes.includes(file.type),
         ".jpg, .jpeg and .png files are accepted."
-      ),
+      ) : z.any(),
     shopCode: z.string().min(3, { message: "This field cannot be empty!" }),
     colorCode: z.string().min(3, { message: "This field cannot be empty!" }),
     barcode: z.string().min(3, { message: "This field cannot be empty!" }),
-    productSizingId: z
-      .number()
-      .min(1, { message: "This field cannot be empty!" }),
+    productSizingId: z.number().min(1, { message: "This field cannot be empty!" }),
   });
 
   const inputRef = useRef<HTMLInputElement>(null);

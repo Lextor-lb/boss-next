@@ -28,8 +28,9 @@ const AddProductPageThree = () => {
   const validImageTypes = ["image/jpeg", "image/png", "image/jpg"];
   const MAX_FILE_SIZE = 20000000;
 
+
   const schema = z.object({
-    image: z
+    image: typeof window !== 'undefined' ?z
       .array(
         z.object({
           file: z
@@ -43,7 +44,7 @@ const AddProductPageThree = () => {
         })
       )
       .min(1, { message: "At least one image is required" })
-      .max(5, { message: "No more than 5 images are allowed" }),
+      .max(5, { message: "No more than 5 images are allowed" }) : z.any(),
   });
 
   type FormData = z.infer<typeof schema>;
@@ -69,6 +70,7 @@ const AddProductPageThree = () => {
   };
 
   return (
+
     <div className="space-y-4 ">
       <AddProductControlBar
         goBackward={navigateBackward}
@@ -99,9 +101,10 @@ const AddProductPageThree = () => {
           instantUpload={false}
         />
         {errors.image && (
-          <p className="text-sm text-red-500">{errors.image.message}</p>
+          <p className="text-sm text-red-500">{errors.image.message as never}</p>
         )}
       </div>
+      
 
       <div className=" w-full overflow-auto">
         <div className=" flex gap-3 justify-start items-center">
