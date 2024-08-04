@@ -48,21 +48,22 @@ const EditProductPageThree = () => {
 
   const validImageTypes = ["image/jpeg", "image/png", "image/jpg"];
 
-
   const schema = z.object({
-    images: typeof window !== 'undefined' ? z
-      .array(
-        z.object({
-          file: z
-            .instanceof(File)
-            .refine((file) => validImageTypes.includes(file.type), {
-              message: "Invalid file type",
-            }),
-        })
-      ) 
-      .min(1, { message: "At least one image is required" })
-      .max(5, { message: "No more than 5 images are allowed" })
-      : z.any(),
+    images:
+      typeof window !== "undefined"
+        ? z
+            .array(
+              z.object({
+                file: z
+                  .instanceof(File)
+                  .refine((file) => validImageTypes.includes(file.type), {
+                    message: "Invalid file type",
+                  }),
+              })
+            )
+            .min(1, { message: "At least one image is required" })
+            .max(5, { message: "No more than 5 images are allowed" })
+        : z.any(),
   });
 
   type FormData = z.infer<typeof schema>;
@@ -122,7 +123,9 @@ const EditProductPageThree = () => {
   const onSubmit = async (data: FormData) => {
     const formData = new FormData();
     console.log(data);
-    data.images.forEach((img: { file: string | Blob; }) => formData.append("images", img.file));
+    data.images.forEach((img: { file: string | Blob }) =>
+      formData.append("images", img.file)
+    );
     const res = await add(formData);
     if (res.status) {
       setSwalProps({
@@ -137,7 +140,6 @@ const EditProductPageThree = () => {
       <EditProductControlBar run={handleSubmit(onSubmit)} />
 
       <div className="w-1/2">
-      
         {/* <FilePond
           className="!bg-white !rounded-md"
           allowMultiple={true}
@@ -160,7 +162,7 @@ const EditProductPageThree = () => {
           <p className="text-sm text-red-500">{errors.images.message}</p>
         )} */}
 
-{typeof window !== 'undefined' && (
+        {typeof window !== "undefined" && (
           <FilePond
             className="!bg-white !rounded-md"
             allowMultiple={true}
@@ -181,7 +183,9 @@ const EditProductPageThree = () => {
           />
         )}
         {errors.images && (
-          <p className="text-sm text-red-500">{errors.images.message as never}</p>
+          <p className="text-sm text-red-500">
+            {errors.images.message as never}
+          </p>
         )}
       </div>
 
@@ -217,22 +221,22 @@ const EditProductPageThree = () => {
         </div>
         <div className=" w-full overflow-x-auto space-y-2">
           <p className=" text-lg font-semibold">New Photos</p>
-           <div className=" flex gap-3 justify-start items-center">
-             {images.map((file: any, index) => (
-               <Image
-                 alt=""
-                 key={index}
-                 className=" object-cover"
-                 src={URL.createObjectURL(file)}
-                 width={400}
-                 height={400}
-               />
-             ))}
-           </div>
-         </div>
-       </div>
-     </div>
-   );
+          <div className=" flex gap-3 justify-start items-center">
+            {images.map((file: any, index) => (
+              <Image
+                alt=""
+                key={index}
+                className=" object-cover"
+                src={URL.createObjectURL(file)}
+                width={400}
+                height={400}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default EditProductPageThree;

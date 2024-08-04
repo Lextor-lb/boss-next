@@ -17,6 +17,7 @@ import SweetAlert2 from "react-sweetalert2";
 import { useRouter } from "next/navigation";
 import { useProductProvider } from "@/app/pos/app/products/Provider/ProductProvider";
 import NavHeader from "@/components/pos/NavHeader";
+import { PaginationComponent } from "@/components/pos/inventory";
 
 export default function ProductPage() {
   const [isClient, setIsClient] = useState(false);
@@ -47,25 +48,6 @@ export default function ProductPage() {
     setFilterType(value);
   };
 
-  // for pagination
-  const incrementPage = () => {
-    setCurrentPage(currentPage + 1);
-  };
-
-  const decrementPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  const goToLastPage = () => {
-    setCurrentPage(data?.meta?.last_page);
-  };
-
-  const goToFirstPage = () => {
-    setCurrentPage(1);
-  };
-
   const getProducts = (url: string) => {
     return getFetch(url);
   };
@@ -82,6 +64,26 @@ export default function ProductPage() {
       refreshWhenHidden: true,
     }
   );
+
+  console.log(data);
+  // for pagination
+  const incrementPage = () => {
+    setCurrentPage(currentPage + 1);
+  };
+
+  const decrementPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const goToLastPage = () => {
+    setCurrentPage(data?.totalPages);
+  };
+
+  const goToFirstPage = () => {
+    setCurrentPage(1);
+  };
 
   const refetch = () => {
     mutate(
@@ -225,18 +227,28 @@ export default function ProductPage() {
             {isLoading || isValidating ? (
               <TableSkeletonLoader />
             ) : (
-              <ProductTable
-                data={data?.data}
-                openDetail={handleOpenDetailBox}
-                setIdsToDelete={setIdsToDelete}
-                handleCheckboxChange={handleCheckboxChange}
-                editId={editId}
-                handleEdit={handleEdit}
-                filterTable={filterTable}
-                refetch={refetch}
-                handleSingleDelete={handleSingleDelete}
-                setDeleteId={setDeleteId}
-              />
+              <div className=" space-y-4">
+                <ProductTable
+                  data={data?.data}
+                  openDetail={handleOpenDetailBox}
+                  setIdsToDelete={setIdsToDelete}
+                  handleCheckboxChange={handleCheckboxChange}
+                  editId={editId}
+                  handleEdit={handleEdit}
+                  filterTable={filterTable}
+                  refetch={refetch}
+                  handleSingleDelete={handleSingleDelete}
+                  setDeleteId={setDeleteId}
+                />
+                <PaginationComponent
+                  goToFirstPage={goToFirstPage}
+                  currentPage={currentPage}
+                  decrementPage={decrementPage}
+                  incrementPage={incrementPage}
+                  goToLastPage={goToLastPage}
+                  lastPage={data?.totalPages}
+                />
+              </div>
             )}
           </>
         )}

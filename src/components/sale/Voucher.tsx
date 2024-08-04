@@ -2,7 +2,6 @@ import React from "react";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -39,13 +38,13 @@ const Voucher = ({
   customerInfoData,
 }: any) => {
   return (
-    <div className="space-y-12 p-12 bg-white">
+    <div className="space-y-8 p-6 bg-white">
       <p className="text-xl mb-3 text-primary text-center font-medium">
         Receipt Voucher
       </p>
 
       <div className="">
-        <div className="grid gap-3 grid-cols-2">
+        <div className="grid gap-1 grid-cols-2">
           {customerInfoData.name !== "" && (
             <div className="flex gap-4 items-center">
               <p className=" text-sm w-[200px] text-start text-black">
@@ -126,10 +125,10 @@ const Voucher = ({
                   <div className="flex gap-1 flex-col">
                     <p className="capitalize">{productName}</p>
                     <div className="flex items-center gap-1">
-                      <div className="bg-muted/90 text-xs font-medium capitalize text-muted-foreground px-1.5 py-0.5 rounded-md">
+                      {/* <div className="bg-muted/90 text-xs font-medium capitalize text-muted-foreground px-1.5 py-0.5 rounded-md">
                         {gender}
-                      </div>
-                      <div className="bg-muted/90 text-xs font-medium capitalize text-muted-foreground px-1.5 py-0.5 rounded-md">
+                      </div> */}
+                      {/* <div className="bg-muted/90 text-xs font-medium capitalize text-muted-foreground px-1.5 py-0.5 rounded-md">
                         {productType}
                       </div>
                       <div className="bg-muted/90 text-xs font-medium capitalize text-muted-foreground px-1.5 py-0.5 rounded-md">
@@ -137,7 +136,7 @@ const Voucher = ({
                       </div>
                       <div className="bg-muted/90 text-xs font-medium capitalize text-muted-foreground px-1.5 py-0.5 rounded-md">
                         {productFitting}
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 </TableCell>

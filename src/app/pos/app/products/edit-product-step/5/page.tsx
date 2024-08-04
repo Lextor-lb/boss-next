@@ -126,7 +126,11 @@ const EditProductPageFive = () => {
     return putMediaFetch(url, arg);
   };
 
-  const { data: putData, trigger: edit } = useSWRMutation(
+  const {
+    data: putData,
+    trigger: edit,
+    error: editError,
+  } = useSWRMutation(
     `${Backend_URL}/product-variants/${editMode.id}`,
     putFetcher
   );
@@ -135,26 +139,29 @@ const EditProductPageFive = () => {
     return postMediaFetch(url, arg);
   };
 
-  const { data: postData, trigger: add } = useSWRMutation(
-    `${Backend_URL}/product-variants`,
-    postFetcher
-  );
+  const {
+    data: postData,
+    trigger: add,
+    error,
+  } = useSWRMutation(`${Backend_URL}/product-variants`, postFetcher);
+
+  console.log(editMode);
 
   const onSubmit = async (value: any) => {
     const formData = new FormData();
     formData.append("image", value.image);
     formData.append("shopCode", value.shopCode);
     formData.append("colorCode", value.colorCode);
-    formData.append("barcode", value.barcode);
+    if (value.barcode !== variants.find((el) => el.id == editMode.id).barcode)
+      formData.append("barcode", value.barcode);
     formData.append("productSizingId", value.productSizingId);
     formData.append("productId", `${editProductFormData.id}`);
 
     if (editMode.status) {
       const res = await edit(formData);
+      console.log(res);
       if (res.status) {
-        // setVariants(
-        //   variants.map((el) => (el.id == editMode.id ? res.data : el))
-        // );
+        // setVariants(variants.map((el) => (el.id == editMode.id ? {} : el)));
         setImage(undefined);
         reset({
           image: undefined,
@@ -167,6 +174,7 @@ const EditProductPageFive = () => {
           status: false,
           id: "",
         });
+        return;
       }
     } else {
       const res = await add(formData);
@@ -218,7 +226,7 @@ const EditProductPageFive = () => {
     setSize(data.productSizing.name);
     setImage(data.media.url);
   };
-
+  console.log(editError);
   return (
     <div className="space-y-4">
       <div>
@@ -232,6 +240,11 @@ const EditProductPageFive = () => {
         />
 
         <hr className="py-3" />
+
+        {error && <p className=" text-sm text-red-500">{error.message}</p>}
+        {editError && (
+          <p className=" text-sm text-red-500">{editError.message}</p>
+        )}
 
         <div className="space-y-5">
           <div className="space-y-1.5">

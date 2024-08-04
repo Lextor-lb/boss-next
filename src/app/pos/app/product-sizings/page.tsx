@@ -44,7 +44,7 @@ export default function ProductSizingsPage() {
   };
 
   const goToLastPage = () => {
-    setCurrentPage(data?.meta?.last_page);
+    setCurrentPage(data?.totalPages);
   };
 
   const goToFirstPage = () => {
@@ -187,7 +187,7 @@ export default function ProductSizingsPage() {
                   decrementPage={decrementPage}
                   incrementPage={incrementPage}
                   goToLastPage={goToLastPage}
-                  lastPage={currentPage}
+                  lastPage={data?.totalPages}
                 />
               </div>
             )}

@@ -106,19 +106,6 @@ const EditProductPageTwo = () => {
     getData
   );
 
-  useEffect(() => {
-    if (categoriesData) {
-      setCategoryData(
-        categoriesData.data.find(
-          ({ id }: { id: number }) =>
-            id == editProductFormData.productCategoryId
-        )
-      );
-    }
-  }, [categoriesData, fittingsData]);
-
-  console.log(fittingsData);
-
   // Fetcher function to make API requests
   const putFetcher = async (url: string, { arg }: { arg: any }) => {
     return editProductFetch(url, arg);
@@ -135,7 +122,13 @@ const EditProductPageTwo = () => {
   );
 
   const onSubmit = async (data: FormData) => {
-    const res = await edit(data);
+    const formData = new FormData();
+    formData.append("productBrandId", `${data.brand}`);
+    formData.append("productTypeId", `${data.productTypeId}`);
+    formData.append("productCategoryId", `${data.productCategoryId}`);
+    formData.append("productFittingId", `${data.productFittingId}`);
+    formData.append("gender", `${data.gender}`);
+    const res = await edit(formData);
     if (res.status) {
       setSwalProps({
         ...swalProps,
@@ -144,10 +137,20 @@ const EditProductPageTwo = () => {
     }
   };
 
+  useEffect(() => {
+    if (categoriesData) {
+      
+      setCategoryData(categoriesData.data);
+    }
+    if (fittingsData) {
+      setFittingData(fittingsData.data);
+    }
+  }, [categoriesData, fittingsData]);
+
   return (
     <div className=" space-y-4">
       <EditProductControlBar run={handleSubmit(onSubmit)} />
-
+      {error && <p className=" text-sm text-red-500">{error.message}</p>}
       <div className=" w-3/4 space-y-4">
         {/* gender */}
         <div className=" space-y-1.5">
@@ -159,12 +162,12 @@ const EditProductPageTwo = () => {
             className=" bg-white rounded-md border p-3 flex justify-around"
           >
             <div className="flex items-center space-x-2">
-              <RadioGroupItem value="MAN" id="r1" />
+              <RadioGroupItem value="MEN" id="r1" />
               <Label htmlFor="r1">Man</Label>
             </div>
 
             <div className="flex items-center space-x-2">
-              <RadioGroupItem value="LADY" id="r2" />
+              <RadioGroupItem value="WOMEN" id="r2" />
               <Label htmlFor="r2">Woman</Label>
             </div>
 
@@ -251,7 +254,8 @@ const EditProductPageTwo = () => {
                     onValueChange={(e) => {
                       setValue("productCategoryId", parseInt(e));
                       setFittingData(
-                        categoryData.find(({ id }) => id == e).productFittings
+                        categoryData.find(({ id }: any) => id == e)
+                          .productFittings
                       );
                     }}
                   >
@@ -259,9 +263,9 @@ const EditProductPageTwo = () => {
                       <SelectValue placeholder="Select Product Categories" />
                     </SelectTrigger>
                     <SelectContent>
-                      {categoryData.length > 0 && (
+                      {categoryData && (
                         <>
-                          {categoryData.map(({ id, name }: any) => (
+                          {categoryData?.map(({ id, name }: any) => (
                             <SelectItem key={id} value={`${id}`}>
                               {name}
                             </SelectItem>
@@ -273,7 +277,7 @@ const EditProductPageTwo = () => {
                 </div>
               )}
             </div>
-            {fittingData.length > 0 && (
+            {fittingData && (
               <div className=" space-y-1.5">
                 <Label>Fitting</Label>
                 <Select
@@ -286,9 +290,9 @@ const EditProductPageTwo = () => {
                     <SelectValue placeholder="Select Fitting" />
                   </SelectTrigger>
                   <SelectContent>
-                    {fittingData.length > 0 && (
+                    {fittingData && (
                       <>
-                        {fittingData.map(({ name, id }: any) => (
+                        {fittingData?.map(({ name, id }: any) => (
                           <SelectItem key={id} value={`${id}`}>
                             {name}
                           </SelectItem>

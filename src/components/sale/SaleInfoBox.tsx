@@ -64,7 +64,6 @@ const SaleInfoBox = ({
   });
 
   const [change, setChange] = useState(0);
-  const [error, setError] = useState(false);
   const [chargeValue, setChargeValue] = useState<number>(0);
   const [total, setTotal] = useState(0);
 
@@ -125,10 +124,11 @@ const SaleInfoBox = ({
     return postFetch(url, arg);
   };
 
-  const { isMutating, trigger: sell } = useSWRMutation(
-    `${Backend_URL}/vouchers`,
-    postFetcher
-  );
+  const {
+    isMutating,
+    trigger: sell,
+    error,
+  } = useSWRMutation(`${Backend_URL}/vouchers`, postFetcher);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -147,11 +147,12 @@ const SaleInfoBox = ({
         subTotal: data.reduce((pv, cv) => pv + cv.cost, 0),
         total,
         paymentMethod: paymentInfo.payment_method.toUpperCase(),
-        voucherRecords: data.map(({ id, quantity, discount, price }) => ({
+        voucherRecords: data.map(({ id, quantity, discount, price, cost }) => ({
           productVariantId: id,
           quantity,
           salePrice: price,
           discount,
+          cost: Number(cost.toFixed(0)),
         })),
       } as any;
 
@@ -164,6 +165,7 @@ const SaleInfoBox = ({
       }
 
       const res = await sell(voucher);
+      console.log(res);
       if (res.status) {
         setData([]);
         setPaymentInfo({
@@ -177,21 +179,15 @@ const SaleInfoBox = ({
           tax: false,
         });
         setCustomerPromotion(undefined);
-        router.push(`/pos/app/voucher/${voucherCode}`);
+        router.push(`/pos/app/sale/voucher/${res.data.id}`);
         setVoucherCode(generateLongNumber(7));
-        return setError(false);
-      }
-      if (!res.status) {
-        setError(true);
       }
     }
   };
-
+  console.log(data);
   return (
     <>
-      {error && (
-        <p className=" text-red-500">Something went wrong! Please Try Again</p>
-      )}
+      {error && <p className=" text-red-500">{error.message}</p>}
       <form onSubmit={handleSubmit}>
         <div className="flex">
           <div className="flex justify-between basis-4/12 items-end rounded-e-none bg-white p-3 rounded border border-primary">

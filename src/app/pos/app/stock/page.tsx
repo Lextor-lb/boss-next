@@ -38,7 +38,7 @@ const StockPage = () => {
   };
 
   const goToLastPage = () => {
-    setCurrentPage(data?.meta?.last_page);
+    setCurrentPage(data?.totalPages);
   };
 
   const goToFirstPage = () => {

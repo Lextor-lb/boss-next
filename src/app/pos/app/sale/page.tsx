@@ -120,13 +120,19 @@ const SaleForm: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    if (productError) {
+      if (barcodeRef.current) {
+        barcodeRef.current.value = "";
+        barcodeRef.current.focus();
+      }
+      return;
+    }
     if (productData && !productLoading && !productError) {
       const productExists = data.some(
         (product) => product.id === productData.id
       );
 
       if (productExists) {
-        console.log("i am here");
         if (barcodeRef.current) {
           barcodeRef.current.value = "";
           barcodeRef.current.focus();

@@ -41,7 +41,7 @@ const PaginationComponent = ({
               <PaginationItem>
                 <PaginationLink
                   onClick={goToFirstPage}
-                  // disabled={currentPage === 1}
+                  isActive={currentPage !== 1}
                   className="cursor-pointer"
                 >
                   <DoubleArrowLeftIcon width={20} height={20} />
@@ -51,7 +51,7 @@ const PaginationComponent = ({
                 <PaginationLink
                   onClick={decrementPage}
                   className="cursor-pointer"
-                  // disabled={currentPage === 1}
+                  isActive={currentPage !== 1}
                 >
                   <ChevronLeftIcon width={20} height={20} />
                 </PaginationLink>
@@ -59,7 +59,7 @@ const PaginationComponent = ({
               <PaginationItem>
                 <PaginationLink
                   onClick={incrementPage}
-                  // disabled={currentPage === lastPage}
+                  isActive={currentPage !== lastPage}
                   className="cursor-pointer"
                 >
                   <ChevronRightIcon width={20} height={20} />
@@ -68,7 +68,7 @@ const PaginationComponent = ({
               <PaginationItem>
                 <PaginationLink
                   onClick={goToLastPage}
-                  // disabled={currentPage === lastPage}
+                  isActive={currentPage !== lastPage}
                   className="cursor-pointer"
                 >
                   <DoubleArrowRightIcon width={20} height={20} />
