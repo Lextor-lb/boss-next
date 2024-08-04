@@ -24,6 +24,7 @@
     "@radix-ui/react-toggle": "1.1.0",
     "@radix-ui/react-toggle-group": "1.1.0",
     "axios": "1.7.2",
+    "chart.js": "^4.4.3",
     "class-variance-authority": "0.7.0",
     "clsx": "2.1.1",
     "cmdk": "^1.0.0",
@@ -51,6 +52,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@types/chart.js": "^2.9.41",
     "@types/js-cookie": "^3.0.6",
     "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^20",

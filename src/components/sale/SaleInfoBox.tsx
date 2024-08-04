@@ -1,8 +1,12 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import SweetAlert2 from "react-sweetalert2";
+import Voucher from "./Voucher";
+import { Backend_URL, postFetch } from "@/lib/fetch";
+import useSWRMutation from "swr/mutation";
+import { useRouter } from "next/navigation";
 
 interface Product {
   id: number;
@@ -17,16 +21,41 @@ interface Product {
   gender: string;
 }
 
+interface Voucher {
+  voucher_code: string;
+  customerId?: any;
+  type: any;
+  discount: any;
+  subTotal: number;
+  total: number;
+  paymentMethod: any;
+  voucherRecord: {
+    product_variant_id: number;
+    quantity: number;
+    sale_price: number;
+    discount: number;
+  }[];
+  tax?: number; // Add the tax property here
+}
+
 const SaleInfoBox = ({
-  isNotValid,
-  handleSubmit,
   data,
   setData,
+  overallDiscount,
+  loyaltyDiscount,
+  paymentInfo,
+  setPaymentInfo,
+  customerInfoData,
+  setCustomerPromotion,
 }: {
-  isNotValid: boolean;
-  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   data: Product[];
   setData: React.Dispatch<React.SetStateAction<Product[]>>;
+  overallDiscount: number;
+  loyaltyDiscount: number | undefined;
+  paymentInfo: any;
+  setPaymentInfo: any;
+  customerInfoData: any;
+  setCustomerPromotion: any;
 }) => {
   const [swalProps, setSwalProps] = useState({
     show: false,
@@ -35,13 +64,38 @@ const SaleInfoBox = ({
   });
 
   const [change, setChange] = useState(0);
-  const [chargeValue, setChargeValue] = useState(0);
+  const [error, setError] = useState(false);
+  const [chargeValue, setChargeValue] = useState<number>(0);
+  const [total, setTotal] = useState(0);
 
   useEffect(() => {
-    const totalCost = data.reduce((pv, cv) => pv + cv.cost, 0);
-    const newChange = chargeValue > totalCost ? chargeValue - totalCost : 0;
+    const totalCostWithoutDiscounts = data.reduce((pv, cv) => pv + cv.cost, 0);
+
+    const overallDiscountAmount =
+      (overallDiscount / 100) * totalCostWithoutDiscounts;
+    const totalCostAfterOverallDiscount =
+      totalCostWithoutDiscounts - overallDiscountAmount;
+
+    const loyaltyDiscountValue = loyaltyDiscount ?? 0; // Default to 0 if undefined
+    const loyaltyDiscountAmount =
+      (loyaltyDiscountValue / 100) * totalCostAfterOverallDiscount;
+    const totalCostAfterDiscounts = (
+      totalCostAfterOverallDiscount - loyaltyDiscountAmount
+    ).toFixed(0); // Keeping .toFixed(0)
+
+    const total = paymentInfo.tax
+      ? (Number(totalCostAfterDiscounts) * 1.05).toFixed(0) // Apply 5% tax
+      : totalCostAfterDiscounts;
+
+    setTotal(Number(total));
+
+    const newChange =
+      chargeValue > Number(totalCostAfterDiscounts)
+        ? parseFloat((chargeValue - Number(totalCostAfterDiscounts)).toFixed(0))
+        : 0;
+
     setChange(newChange);
-  }, [data, chargeValue, setChargeValue]);
+  }, [data, chargeValue, overallDiscount, loyaltyDiscount, paymentInfo.tax]);
 
   const [isClient, setIsClient] = useState(false);
 
@@ -49,12 +103,94 @@ const SaleInfoBox = ({
     setIsClient(true);
   }, []);
 
+  const router = useRouter();
+
+  const generateLongNumber = (length: number) => {
+    let number = "";
+    for (let i = 0; i < length; i++) {
+      number += Math.floor(Math.random() * 10);
+    }
+    return parseInt(number);
+  };
+
+  const [voucherCode, setVoucherCode] = useState<number | undefined>();
+
+  useEffect(() => {
+    setVoucherCode(generateLongNumber(7));
+  }, []);
+
+  // Fetcher function to make API requests
+  const postFetcher = async (url: string, { arg }: { arg: any }) => {
+    console.log(arg);
+    return postFetch(url, arg);
+  };
+
+  const { isMutating, trigger: sell } = useSWRMutation(
+    `${Backend_URL}/vouchers`,
+    postFetcher
+  );
+
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    if (
+      paymentInfo.type === "" ||
+      paymentInfo.paymentMethod === "" ||
+      data.length === 0
+    ) {
+      return;
+    } else {
+      const voucher = {
+        voucherCode: `${voucherCode}`,
+        // customerId: paymentInfo.customer.customerId,
+        type: paymentInfo.type.toUpperCase(),
+        discount: paymentInfo.overallDiscount,
+        subTotal: data.reduce((pv, cv) => pv + cv.cost, 0),
+        total,
+        paymentMethod: paymentInfo.payment_method.toUpperCase(),
+        voucherRecords: data.map(({ id, quantity, discount, price }) => ({
+          productVariantId: id,
+          quantity,
+          salePrice: price,
+          discount,
+        })),
+      } as any;
+
+      if (paymentInfo.tax) {
+        (voucher as any).tax = 5;
+      }
+
+      if (paymentInfo.customer.amount > 0) {
+        (voucher as any).customerId = paymentInfo.customer.customerId;
+      }
+
+      const res = await sell(voucher);
+      if (res.status) {
+        setData([]);
+        setPaymentInfo({
+          customer: {
+            customerId: "",
+            amount: 0,
+          },
+          type: "offline",
+          payment_method: "cash",
+          overallDiscount: 0,
+          tax: false,
+        });
+        setCustomerPromotion(undefined);
+        router.push(`/pos/app/voucher/${voucherCode}`);
+        setVoucherCode(generateLongNumber(7));
+        return setError(false);
+      }
+      if (!res.status) {
+        setError(true);
+      }
+    }
+  };
+
   return (
     <>
-      {isNotValid && (
-        <p className="text-red-500 text-sm py-3">
-          Please Select Payment type and location before submitting!
-        </p>
+      {error && (
+        <p className=" text-red-500">Something went wrong! Please Try Again</p>
       )}
       <form onSubmit={handleSubmit}>
         <div className="flex">
@@ -78,9 +214,7 @@ const SaleInfoBox = ({
                 <p className="text-sm text-primary/60">Total</p>
               </div>
               <p className="text-2xl">
-                {new Intl.NumberFormat("ja-JP").format(
-                  data.reduce((pv, cv) => pv + cv.cost, 0)
-                )}
+                {new Intl.NumberFormat("ja-JP").format(total)}
               </p>
             </div>
           </div>
@@ -104,7 +238,7 @@ const SaleInfoBox = ({
                 <p className="text-xl">{change}</p>
               </div>
               <div className="basis-1/3 self-end">
-                <Button disabled={isNotValid} className="select-none w-full">
+                <Button disabled={isMutating} className="select-none w-full">
                   Confirm
                 </Button>
               </div>
@@ -115,6 +249,9 @@ const SaleInfoBox = ({
 
       {isClient && (
         <SweetAlert2
+          customClass={{
+            popup: " !w-auto !h-auto ",
+          }}
           didClose={() =>
             setSwalProps({
               ...swalProps,
@@ -123,16 +260,16 @@ const SaleInfoBox = ({
           }
           {...swalProps}
         >
-          <p>Voucher content here</p>
-          {/* <Voucher
+          <Voucher
             data={data}
+            subTotal={data.reduce((pv, cv) => pv + cv.cost, 0)}
             total={total}
-            subTotal={subTotal}
-            tax={tax}
-            taxOn={paymentInfo.tax.status}
+            tax={paymentInfo.tax}
+            voucherCode={voucherCode}
             overallDiscount={paymentInfo.overallDiscount}
-            loyaltyDiscount={paymentInfo.customer}
-          /> */}
+            loyaltyDiscount={loyaltyDiscount}
+            customerInfoData={customerInfoData}
+          />
         </SweetAlert2>
       )}
     </>
