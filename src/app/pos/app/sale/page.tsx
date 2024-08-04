@@ -25,8 +25,9 @@ interface Customer {
   id: string;
   name: string;
   level: string;
-  phone_number: string;
-  promotion_rate: number;
+  phoneNumber: string;
+  promotionRate: number;
+  special: any;
 }
 
 interface BarcodeState {
@@ -47,16 +48,29 @@ interface Product {
   gender: string;
 }
 
+interface customerInfoData {
+  name: string | undefined;
+  phone: string | undefined;
+}
+
 const SaleForm: React.FC = () => {
   const [data, setData] = useState<Product[]>([]);
+  const [customerPromotion, setCustomerPromotion] = useState<
+    number | undefined
+  >();
+
+  const [customerInfoData, setCustomerData] = useState<customerInfoData>({
+    name: "",
+    phone: "",
+  });
 
   const [paymentInfo, setPaymentInfo] = useState({
     customer: {
-      customer_id: "",
+      customerId: "",
       amount: 0,
     },
-    type: "",
-    payment_method: "",
+    type: "offline",
+    payment_method: "cash",
     overallDiscount: 0,
     tax: false,
   });
@@ -111,7 +125,13 @@ const SaleForm: React.FC = () => {
         (product) => product.id === productData.id
       );
 
-      if (!productExists) {
+      if (productExists) {
+        console.log("i am here");
+        if (barcodeRef.current) {
+          barcodeRef.current.value = "";
+          barcodeRef.current.focus();
+        }
+      } else {
         const newData = {
           ...productData,
           quantity: 1,
@@ -149,49 +169,94 @@ const SaleForm: React.FC = () => {
                   className="flex items-center justify-end gap-3"
                 >
                   {/* tax */}
-                  <div>
+                  <div className=" flex flex-col gap-3">
                     <Label htmlFor="tax">Tax</Label>
-                    <Switch id="tax" />
+                    <Switch
+                      id="tax"
+                      checked={paymentInfo.tax}
+                      onCheckedChange={() =>
+                        setPaymentInfo({
+                          ...paymentInfo,
+                          tax: !paymentInfo.tax,
+                        })
+                      }
+                    />
                   </div>
 
                   {/* customer */}
-                  <div className="basis-3/12">
-                    <Select>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Customer" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {customerLoading ? (
-                          <SelectItem
-                            className="pointer-events-none capitalize"
-                            value=" "
-                          >
-                            Loading...
-                          </SelectItem>
-                        ) : (
-                          customerData?.data.map(
-                            (
-                              { id, name, level, phone_number }: Customer,
-                              index: number
-                            ) => (
-                              <SelectItem
-                                key={index}
-                                className="capitalize"
-                                value={id}
-                              >
-                                <Badge className="me-1">{level}</Badge>
-                                {name} ({phone_number})
-                              </SelectItem>
+                  <div className=" ">
+                    <div className="bg-muted/90 text-end text-xs font-medium capitalize text-muted-foreground px-1.5 py-0.5 rounded-md">
+                      {customerPromotion} %
+                    </div>
+                    <div className="basis-3/12">
+                      <Select
+                        value={paymentInfo.customer.customerId}
+                        onValueChange={(e) => {
+                          setCustomerPromotion(
+                            customerData?.data.find((el) => el.id == e)?.special
+                              .promotionRate
+                          );
+                          setCustomerData({
+                            name: customerData?.data.find((el) => el.id == e)
+                              ?.name,
+                            phone: customerData?.data.find((el) => el.id == e)
+                              ?.phoneNumber,
+                          });
+                          setPaymentInfo({
+                            ...paymentInfo,
+                            customer: {
+                              customerId: e,
+                              amount: 0,
+                            },
+                          });
+                        }}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Customer" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {customerLoading ? (
+                            <SelectItem
+                              className="pointer-events-none capitalize"
+                              value=" "
+                            >
+                              Loading...
+                            </SelectItem>
+                          ) : (
+                            customerData?.data.map(
+                              (
+                                { id, name, phoneNumber, special }: Customer,
+                                index: number
+                              ) => (
+                                <SelectItem
+                                  key={index}
+                                  className="capitalize"
+                                  value={`${id}`}
+                                >
+                                  <Badge className="me-1" variant={"secondary"}>
+                                    {special.name}
+                                  </Badge>
+                                  {name} ({phoneNumber})
+                                </SelectItem>
+                              )
                             )
-                          )
-                        )}
-                      </SelectContent>
-                    </Select>
+                          )}
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
 
                   {/* type */}
                   <div className="basis-1/12">
-                    <Select>
+                    <Select
+                      defaultValue={paymentInfo.type}
+                      onValueChange={(e) =>
+                        setPaymentInfo({
+                          ...paymentInfo,
+                          type: e,
+                        })
+                      }
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Location" />
                       </SelectTrigger>
@@ -203,7 +268,15 @@ const SaleForm: React.FC = () => {
                   </div>
 
                   <div className="basis-1/12">
-                    <Select>
+                    <Select
+                      defaultValue={paymentInfo.payment_method}
+                      onValueChange={(e) =>
+                        setPaymentInfo({
+                          ...paymentInfo,
+                          payment_method: e,
+                        })
+                      }
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Payment method" />
                       </SelectTrigger>
@@ -221,6 +294,13 @@ const SaleForm: React.FC = () => {
                       id="discount"
                       type="number"
                       className="h-9 text-end"
+                      value={paymentInfo.overallDiscount}
+                      onChange={(e) =>
+                        setPaymentInfo({
+                          ...paymentInfo,
+                          overallDiscount: parseFloat(e.target.value),
+                        })
+                      }
                     />
                   </div>
                   <div className="space-y-1.5">
@@ -243,12 +323,14 @@ const SaleForm: React.FC = () => {
           <SaleTable data={data} setData={setData} />
           <div className=" absolute bottom-0 w-full">
             <SaleInfoBox
-              isNotValid={false}
-              handleSubmit={(e: any) => {
-                e.preventDefault;
-              }}
+              setPaymentInfo={setPaymentInfo}
+              loyaltyDiscount={customerPromotion}
+              overallDiscount={paymentInfo.overallDiscount}
               data={data}
               setData={setData}
+              paymentInfo={paymentInfo}
+              customerInfoData={customerInfoData}
+              setCustomerPromotion={setCustomerPromotion}
             />
           </div>
         </div>

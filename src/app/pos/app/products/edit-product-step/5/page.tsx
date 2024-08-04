@@ -80,6 +80,8 @@ const EditProductPageFive = () => {
     setVariants(editProductFormData.productVariants);
   }, []);
 
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const { data } = useSWR(`${Backend_URL}/product-sizings/all`, getData);
 
   const schema = z.object({
@@ -97,8 +99,6 @@ const EditProductPageFive = () => {
       .number()
       .min(1, { message: "This field cannot be empty!" }),
   });
-
-  const inputRef = useRef<HTMLInputElement>(null);
 
   type FormData = z.infer<typeof schema>;
 

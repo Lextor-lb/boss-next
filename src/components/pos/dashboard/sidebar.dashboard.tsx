@@ -24,6 +24,7 @@ export default function Sidebar() {
   const inventoryRoutes = filterRoutesByGroup("inventory");
   const CRMRoutes = filterRoutesByGroup("CRM");
   const profileRoutes = filterRoutesByGroup("profile");
+  const stockRoutes = filterRoutesByGroup("stock");
 
   const sidebarNavHeading = [
     {
@@ -48,6 +49,11 @@ export default function Sidebar() {
     },
     {
       id: 4,
+      name: "stock",
+      routes: stockRoutes,
+    },
+    {
+      id: 5,
       name: "User Profile",
       routes: profileRoutes,
     },

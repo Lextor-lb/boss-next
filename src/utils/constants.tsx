@@ -118,7 +118,6 @@ export const sidebarMenuItems: menuItems = [
   {
     id: 16,
     group: "inventory",
-
     pageName: "Product List",
     path: "/pos/app/products",
     icon: <PackageCheck size={20} strokeWidth={1.5} />,
@@ -164,6 +163,21 @@ export const sidebarMenuItems: menuItems = [
     group: "profile",
     pageName: "profile",
     path: "/pos/app/profile",
+    icon: <Users2 size={20} strokeWidth={1.5} />,
+  },
+
+  {
+    id: 24,
+    group: "stock",
+    pageName: "Stock",
+    path: "/pos/app/stock",
+    icon: <Users2 size={20} strokeWidth={1.5} />,
+  },
+  {
+    id: 25,
+    group: "stock",
+    pageName: "Stock Control",
+    path: "/pos/app/control-stock",
     icon: <Users2 size={20} strokeWidth={1.5} />,
   },
 ];
