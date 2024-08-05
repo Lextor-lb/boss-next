@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { CoinsIcon, ShoppingCart } from "lucide-react";
 import StockChart from "./StockChart";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 
 const StockReportChart = ({
   isLoading = true,
@@ -54,7 +54,9 @@ const StockReportChart = ({
                   ></div>
                 </div>
                 <div>
-                  <p className=" font-medium text-xl text-end">{data.totalProducts}</p>
+                  <p className=" font-medium text-xl text-end">
+                    {data.totalProducts}
+                  </p>
                   <p className=" font-light">Products</p>
                 </div>
               </div>

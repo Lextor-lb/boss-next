@@ -2,8 +2,6 @@
 
 import Container from "@/components/Container.components";
 import NavHeader from "@/components/pos/NavHeader";
-import StockReportChart from "@/components/stock/StockReportChart";
-import StockTable from "@/components/stock/StockTable";
 import React, { useEffect, useRef, useState } from "react";
 import { Backend_URL, getFetch, postMediaFetch, putFetch } from "@/lib/fetch";
 import { useRouter } from "next/navigation";
