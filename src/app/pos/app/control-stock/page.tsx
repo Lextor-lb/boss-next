@@ -321,7 +321,7 @@ const StockControlPage = () => {
                             <SheetHeader>
                               <SheetTitle>Add Stock</SheetTitle>
                               <SheetDescription>
-                                Make new product here. Click save when you're
+                                Make new product here. Click save when you are
                                 done.
                               </SheetDescription>
                             </SheetHeader>
