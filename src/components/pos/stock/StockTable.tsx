@@ -8,22 +8,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { CaretSortIcon } from "@radix-ui/react-icons";
-import {
-  ArrowRightCircle,
-  CalendarDays,
-  Clock1,
-  Edit2,
-  MinusCircle,
-  MoveRightIcon,
-} from "lucide-react";
-import ConfirmBox from "@/components/ConfirmBox";
+import { ArrowRightCircle } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Backend_URL, getFetch } from "@/lib/fetch";
-import useSWR from "swr";
-import Image from "next/image";
-import { Button } from "../ui/button";
-import { Badge } from "../ui/badge";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 const StockTable = ({ data }: any) => {
   const router = useRouter();
