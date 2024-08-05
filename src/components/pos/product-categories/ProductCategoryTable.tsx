@@ -8,12 +8,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { CaretSortIcon } from "@radix-ui/react-icons";
-import { Button } from "../../ui/button";
 import { Edit2, MinusCircle } from "lucide-react";
 import ConfirmBox from "@/components/ConfirmBox";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Backend_URL, getFetch } from "@/lib/fetch";
 import useSWR from "swr";
+import { Button } from "@/components/ui/button";
 
 type TypeTable = {
   data: [];
