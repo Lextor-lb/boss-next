@@ -22,19 +22,19 @@ const AddProductPageFour = () => {
   });
 
   const schema = z.object({
-    stock_price: z
+    stock_price: typeof window !== 'undefined' ? z
       .number({
         required_error: "This field cannot be empty!",
       })
-      .min(3, { message: "This field cannot be empty." }),
+      .min(3, { message: "This field cannot be empty." }) : z.any(),
 
-    sale_price: z
+    sale_price:  typeof window !== 'undefined' ? z
       .number({
         required_error: "This field cannot be empty!",
       })
-      .min(3, { message: "This field cannot be empty." }),
+      .min(3, { message: "This field cannot be empty." }) : z.any(),
 
-    discount: z.number().optional(),
+    discount:  typeof window !== 'undefined' ? z.number().optional() : z.any(),
   });
 
   const {

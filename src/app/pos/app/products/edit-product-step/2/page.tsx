@@ -33,35 +33,35 @@ const EditProductPageTwo = () => {
   } = useProductProvider();
 
   // form validation
-  const schema = z.object({
-    gender: z.string({
+  const schema =  typeof window !== "undefined" ? z.object({
+    gender:  typeof window !== "undefined" ? z.string({
       required_error: "This field cannot be empty!",
-    }),
+    }) : z.any(),
 
-    brand: z
+    brand: typeof window !== "undefined" ? z
       .number({
         required_error: "This field cannot be empty!",
       })
-      .min(1, { message: "This field cannot be empty!" }),
+      .min(1, { message: "This field cannot be empty!" }) : z.any(),
 
-    productTypeId: z
+    productTypeId: typeof window !== "undefined" ? z
       .number({
         required_error: "This field cannot be empty!",
       })
-      .min(1, { message: "This field cannot be empty!" }),
+      .min(1, { message: "This field cannot be empty!" }) : z.any(),
 
-    productCategoryId: z
+    productCategoryId: typeof window !== "undefined" ? z
       .number({
         required_error: "This field cannot be empty!",
       })
-      .min(1, { message: "This field cannot be empty!" }),
+      .min(1, { message: "This field cannot be empty!" }) : z.any(),
 
-    productFittingId: z
+    productFittingId: typeof window !== "undefined" ? z
       .number({
         required_error: "This field cannot be empty!",
       })
-      .min(1, { message: "This field cannot be empty!" }),
-  });
+      .min(1, { message: "This field cannot be empty!" }) : z.any(),
+  }) : z.any();
 
   type FormData = z.infer<typeof schema>;
 
@@ -177,7 +177,7 @@ const EditProductPageTwo = () => {
             </div>
           </RadioGroup>
           {errors.gender && (
-            <p className="text-sm text-red-500">{errors.gender.message}</p>
+            <p className="text-sm text-red-500">{errors.gender.message as never}</p>
           )}
         </div>
 
@@ -205,7 +205,7 @@ const EditProductPageTwo = () => {
               </SelectContent>
             </Select>
             {errors.brand && (
-              <p className="text-sm text-red-500">{errors.brand.message}</p>
+              <p className="text-sm text-red-500">{errors.brand.message as never}</p>
             )}
           </div>
 
@@ -241,7 +241,7 @@ const EditProductPageTwo = () => {
                 </Select>
                 {errors.productTypeId && (
                   <p className="text-sm text-red-500">
-                    {errors.productTypeId.message}
+                    {errors.productTypeId.message as never}
                   </p>
                 )}
               </div>
@@ -303,7 +303,7 @@ const EditProductPageTwo = () => {
                 </Select>
                 {errors.productFittingId && (
                   <p className="text-sm text-red-500">
-                    {errors.productFittingId.message}
+                    {errors.productFittingId.message as never}
                   </p>
                 )}
               </div>
