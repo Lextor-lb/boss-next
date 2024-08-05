@@ -85,19 +85,21 @@ const EditProductPageFive = () => {
   const { data } = useSWR(`${Backend_URL}/product-sizings/all`, getData);
 
   const schema = z.object({
-    image: z
+    image:
+    typeof window !== "undefined" ?
+    z
       .instanceof(File)
       .refine(
         (file) => validImageTypes.includes(file.type),
         ".jpg, .jpeg and .png files are accepted."
       )
-      .optional(),
-    shopCode: z.string().min(2, { message: "This field cannot be empty!" }),
-    colorCode: z.string().min(2, { message: "This field cannot be empty!" }),
-    barcode: z.string().min(2, { message: "This field cannot be empty!" }),
-    productSizingId: z
+      .optional() : z.any(),
+    shopCode:     typeof window !== "undefined" ? z.string().min(2, { message: "This field cannot be empty!" }) : z.any(),
+    colorCode:   typeof window !== "undefined" ? z.string().min(2, { message: "This field cannot be empty!" }) : z.any(),
+    barcode: typeof window !== "undefined" ? z.string().min(2, { message: "This field cannot be empty!" }) : z.any(),
+    productSizingId: typeof window !== "undefined" ? z 
       .number()
-      .min(1, { message: "This field cannot be empty!" }),
+      .min(1, { message: "This field cannot be empty!" }) : z.any(),
   });
 
   type FormData = z.infer<typeof schema>;
