@@ -9,16 +9,23 @@ export default function Sidebar() {
   const filterRoutesByGroup = (group: string) =>
     sidebarMenuItems.filter((el) => el.group === group);
 
-  // State for controlling open/close state
-  // const [open, setOpen] = useState(
-  //   localStorage.getItem("open"));
+  const [isClient, setIsClient] = useState(false);
+  const [open, setOpen] = useState<string | null>(null);
 
-    const [open, setOpen] = useState("open");
+  useEffect(() => {
+    setIsClient(true);
+    // Only set the open state if we are on the client side
+    if (typeof window !== "undefined") {
+      setOpen(localStorage.getItem("open"));
+    }
+  }, []);
 
   // Function to handle opening/closing of sidebar nav
-  const handleOpen = (value: any) => () => {
+  const handleOpen = (value: string) => () => {
     setOpen(open === value ? open : value);
-    // localStorage.setItem("open", value);
+    if (isClient) {
+      localStorage.setItem("open", value);
+    }
   };
 
   // Define filtered routes

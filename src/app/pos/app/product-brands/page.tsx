@@ -143,53 +143,55 @@ export default function ProductBrandsPage() {
     <Container>
       <div className="space-y-3">
         <NavHeader parentPage="Brand" path="Product" currentPage="Brand" />
+        {}
+        <div className=" space-y-3">
+          <BrandControlBar
+            isSelected={idsToDelete.length > 0}
+            closeRef={closeSheetRef}
+            dropType={handleDelete}
+            openSheetRef={openSheetRef}
+            editId={editId}
+            setEditId={setEditId}
+            inputValue={inputValue}
+            setInputValue={setInputValue}
+            resetValue={resetValue}
+            searchInputValue={searchInputValue}
+            setSearchInputValue={setSearchInputValue}
+            refetch={refetch}
+            brandImageToShow={brandImageToShow}
+            setBrandImageToShow={setBrandImageToShow}
+          />
 
-        <BrandControlBar
-          isSelected={idsToDelete.length > 0}
-          closeRef={closeSheetRef}
-          dropType={handleDelete}
-          openSheetRef={openSheetRef}
-          editId={editId}
-          setEditId={setEditId}
-          inputValue={inputValue}
-          setInputValue={setInputValue}
-          resetValue={resetValue}
-          searchInputValue={searchInputValue}
-          setSearchInputValue={setSearchInputValue}
-          refetch={refetch}
-          brandImageToShow={brandImageToShow}
-          setBrandImageToShow={setBrandImageToShow}
-        />
-
-        {isLoading || isValidating ? (
-          <TableSkeletonLoader />
-        ) : (
-          <div className="space-y-5">
-            <BrandTable
-              dropType={handleDelete}
-              data={data?.data}
-              setIdsToDelete={setIdsToDelete}
-              handleCheckboxChange={handleCheckboxChange}
-              openSheetRef={openSheetRef}
-              setInputValue={setInputValue}
-              editId={editId}
-              handleEdit={handleEdit}
-              filterTable={filterTable}
-              refetch={refetch}
-              setBrandImageToShow={setBrandImageToShow}
-              handleSingleDelete={handleSingleDelete}
-              setDeleteId={setDeleteId}
-            />
-            <PaginationComponent
-              goToFirstPage={goToFirstPage}
-              currentPage={currentPage}
-              decrementPage={decrementPage}
-              incrementPage={incrementPage}
-              goToLastPage={goToLastPage}
-              lastPage={currentPage}
-            />
-          </div>
-        )}
+          {isLoading || isValidating ? (
+            <TableSkeletonLoader />
+          ) : (
+            <div className="space-y-5">
+              <BrandTable
+                dropType={handleDelete}
+                data={data?.data}
+                setIdsToDelete={setIdsToDelete}
+                handleCheckboxChange={handleCheckboxChange}
+                openSheetRef={openSheetRef}
+                setInputValue={setInputValue}
+                editId={editId}
+                handleEdit={handleEdit}
+                filterTable={filterTable}
+                refetch={refetch}
+                setBrandImageToShow={setBrandImageToShow}
+                handleSingleDelete={handleSingleDelete}
+                setDeleteId={setDeleteId}
+              />
+              <PaginationComponent
+                goToFirstPage={goToFirstPage}
+                currentPage={currentPage}
+                decrementPage={decrementPage}
+                incrementPage={incrementPage}
+                goToLastPage={goToLastPage}
+                lastPage={currentPage}
+              />
+            </div>
+          )}
+        </div>
       </div>
     </Container>
   );

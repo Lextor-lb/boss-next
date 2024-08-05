@@ -2,12 +2,13 @@
 
 import Container from "@/components/Container.components";
 import NavHeader from "@/components/pos/NavHeader";
-import StockReportChart from "@/components/stock/StockReportChart";
-import StockTable from "@/components/stock/StockTable";
+
 import React, { useEffect, useState } from "react";
 import { Backend_URL, getFetch } from "@/lib/fetch";
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
+import StockReportChart from "@/components/pos/stock/StockReportChart";
+import StockTable from "@/components/pos/stock/StockTable";
 
 const StockPage = () => {
   const router = useRouter();

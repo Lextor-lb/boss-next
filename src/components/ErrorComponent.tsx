@@ -3,7 +3,7 @@ import React from "react";
 const ErrorComponent = ({ refetch }: { refetch: () => void }) => {
   return (
     <div>
-      <p>Something bad bad happened</p>
+      <p>Something bad happened</p>
     </div>
   );
 };
