@@ -203,6 +203,7 @@ const StockControlPage = () => {
       mutate(`${Backend_URL}/stock-reports?page=${currentPage}`);
     }
   };
+  
   console.log(data);
   return (
     <Container>
