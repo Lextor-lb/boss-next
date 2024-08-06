@@ -69,8 +69,6 @@ const EditProductPageFive = () => {
     id: "",
   });
 
-  console.log(variants);
-
   const getData = async (url: string) => {
     const response = await getFetch(url);
     return response;
@@ -86,22 +84,32 @@ const EditProductPageFive = () => {
 
   const schema = z.object({
     image:
-    typeof window !== "undefined" ?
-    z
-      .instanceof(File)
-      .refine(
-        (file) => validImageTypes.includes(file.type),
-        ".jpg, .jpeg and .png files are accepted."
-      )
-      .optional() : z.any(),
-    shopCode:     typeof window !== "undefined" ? z.string().min(2, { message: "This field cannot be empty!" }) : z.any(),
-    colorCode:   typeof window !== "undefined" ? z.string().min(2, { message: "This field cannot be empty!" }) : z.any(),
-    barcode: typeof window !== "undefined" ? z.string().min(2, { message: "This field cannot be empty!" }) : z.any(),
-    productSizingId: typeof window !== "undefined" ? z 
-      .number()
-      .min(1, { message: "This field cannot be empty!" }) : z.any(),
+      typeof window !== "undefined"
+        ? z
+            .instanceof(File)
+            .refine(
+              (file) => validImageTypes.includes(file.type),
+              ".jpg, .jpeg and .png files are accepted."
+            )
+            .optional()
+        : z.any(),
+    shopCode:
+      typeof window !== "undefined"
+        ? z.string().min(2, { message: "This field cannot be empty!" })
+        : z.any(),
+    colorCode:
+      typeof window !== "undefined"
+        ? z.string().min(2, { message: "This field cannot be empty!" })
+        : z.any(),
+    barcode:
+      typeof window !== "undefined"
+        ? z.string().min(2, { message: "This field cannot be empty!" })
+        : z.any(),
+    productSizingId:
+      typeof window !== "undefined"
+        ? z.number().min(1, { message: "This field cannot be empty!" })
+        : z.any(),
   });
-  
 
   type FormData = z.infer<typeof schema>;
 
@@ -148,23 +156,30 @@ const EditProductPageFive = () => {
     error,
   } = useSWRMutation(`${Backend_URL}/product-variants`, postFetcher);
 
-  console.log(editMode);
-
   const onSubmit = async (value: any) => {
     const formData = new FormData();
-    formData.append("image", value.image);
     formData.append("shopCode", value.shopCode);
     formData.append("colorCode", value.colorCode);
-    if (value.barcode !== variants.find((el) => el.id == editMode.id).barcode)
-      formData.append("barcode", value.barcode);
     formData.append("productSizingId", value.productSizingId);
-    formData.append("productId", `${editProductFormData.id}`);
+
+    if (editMode.status) {
+      if (typeof value.image !== "undefined") {
+        formData.append("image", value.image);
+      }
+      if (
+        value.barcode !== variants.find((el) => el.id == editMode.id).barcode
+      ) {
+        formData.append("barcode", value.barcode);
+      }
+    }
 
     if (editMode.status) {
       const res = await edit(formData);
-      console.log(res);
+      console.log("res", res);
       if (res.status) {
-        // setVariants(variants.map((el) => (el.id == editMode.id ? {} : el)));
+        setVariants(
+          variants.map((el) => (el.id == editMode.id ? res.data : el))
+        );
         setImage(undefined);
         reset({
           image: undefined,
@@ -177,9 +192,13 @@ const EditProductPageFive = () => {
           status: false,
           id: "",
         });
+        setSize("");
         return;
       }
     } else {
+      formData.append("productId", `${editProductFormData.id}`);
+      formData.append("image", value.image);
+      formData.append("barcode", value.barcode);
       const res = await add(formData);
       if (res.status) {
         setVariants([...variants, res.data]);
@@ -191,6 +210,7 @@ const EditProductPageFive = () => {
           barcode: "",
           productSizingId: parseInt(""),
         });
+        setSize("");
       }
     }
   };
@@ -229,7 +249,7 @@ const EditProductPageFive = () => {
     setSize(data.productSizing.name);
     setImage(data.media.url);
   };
-  console.log(editError);
+
   return (
     <div className="space-y-4">
       <div>

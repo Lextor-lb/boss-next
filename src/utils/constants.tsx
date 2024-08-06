@@ -28,13 +28,6 @@ interface menuItems extends Array<menu> {}
 
 export const sidebarMenuItems: menuItems = [
   {
-    id: 1,
-    group: "control",
-    pageName: "Dashboard",
-    path: "/pos/app/dashboard",
-    icon: <Store size={20} strokeWidth={1.5} />,
-  },
-  {
     id: 2,
     group: "control",
     pageName: "Sale",
@@ -46,7 +39,7 @@ export const sidebarMenuItems: menuItems = [
     id: 4,
     group: "report",
     pageName: "Today",
-    path: "today-report",
+    path: "/pos/app/today-report",
     icon: <Coins size={20} strokeWidth={1.5} />,
   },
   {
@@ -96,14 +89,15 @@ export const sidebarMenuItems: menuItems = [
     id: 12,
     group: "CRM",
     pageName: "Customer List",
-    path: "crm",
+    path: "/pos/app/crm",
     icon: <Users2 size={20} strokeWidth={1.5} />,
   },
+
   {
     id: 13,
     group: "CRM",
     pageName: "Add Customer",
-    path: "customer-control",
+    path: "/pos/app/add-customer",
     icon: <UserPlus size={20} strokeWidth={1.5} />,
   },
 
@@ -111,7 +105,7 @@ export const sidebarMenuItems: menuItems = [
     id: 14,
     group: "CRM",
     pageName: "Level List",
-    path: "level-list",
+    path: "/pos/app/level-list",
     icon: <Crown size={20} strokeWidth={1.5} />,
   },
 

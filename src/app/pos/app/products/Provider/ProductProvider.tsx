@@ -330,7 +330,7 @@ export const ProductProvider = ({
   const [addProductFormData, setAddProductFormData] =
     useState<AddProductFormData>({
       addTo: {
-        eCommerce: false,
+        eCommerce: true,
         pos: true,
       },
       name: "",

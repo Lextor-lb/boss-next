@@ -305,14 +305,12 @@ export const putMediaFetch = async (
     const response = await fetch(url, options);
     const data = await response.json();
 
-    console.log("Response data:", data);
-
     if (!response.ok) {
       throw new Error(data.message || "An error occurred");
     }
 
     return data;
   } catch (error: any) {
-    console.log(error);
+    throw error;
   }
 };

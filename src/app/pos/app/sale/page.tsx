@@ -46,6 +46,7 @@ interface Product {
   productFitting: string;
   productType: string;
   gender: string;
+  productSizing: string;
 }
 
 interface customerInfoData {
@@ -309,7 +310,7 @@ const SaleForm: React.FC = () => {
                       }
                     />
                   </div>
-                  <div className="space-y-1.5">
+                  <div className=" flex flex-col gap-1.5">
                     <Label htmlFor="barcode">Barcode</Label>
                     <Input ref={barcodeRef} id="barcode" className="h-9" />
                   </div>
@@ -323,7 +324,10 @@ const SaleForm: React.FC = () => {
               <p className="text-red-500">{productError.message}</p>
             )}
             {customerError && (
-              <p className="text-red-500">{customerError.message}</p>
+              <p className="text-red-500">
+                {" "}
+                Customer Data has {customerError.message}
+              </p>
             )}
           </div>
           <SaleTable data={data} setData={setData} />

@@ -38,7 +38,7 @@ export default function Login() {
   const onSubmit = async (data: { email: string; password: string }) => {
     const res = await trigger({ email: data.email, password: data.password });
     if (res) {
-      router.push("/pos/app/dashboard");
+      router.push("/pos/app/sale");
     }
   };
 
@@ -88,11 +88,6 @@ export default function Login() {
                       {errors.password.message}
                     </p>
                   )}
-                  <div className="flex justify-end">
-                    <p className="text-xs select-none cursor-pointer font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                      Forget Password?
-                    </p>
-                  </div>
                 </div>
               </div>
               <Button

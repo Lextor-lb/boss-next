@@ -23,10 +23,6 @@ const SaleReport = ({ params }: { params: { date: string } }) => {
     }
   };
 
-  const goToLastPage = () => {
-    setCurrentPage(data?.totalPages);
-  };
-
   const goToFirstPage = () => {
     setCurrentPage(1);
   };
@@ -68,6 +64,7 @@ const SaleReport = ({ params }: { params: { date: string } }) => {
   const getData = (url: string) => {
     return getFetch(url);
   };
+
   const { data, isLoading, error } = useSWR(
     `${Backend_URL}/voucher-report/custom?start=${dateConverter(
       extractDates(params.date).startDate
@@ -75,6 +72,9 @@ const SaleReport = ({ params }: { params: { date: string } }) => {
     getData
   );
 
+  const goToLastPage = () => {
+    setCurrentPage(data?.totalPages);
+  };
   return (
     <Container>
       <div className=" space-y-4">

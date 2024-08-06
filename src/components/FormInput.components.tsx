@@ -16,7 +16,7 @@ type InputProps = {
 const FormInput = forwardRef<HTMLInputElement, InputProps>(
   ({ label, id, className, type, min, value, max, ...rest }, ref) => {
     return (
-      <div className={`space-y-1.5 ${className}`}>
+      <div className={` flex flex-col gap-1.5 ${className}`}>
         <Label htmlFor={id}>{label}</Label>
         <Input
           min={min}
