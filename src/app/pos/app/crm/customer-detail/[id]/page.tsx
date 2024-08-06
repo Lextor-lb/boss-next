@@ -110,7 +110,7 @@ const CustomerDetailPage = ({ params }: { params: { id: string } }) => {
           </div>
         )}
 
-        <p className=" font-medium text-2xl my-4">Customer's voucher</p>
+        <p className=" font-medium text-2xl my-4">Voucher of Customer</p>
 
         {isLoading ? (
           <TableSkeletonLoader />
