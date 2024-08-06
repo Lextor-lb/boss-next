@@ -38,7 +38,7 @@ const NavHeader = ({
       </div>
       <div className=" gap-3 flex items-center">
         <div>
-          <p className=" text-sm text-end">Kar Yan Kyaw</p>
+          <p className=" text-sm text-end">Naing Oo</p>
           <p className=" text-sm opacity-50 font-light text-end">active</p>
         </div>
 

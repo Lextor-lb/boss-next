@@ -65,7 +65,6 @@ export default function ProductPage() {
     }
   );
 
-  console.log(data);
   // for pagination
   const incrementPage = () => {
     setCurrentPage(currentPage + 1);

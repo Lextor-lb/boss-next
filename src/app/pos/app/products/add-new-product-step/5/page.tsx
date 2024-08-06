@@ -43,7 +43,6 @@ type ProductVariant = {
 
 const validImageTypes = ["image/jpeg", "image/png", "image/jpg"];
 
-
 const AddProductPageFive = () => {
   const [readyToProceed, setReadyToProceed] = useState(false);
 
@@ -68,19 +67,25 @@ const AddProductPageFive = () => {
   };
 
   const { data } = useSWR(`${Backend_URL}/product-sizings/all`, getData);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const schema = z.object({
-    image: typeof window !== 'undefined' ? z.instanceof(File).refine(
-        (file) => validImageTypes.includes(file.type),
-        ".jpg, .jpeg and .png files are accepted."
-      ) : z.any(),
-    shopCode: z.string().min(3, { message: "This field cannot be empty!" }),
-    colorCode: z.string().min(3, { message: "This field cannot be empty!" }),
-    barcode: z.string().min(3, { message: "This field cannot be empty!" }),
-    productSizingId: z.number().min(1, { message: "This field cannot be empty!" }),
+    image:
+      typeof window !== "undefined"
+        ? z
+            .instanceof(File)
+            .refine(
+              (file) => validImageTypes.includes(file.type),
+              ".jpg, .jpeg and .png files are accepted."
+            )
+        : z.any(),
+    shopCode: z.string().min(2, { message: "This field cannot be empty!" }),
+    colorCode: z.string().min(2, { message: "This field cannot be empty!" }),
+    barcode: z.string().min(2, { message: "This field cannot be empty!" }),
+    productSizingId: z
+      .number()
+      .min(1, { message: "This field cannot be empty!" }),
   });
-
-  const inputRef = useRef<HTMLInputElement>(null);
 
   type FormData = z.infer<typeof schema>;
 
@@ -132,6 +137,7 @@ const AddProductPageFive = () => {
       barcode: "",
     });
     setImage(undefined);
+    setSize("");
     setEditMode({ status: false, id: "" });
   };
 
@@ -152,6 +158,9 @@ const AddProductPageFive = () => {
         status: true,
         id: `${id}`,
       });
+      setSize(
+        data.data.find((el: any) => el.id == variantToEdit.productSizingId).name
+      )
       reset({
         image: variantToEdit.image,
         shopCode: variantToEdit.shopCode,

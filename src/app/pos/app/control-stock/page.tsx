@@ -50,6 +50,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import useSWRMutation from "swr/mutation";
+import { PaginationComponent } from "@/components/pos/inventory";
 
 const StockControlPage = () => {
   const router = useRouter();
@@ -95,7 +96,7 @@ const StockControlPage = () => {
   };
 
   const { data, error, isLoading, mutate, isValidating } = useSWR(
-    `${Backend_URL}/stock-reports`,
+    `${Backend_URL}/stock-reports?page=${currentPage}`,
     getData,
     {
       revalidateIfStale: true,
@@ -107,41 +108,11 @@ const StockControlPage = () => {
     }
   );
 
-  console.log(data);
-
-  const refetch = () => {
-    mutate(
-      `${Backend_URL}/products?page=${currentPage}&search=${searchInputValue}&orderDirection=${sortBy}&orderBy=${filterType}`
-    );
-  };
-
   const [editId, setEditId] = useState({
     status: false,
     id: "",
   });
 
-  const { data: singleData, isLoading: singleLoading } = useSWR(
-    editId.status ? `${Backend_URL}/products/${singleId}` : null,
-    getFetch,
-    {
-      revalidateIfStale: true,
-      revalidateOnFocus: true,
-      revalidateOnReconnect: false,
-      errorRetryInterval: 5000,
-    }
-  );
-
-  const handleEdit = async (id: any) => {
-    setEditId({
-      status: true,
-      id,
-    });
-    setSingleId(id);
-  };
-
-  useEffect(() => {
-    console.log("object");
-  }, [editId, singleData]);
   const closeRef = useRef<HTMLButtonElement | null>(null);
 
   const { data: sizeData } = useSWR(
@@ -149,13 +120,35 @@ const StockControlPage = () => {
     getData
   );
 
+  const validImageTypes = ["image/jpeg", "image/png", "image/jpg"];
+
   const schema = z.object({
-    shopCode: z.string().min(2, { message: "This field cannot be empty!" }),
-    colorCode: z.string().min(2, { message: "This field cannot be empty!" }),
-    barcode: z.string().min(2, { message: "This field cannot be empty!" }),
-    productSizingId: z
-      .number()
-      .min(1, { message: "This field cannot be empty!" }),
+    image:
+      typeof window !== "undefined"
+        ? z
+            .instanceof(File)
+            .refine(
+              (file) => validImageTypes.includes(file.type),
+              ".jpg, .jpeg and .png files are accepted."
+            )
+            .optional()
+        : z.any(),
+    shopCode:
+      typeof window !== "undefined"
+        ? z.string().min(2, { message: "This field cannot be empty!" })
+        : z.any(),
+    colorCode:
+      typeof window !== "undefined"
+        ? z.string().min(2, { message: "This field cannot be empty!" })
+        : z.any(),
+    barcode:
+      typeof window !== "undefined"
+        ? z.string().min(2, { message: "This field cannot be empty!" })
+        : z.any(),
+    productSizingId:
+      typeof window !== "undefined"
+        ? z.number().min(1, { message: "This field cannot be empty!" })
+        : z.any(),
   });
 
   type FormData = z.infer<typeof schema>;
@@ -170,20 +163,20 @@ const StockControlPage = () => {
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
+      image: undefined,
       shopCode: "",
       colorCode: "",
       barcode: "",
       productSizingId: parseInt(""),
     },
   });
-
-  const putFetcher = async (url: string, { arg }: { arg: any }) => {
-    return putFetch(url, arg);
+  const postFetcher = async (url: string, { arg }: { arg: any }) => {
+    return postMediaFetch(url, arg);
   };
 
-  const { data: putData, trigger: edit } = useSWRMutation(
-    `${Backend_URL}/product-variants/${editId.id}`,
-    putFetcher
+  const { data: putData, trigger: add } = useSWRMutation(
+    `${Backend_URL}/product-variants`,
+    postFetcher
   );
 
   const onSubmit = async (value: any) => {
@@ -194,20 +187,23 @@ const StockControlPage = () => {
     formData.append("colorCode", value.colorCode);
     formData.append("barcode", value.barcode);
     formData.append("productSizingId", value.productSizingId);
-    // formData.append("productId", `${editProductFormData.id}`);
+    formData.append("productId", `${editId.id}`);
 
-    const res = await edit(formData);
+    const res = await add(formData);
     console.log(res);
-    // if (res.status) {
-    //   reset({
-    //     shopCode: "",
-    //     colorCode: "",
-    //     barcode: "",
-    //     productSizingId: parseInt(""),
-    //   });
-    // }
+    if (res.status) {
+      closeRef.current && closeRef.current.click();
+      reset({
+        image: undefined,
+        shopCode: "",
+        colorCode: "",
+        barcode: "",
+        productSizingId: parseInt(""),
+      });
+      mutate(`${Backend_URL}/stock-reports?page=${currentPage}`);
+    }
   };
-
+  console.log(data);
   return (
     <Container>
       <div className=" space-y-4">
@@ -215,250 +211,280 @@ const StockControlPage = () => {
         {isLoading ? (
           <TableSkeletonLoader />
         ) : (
-          <div className=" min-h-[780px]">
-            <Table>
-              <TableHeader className="hover:bg-white z-50">
-                <TableRow className="hover:bg-white bg-white">
-                  <TableHead>
-                    <span>No</span>
-                  </TableHead>
+          <div className=" space-y-4">
+            <div className=" min-h-[740px]">
+              <Table>
+                <TableHeader className="hover:bg-white z-50">
+                  <TableRow className="hover:bg-white bg-white">
+                    <TableHead>
+                      <span>No</span>
+                    </TableHead>
 
-                  <TableHead>
-                    <div
-                      // onClick={() => filterTable("name")}
-                      className="flex gap-1 cursor-pointer select-none items-center"
-                    >
-                      <span>Product</span> <CaretSortIcon />
-                    </div>
-                  </TableHead>
-                  <TableHead className=" text-end">Sale Price</TableHead>
-                  <TableHead className=" text-end">Total Stock</TableHead>
-                  <TableHead className=" text-end">Stock Level</TableHead>
-                  <TableHead></TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {data?.products.map(
-                  (
-                    {
-                      id,
-                      name,
-                      totalStock,
-                      salePrice,
-                      stockLevel,
-                      gender,
-                      productCategory,
-                      productFitting,
-                      productType,
-                    }: {
-                      id: any;
-                      name: string;
-                      salePrice: number;
-                      stockLevel: string;
-                      benefit: number;
-                      gender: string;
-                      productBrand: string;
-                      productCategory: string;
-                      productFitting: string;
-                      productType: string;
-                      totalStock: number;
-                    },
-                    index: any
-                  ) => (
-                    <TableRow
-                      className=" bg-white cursor-pointer hover:bg-white/50"
-                      key={id}
-                    >
-                      <TableCell>
-                        <div className="flex items-center gap-3">
-                          <span>{index + 1}</span>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className=" flex items-center gap-3">
-                          <div className=" flex gap-1.5 flex-col">
-                            <p className=" capitalize">{name}</p>
-                            <div className=" flex gap-1">
-                              <div className="bg-muted/90 text-xs font-medium capitalize text-muted-foreground px-1.5 py-0.5 rounded-md">
-                                {gender.toLocaleLowerCase()}
-                              </div>
-                              <div className="bg-muted/90 text-xs font-medium capitalize text-muted-foreground px-1.5 py-0.5 rounded-md">
-                                {productType}
-                              </div>
-                              <div className="bg-muted/90 text-xs font-medium capitalize text-muted-foreground px-1.5 py-0.5 rounded-md">
-                                {productCategory}
-                              </div>
-                              <div className="bg-muted/90 text-xs font-medium capitalize text-muted-foreground px-1.5 py-0.5 rounded-md">
-                                {productFitting}
+                    <TableHead>
+                      <div
+                        // onClick={() => filterTable("name")}
+                        className="flex gap-1 cursor-pointer select-none items-center"
+                      >
+                        <span>Product</span> <CaretSortIcon />
+                      </div>
+                    </TableHead>
+                    <TableHead className=" text-end">Sale Price</TableHead>
+                    <TableHead className=" text-end">Total Stock</TableHead>
+                    <TableHead className=" text-end">Stock Level</TableHead>
+                    <TableHead></TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {data.products &&
+                    data?.products.map(
+                      (
+                        {
+                          id,
+                          name,
+                          totalStock,
+                          salePrice,
+                          stockLevel,
+                          gender,
+                          productCategory,
+                          productFitting,
+                          productType,
+                        }: {
+                          id: any;
+                          name: string;
+                          salePrice: number;
+                          stockLevel: string;
+                          benefit: number;
+                          gender: string;
+                          productBrand: string;
+                          productCategory: string;
+                          productFitting: string;
+                          productType: string;
+                          totalStock: number;
+                        },
+                        index: any
+                      ) => (
+                        <TableRow
+                          className=" bg-white cursor-pointer hover:bg-white/50"
+                          key={id}
+                        >
+                          <TableCell>
+                            <div className="flex items-center gap-3">
+                              <span>{index + 1}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className=" flex items-center gap-3">
+                              <div className=" flex gap-1.5 flex-col">
+                                <p className=" capitalize">{name}</p>
+                                <div className=" flex gap-1">
+                                  <div className="bg-muted/90 text-xs font-medium capitalize text-muted-foreground px-1.5 py-0.5 rounded-md">
+                                    {gender.toLocaleLowerCase()}
+                                  </div>
+                                  <div className="bg-muted/90 text-xs font-medium capitalize text-muted-foreground px-1.5 py-0.5 rounded-md">
+                                    {productType}
+                                  </div>
+                                  <div className="bg-muted/90 text-xs font-medium capitalize text-muted-foreground px-1.5 py-0.5 rounded-md">
+                                    {productCategory}
+                                  </div>
+                                  <div className="bg-muted/90 text-xs font-medium capitalize text-muted-foreground px-1.5 py-0.5 rounded-md">
+                                    {productFitting}
+                                  </div>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell className=" text-end">{salePrice}</TableCell>
-                      <TableCell className=" text-end">{totalStock}</TableCell>
-                      <TableCell className=" text-end">
-                        <Badge
-                          className={`${
-                            stockLevel == "LowStock" && "!bg-red-400"
-                          }
+                          </TableCell>
+                          <TableCell className=" text-end">
+                            {salePrice}
+                          </TableCell>
+                          <TableCell className=" text-end">
+                            {totalStock}
+                          </TableCell>
+                          <TableCell className=" text-end">
+                            <Badge
+                              className={`${
+                                stockLevel == "LowStock" && "!bg-red-400"
+                              }
                         ${stockLevel == "InStock" && "!bg-green-400"}
                         ${stockLevel == "SoldOut" && "!bg-white"}
                         `}
-                        >
-                          {stockLevel}
-                        </Badge>
-                      </TableCell>
-
-                      <TableCell onClick={() => setEditId({ ...editId, id })}>
-                        <Sheet>
-                          <SheetTrigger asChild>
-                            <Button variant="outline" size={"sm"}>
-                              <Plus /> <p className=" ms-1">Add Stock</p>
-                            </Button>
-                          </SheetTrigger>
-                          <SheetContent>
-                            <SheetHeader>
-                              <SheetTitle>Add Stock</SheetTitle>
-                              <SheetDescription>
-                                Make new product here. Click save when you are
-                                done.
-                              </SheetDescription>
-                            </SheetHeader>
-                            <form
-                              onSubmit={handleSubmit(onSubmit)}
-                              className=" space-y-4"
                             >
-                              <div className=" space-y-3">
-                                <FormInput
-                                  label="Shop Code"
-                                  id="shopCode"
-                                  type="text"
-                                  {...register("shopCode")}
-                                />
+                              {stockLevel}
+                            </Badge>
+                          </TableCell>
 
-                                <FormInput
-                                  label="Color Code"
-                                  id="color_code"
-                                  type="text"
-                                  {...register("colorCode")}
-                                />
+                          <TableCell
+                            onClick={() => setEditId({ ...editId, id })}
+                          >
+                            <Sheet>
+                              <SheetTrigger asChild>
+                                <Button variant="outline" size={"sm"}>
+                                  <Plus /> <p className=" ms-1">Add Stock</p>
+                                </Button>
+                              </SheetTrigger>
+                              <SheetContent>
+                                <SheetHeader>
+                                  <SheetTitle>Add Stock</SheetTitle>
+                                  <SheetDescription>
+                                    Make new product here. Click save when you
+                                    are done.
+                                  </SheetDescription>
+                                </SheetHeader>
+                                <form
+                                  onSubmit={handleSubmit(onSubmit)}
+                                  className=" space-y-4"
+                                >
+                                  <input
+                                    type="file"
+                                    id="image"
+                                    name={name}
+                                    onChange={(e) => {
+                                      if (e.target.files) {
+                                        const file = e.target.files[0];
+                                        setValue("image", file);
+                                      }
+                                    }}
+                                  />
+                                  <div className=" space-y-3">
+                                    <FormInput
+                                      label="Shop Code"
+                                      id="shopCode"
+                                      type="text"
+                                      {...register("shopCode")}
+                                    />
 
-                                <div className=" flex flex-col gap-1.5">
-                                  <Label>Select Size</Label>
-                                  <Popover open={open} onOpenChange={setOpen}>
-                                    <PopoverTrigger asChild>
-                                      <Button
-                                        variant="outline"
-                                        role="combobox"
-                                        aria-expanded={open}
-                                        className="justify-between !rounded-md"
+                                    <FormInput
+                                      label="Color Code"
+                                      id="color_code"
+                                      type="text"
+                                      {...register("colorCode")}
+                                    />
+
+                                    <div className=" flex flex-col gap-1.5">
+                                      <Label>Select Size</Label>
+                                      <Popover
+                                        open={open}
+                                        onOpenChange={setOpen}
                                       >
-                                        {size ? size : "Sizes"}
-                                        <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                      </Button>
-                                    </PopoverTrigger>
-                                    <PopoverContent className="p-0">
-                                      <Command
-                                        defaultValue={`${getValues(
-                                          "productSizingId"
-                                        )}`}
-                                      >
-                                        <CommandInput
-                                          placeholder="Search Size..."
-                                          className="h-9"
-                                        />
-                                        <CommandEmpty>
-                                          No sizes found!
-                                        </CommandEmpty>
-                                        <CommandGroup>
-                                          <CommandList>
-                                            {sizeData?.data.map(
-                                              ({ id, name }: any) => (
-                                                <CommandItem
-                                                  className={cn(
-                                                    size === name
-                                                      ? "bg-accent"
-                                                      : ""
-                                                  )}
-                                                  key={id}
-                                                  value={name}
-                                                  onSelect={(e) => {
-                                                    setSize(e);
-                                                    setValue(
-                                                      "productSizingId",
-                                                      parseInt(id)
-                                                    );
-                                                    setOpen(false);
-                                                  }}
-                                                >
-                                                  <Check
-                                                    className={cn(
-                                                      "mr-2 h-4 w-4",
-                                                      size === name
-                                                        ? "opacity-100"
-                                                        : "opacity-0"
-                                                    )}
-                                                  />
-                                                  {name}
-                                                </CommandItem>
-                                              )
-                                            )}
-                                          </CommandList>
-                                        </CommandGroup>
-                                      </Command>
-                                    </PopoverContent>
-                                  </Popover>
-                                </div>
+                                        <PopoverTrigger asChild>
+                                          <Button
+                                            variant="outline"
+                                            role="combobox"
+                                            aria-expanded={open}
+                                            className="justify-between !rounded-md"
+                                          >
+                                            {size ? size : "Sizes"}
+                                            <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                          </Button>
+                                        </PopoverTrigger>
+                                        <PopoverContent className="p-0">
+                                          <Command>
+                                            <CommandInput
+                                              placeholder="Search Size..."
+                                              className="h-9"
+                                            />
+                                            <CommandEmpty>
+                                              No sizes found!
+                                            </CommandEmpty>
+                                            <CommandGroup>
+                                              <CommandList>
+                                                {sizeData?.data.map(
+                                                  ({ id, name }: any) => (
+                                                    <CommandItem
+                                                      className={cn(
+                                                        size === name
+                                                          ? "bg-accent"
+                                                          : ""
+                                                      )}
+                                                      key={id}
+                                                      value={name}
+                                                      onSelect={(e) => {
+                                                        setSize(e);
+                                                        setValue(
+                                                          "productSizingId",
+                                                          parseInt(id)
+                                                        );
+                                                        setOpen(false);
+                                                      }}
+                                                    >
+                                                      <Check
+                                                        className={cn(
+                                                          "mr-2 h-4 w-4",
+                                                          size === name
+                                                            ? "opacity-100"
+                                                            : "opacity-0"
+                                                        )}
+                                                      />
+                                                      {name}
+                                                    </CommandItem>
+                                                  )
+                                                )}
+                                              </CommandList>
+                                            </CommandGroup>
+                                          </Command>
+                                        </PopoverContent>
+                                      </Popover>
+                                    </div>
 
-                                <FormInput
-                                  className="basis-3/12"
-                                  label="Barcode"
-                                  id="barcode"
-                                  {...register("barcode")}
-                                  type="text"
-                                />
-                              </div>
-                              <div className="flex justify-between">
-                                <Button
-                                  ref={closeRef}
-                                  type="button"
-                                  onClick={() =>
-                                    closeRef.current && closeRef.current.click()
+                                    <FormInput
+                                      className="basis-3/12"
+                                      label="Barcode"
+                                      id="barcode"
+                                      {...register("barcode")}
+                                      type="text"
+                                    />
+                                  </div>
+                                  <div className="flex justify-between">
+                                    <Button
+                                      ref={closeRef}
+                                      type="button"
+                                      onClick={() =>
+                                        closeRef.current &&
+                                        closeRef.current.click()
+                                      }
+                                      variant="link"
+                                    >
+                                      Cancel
+                                    </Button>
+                                    <Button size="sm">Save changes</Button>
+                                  </div>
+                                </form>
+                                <SheetFooter
+                                  className={
+                                    "flex !justify-between items-center"
                                   }
-                                  variant="link"
                                 >
-                                  Cancel
-                                </Button>
-                                <Button size="sm">Save changes</Button>
-                              </div>
-                            </form>
-                            <SheetFooter
-                              className={"flex !justify-between items-center"}
-                            >
-                              <SheetClose asChild>
-                                <Button
-                                  className="hidden"
-                                  ref={closeRef}
-                                  variant="link"
-                                >
-                                  Cancel
-                                </Button>
-                              </SheetClose>
-                              <SheetClose asChild>
-                                <Button className="hidden" size="sm">
-                                  Save changes
-                                </Button>
-                              </SheetClose>
-                            </SheetFooter>
-                          </SheetContent>
-                        </Sheet>
-                      </TableCell>
-                    </TableRow>
-                  )
-                )}
-              </TableBody>
-            </Table>
+                                  <SheetClose asChild>
+                                    <Button
+                                      className="hidden"
+                                      ref={closeRef}
+                                      variant="link"
+                                    >
+                                      Cancel
+                                    </Button>
+                                  </SheetClose>
+                                  <SheetClose asChild>
+                                    <Button className="hidden" size="sm">
+                                      Save changes
+                                    </Button>
+                                  </SheetClose>
+                                </SheetFooter>
+                              </SheetContent>
+                            </Sheet>
+                          </TableCell>
+                        </TableRow>
+                      )
+                    )}
+                </TableBody>
+              </Table>
+            </div>
+            <PaginationComponent
+              goToFirstPage={goToFirstPage}
+              currentPage={currentPage}
+              decrementPage={decrementPage}
+              incrementPage={incrementPage}
+              goToLastPage={goToLastPage}
+              lastPage={data?.totalPages}
+            />
           </div>
         )}
       </div>

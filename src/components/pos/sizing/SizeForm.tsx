@@ -93,7 +93,6 @@ const SizeForm = ({
         resetValue();
         refetch();
       }
-
       reset();
     } catch (error) {
       console.error("Submit Error:", error);

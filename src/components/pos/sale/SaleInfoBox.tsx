@@ -20,6 +20,7 @@ interface Product {
   productFitting: string;
   productType: string;
   gender: string;
+  productSizing: string;
 }
 
 interface Voucher {
@@ -121,7 +122,6 @@ const SaleInfoBox = ({
 
   // Fetcher function to make API requests
   const postFetcher = async (url: string, { arg }: { arg: any }) => {
-    console.log(arg);
     return postFetch(url, arg);
   };
 

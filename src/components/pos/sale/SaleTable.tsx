@@ -26,6 +26,7 @@ interface Product {
   productFitting: string;
   productType: string;
   gender: string;
+  productSizing: string;
 }
 
 interface SaleTableProps {
@@ -112,10 +113,8 @@ const SaleTable: React.FC<SaleTableProps> = ({ data, setData }) => {
                     quantity,
                     discount,
                     cost,
-                    productCategory,
-                    productFitting,
-                    productType,
                     gender,
+                    productSizing,
                   },
                   index
                 ) => (
@@ -137,13 +136,7 @@ const SaleTable: React.FC<SaleTableProps> = ({ data, setData }) => {
                               {gender}
                             </div>
                             <div className="bg-muted/90 text-xs font-medium capitalize text-muted-foreground px-1.5 py-0.5 rounded-md">
-                              {productType}
-                            </div>
-                            <div className="bg-muted/90 text-xs font-medium capitalize text-muted-foreground px-1.5 py-0.5 rounded-md">
-                              {productCategory}
-                            </div>
-                            <div className="bg-muted/90 text-xs font-medium capitalize text-muted-foreground px-1.5 py-0.5 rounded-md">
-                              {productFitting}
+                              {productSizing}
                             </div>
                           </div>
                         </div>
