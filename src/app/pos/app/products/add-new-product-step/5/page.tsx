@@ -160,7 +160,7 @@ const AddProductPageFive = () => {
       });
       setSize(
         data.data.find((el: any) => el.id == variantToEdit.productSizingId).name
-      )
+      );
       reset({
         image: variantToEdit.image,
         shopCode: variantToEdit.shopCode,
@@ -219,7 +219,10 @@ const AddProductPageFive = () => {
 
         <div className="space-y-5">
           <div className="space-y-1.5">
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form
+              className=" w-full overflow-hidden"
+              onSubmit={handleSubmit(onSubmit)}
+            >
               <div
                 className="flex gap-3 justify-start"
                 style={{ alignItems: "flex-end" }}
@@ -257,7 +260,7 @@ const AddProductPageFive = () => {
                   </div>
                 </div>
                 <FormInput
-                  className="basis-3/12"
+                  className="basis-2/12  w-[100px]"
                   label="Shop Code"
                   id="shopCode"
                   type="text"
@@ -265,7 +268,7 @@ const AddProductPageFive = () => {
                 />
 
                 <FormInput
-                  className="basis-3/12"
+                  className="basis-2/12"
                   label="Color Code"
                   id="color_code"
                   type="text"
@@ -324,7 +327,7 @@ const AddProductPageFive = () => {
                 </div>
 
                 <FormInput
-                  className="basis-3/12"
+                  className="basis-1/12"
                   label="Barcode"
                   id="barcode"
                   {...register("barcode")}

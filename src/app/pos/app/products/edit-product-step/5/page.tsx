@@ -237,7 +237,7 @@ const EditProductPageFive = () => {
       id: `${id}`,
     });
 
-    const data = editProductFormData.productVariants.find((el) => el.id == id);
+    const data = variants.find((el) => el.id == id);
 
     reset({
       image: data.image,
@@ -318,7 +318,7 @@ const EditProductPageFive = () => {
                   </div>
                 </div>
                 <FormInput
-                  className="basis-3/12"
+                  className="basis-2/12  w-[100px]"
                   label="Shop Code"
                   id="shopCode"
                   type="text"
@@ -385,7 +385,7 @@ const EditProductPageFive = () => {
                 </div>
 
                 <FormInput
-                  className="basis-3/12"
+                  className="basis-2/12"
                   label="Barcode"
                   id="barcode"
                   {...register("barcode")}
