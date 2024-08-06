@@ -85,9 +85,11 @@ const AddCustomer = () => {
     trigger: add,
   } = useSWRMutation(`${Backend_URL}/customers`, postFetcher);
 
-  const onSubmit = (data: any) => {
-    console.log("here");
-    console.log(data);
+  const onSubmit = async (value: any) => {
+    const formData = new FormData();
+
+    const res = await add(formData);
+    console.log(res);
   };
 
   return (
