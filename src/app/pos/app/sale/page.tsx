@@ -9,6 +9,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -17,9 +22,19 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Backend_URL, getFetch } from "@/lib/fetch";
-import { Plus } from "lucide-react";
+import { CaretSortIcon } from "@radix-ui/react-icons";
+import { Check, Plus } from "lucide-react";
 import React, { useEffect, useRef, useState, FormEvent } from "react";
 import useSWR from "swr";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import { cn } from "@/lib/utils";
 
 interface Customer {
   id: string;
@@ -55,6 +70,8 @@ interface customerInfoData {
 }
 
 const SaleForm: React.FC = () => {
+  const [open, setOpen] = useState(false);
+  const [customers, setCustomer] = useState<string>("");
   const [data, setData] = useState<Product[]>([]);
   const [customerPromotion, setCustomerPromotion] = useState<
     number | undefined
@@ -191,66 +208,83 @@ const SaleForm: React.FC = () => {
                   </div>
 
                   {/* customer */}
-                  <div className=" ">
-                    <div className="bg-muted/90 text-end text-xs font-medium capitalize text-muted-foreground px-1.5 py-0.5 rounded-md">
-                      {customerPromotion} %
+
+                  <div className="space-y-1.5 basis-2/12">
+                    <div>
+                      <div className=" text-end">{customerPromotion} %</div>
+                      <Label>Select customers</Label>
                     </div>
-                    <div className="basis-3/12">
-                      <Select
-                        value={paymentInfo.customer.customerId}
-                        onValueChange={(e) => {
-                          setCustomerPromotion(
-                            customerData?.data.find((el) => el.id == e)?.special
-                              .promotionRate
-                          );
-                          setCustomerData({
-                            name: customerData?.data.find((el) => el.id == e)
-                              ?.name,
-                            phone: customerData?.data.find((el) => el.id == e)
-                              ?.phoneNumber,
-                          });
-                          setPaymentInfo({
-                            ...paymentInfo,
-                            customer: {
-                              customerId: e,
-                              amount: 0,
-                            },
-                          });
-                        }}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Customer" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {customerLoading ? (
-                            <SelectItem
-                              className="pointer-events-none capitalize"
-                              value=" "
-                            >
-                              Loading...
-                            </SelectItem>
-                          ) : (
-                            customerData?.data.map(
-                              (
-                                { id, name, phoneNumber, special }: Customer,
-                                index: number
-                              ) => (
-                                <SelectItem
-                                  key={index}
-                                  className="capitalize"
-                                  value={`${id}`}
-                                >
-                                  <Badge className="me-1" variant={"secondary"}>
-                                    {special.name}
-                                  </Badge>
-                                  {name} ({phoneNumber})
-                                </SelectItem>
-                              )
-                            )
-                          )}
-                        </SelectContent>
-                      </Select>
-                    </div>
+
+                    <Popover open={open} onOpenChange={setOpen}>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          aria-expanded={open}
+                          className="w-[400px] text-sm justify-between !rounded-md"
+                        >
+                          {customers ? customers : "Customers"}
+                          <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-[400px] p-0">
+                        <Command>
+                          <CommandInput
+                            placeholder="Search customers..."
+                            className="h-9"
+                          />
+                          <CommandEmpty>No customers found!</CommandEmpty>
+                          <CommandGroup>
+                            <CommandList>
+                              {customerData?.data.map(
+                                ({ id, name, phoneNumber }: any) => (
+                                  <CommandItem
+                                    className={cn(
+                                      customers === name ? "bg-accent" : ""
+                                    )}
+                                    key={id}
+                                    value={name}
+                                    onSelect={(e) => {
+                                      setCustomerPromotion(
+                                        customerData?.data.find(
+                                          (el) => el.id == id
+                                        )?.special.promotionRate
+                                      );
+                                      setCustomerData({
+                                        name: customerData?.data.find(
+                                          (el) => el.id == id
+                                        )?.name,
+                                        phone: customerData?.data.find(
+                                          (el) => el.id == id
+                                        )?.phoneNumber,
+                                      });
+                                      setPaymentInfo({
+                                        ...paymentInfo,
+                                        customer: {
+                                          customerId: id,
+                                          amount: 0,
+                                        },
+                                      });
+                                      setCustomer(e);
+                                    }}
+                                  >
+                                    <Check
+                                      className={cn(
+                                        "mr-2 h-4 w-4",
+                                        customers === name
+                                          ? "opacity-100"
+                                          : "opacity-0"
+                                      )}
+                                    />
+                                    {name} {phoneNumber}
+                                  </CommandItem>
+                                )
+                              )}
+                            </CommandList>
+                          </CommandGroup>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
                   </div>
 
                   {/* type */}
@@ -295,12 +329,12 @@ const SaleForm: React.FC = () => {
                     </Select>
                   </div>
 
-                  <div className="basis-1/12 space-y-1.5">
+                  <div className="basis-1/12 space-y-1">
                     <Label htmlFor="discount">Discount</Label>
                     <Input
                       id="discount"
                       type="number"
-                      className="h-9 text-end"
+                      className="h-9 text-end w-[80px] "
                       value={paymentInfo.overallDiscount}
                       onChange={(e) =>
                         setPaymentInfo({
@@ -312,7 +346,11 @@ const SaleForm: React.FC = () => {
                   </div>
                   <div className=" flex flex-col gap-1.5">
                     <Label htmlFor="barcode">Barcode</Label>
-                    <Input ref={barcodeRef} id="barcode" className="h-9" />
+                    <Input
+                      ref={barcodeRef}
+                      id="barcode"
+                      className="h-9 w-[100px]"
+                    />
                   </div>
                   <Button disabled={productLoading} type="submit" size="sm">
                     {productLoading ? "Loading" : <Plus />}
@@ -325,7 +363,6 @@ const SaleForm: React.FC = () => {
             )}
             {customerError && (
               <p className="text-red-500">
-                {" "}
                 Customer Data has {customerError.message}
               </p>
             )}

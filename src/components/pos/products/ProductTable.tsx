@@ -98,6 +98,7 @@ const ProductTable = ({
                     productFitting,
                     productType,
                     time,
+                    productCode,
                   }: {
                     id: any;
                     name: string;
@@ -112,6 +113,7 @@ const ProductTable = ({
                     productType: { name: string };
                     medias: any;
                     time: string;
+                    productCode: string;
                   },
                   index
                 ) => (
@@ -145,7 +147,9 @@ const ProductTable = ({
                           />
                         </div>
                         <div className=" flex gap-1.5 flex-col">
-                          <p className=" capitalize">{name}</p>
+                          <p className=" capitalize">
+                            {name} {productCode}
+                          </p>
                           <div className=" flex gap-1">
                             <div className="bg-muted/90 text-xs font-medium capitalize text-muted-foreground px-1.5 py-0.5 rounded-md">
                               {gender.toLocaleLowerCase()}
