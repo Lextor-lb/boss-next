@@ -326,7 +326,7 @@ const EditProductPageFive = () => {
                 />
 
                 <FormInput
-                  className="basis-3/12"
+                  className="basis-2/12 w-[100px]"
                   label="Color Code"
                   id="color_code"
                   type="text"
@@ -385,7 +385,7 @@ const EditProductPageFive = () => {
                 </div>
 
                 <FormInput
-                  className="basis-2/12"
+                  className="basis-2/12 w-[100px]"
                   label="Barcode"
                   id="barcode"
                   {...register("barcode")}

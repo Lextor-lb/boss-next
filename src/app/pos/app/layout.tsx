@@ -20,10 +20,15 @@ export default function BackofficeLayout({
   return (
     <div className="grid grid-cols-12 h-screen overflow-hidden">
       <div className=" col-span-2 ">
-        <div className="p-5 h-screen overflow-hidden">
-          <div className="flex h-full justify-between flex-col">
+        <div className="p-5 h-screen overflow-auto">
+          <div className=" space-y-3">
             <Sidebar />
-            <Button variant="outline" size="sm" onClick={handleSubmit}>
+            <Button
+              variant="outline"
+              className=" w-full"
+              size="sm"
+              onClick={handleSubmit}
+            >
               Log Out
             </Button>
           </div>

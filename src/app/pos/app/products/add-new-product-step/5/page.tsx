@@ -219,10 +219,7 @@ const AddProductPageFive = () => {
 
         <div className="space-y-5">
           <div className="space-y-1.5">
-            <form
-              className=" w-full overflow-hidden"
-              onSubmit={handleSubmit(onSubmit)}
-            >
+            <form className=" w-full " onSubmit={handleSubmit(onSubmit)}>
               <div
                 className="flex gap-3 justify-start"
                 style={{ alignItems: "flex-end" }}
@@ -260,7 +257,7 @@ const AddProductPageFive = () => {
                   </div>
                 </div>
                 <FormInput
-                  className="basis-2/12  w-[100px]"
+                  className="basis-2/12  w-[70px]"
                   label="Shop Code"
                   id="shopCode"
                   type="text"
@@ -268,7 +265,7 @@ const AddProductPageFive = () => {
                 />
 
                 <FormInput
-                  className="basis-2/12"
+                  className="basis-2/12 w-[100px]"
                   label="Color Code"
                   id="color_code"
                   type="text"
@@ -327,7 +324,7 @@ const AddProductPageFive = () => {
                 </div>
 
                 <FormInput
-                  className="basis-1/12"
+                  className="basis-2/12 w-[100px]"
                   label="Barcode"
                   id="barcode"
                   {...register("barcode")}
