@@ -72,3 +72,7 @@ input[type="number"]::-webkit-inner-spin-button {
 .filepond--drop-label {
   @apply bg-white !rounded-md;
 }
+
+.firebase-emulator-warning {
+  display: none;
+}
