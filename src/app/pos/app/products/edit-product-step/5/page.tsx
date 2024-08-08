@@ -62,8 +62,8 @@ const EditProductPageFive = () => {
 
   const [variants, setVariants] = useState<any[]>([]);
   const [open, setOpen] = useState(false);
-  const [image, setImage] = useState<File | undefined | string>(undefined);
   const [size, setSize] = useState<string>("");
+  const [image, setImage] = useState<File | undefined | string>(undefined);
   const [editMode, setEditMode] = useState({
     status: false,
     id: "",

@@ -174,10 +174,11 @@ const StockControlPage = () => {
     return postMediaFetch(url, arg);
   };
 
-  const { data: putData, trigger: add } = useSWRMutation(
-    `${Backend_URL}/product-variants`,
-    postFetcher
-  );
+  const {
+    data: putData,
+    trigger: add,
+    error: addError,
+  } = useSWRMutation(`${Backend_URL}/product-variants`, postFetcher);
 
   const onSubmit = async (value: any) => {
     console.log(value);
@@ -448,6 +449,11 @@ const StockControlPage = () => {
                                     </Button>
                                     <Button size="sm">Save changes</Button>
                                   </div>
+                                  {addError && (
+                                    <p className=" text-red-500 text-sm">
+                                      {addError.message}
+                                    </p>
+                                  )}
                                 </form>
                                 <SheetFooter
                                   className={

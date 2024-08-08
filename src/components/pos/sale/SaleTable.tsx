@@ -76,7 +76,7 @@ const SaleTable: React.FC<SaleTableProps> = ({ data, setData }) => {
   };
 
   return (
-    <div className="lg:h-[500px] xl:h-[735px] z-[900] overflow-auto">
+    <div className="lg:h-[200px] xl:h-[505px] z-[900] overflow-auto">
       <Table>
         <TableHeader className="hover:bg-white">
           <TableRow className="hover:bg-white bg-white">
