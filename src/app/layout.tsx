@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { GeistSans } from "geist/font/sans";
+import { GeistMono } from "geist/font/mono";
 import "../globals.css";
-
-const inter = Inter({ subsets: ["latin"] });
+import { AppProvider } from "./Provider/AppProvider";
 
 export const metadata: Metadata = {
   title: "Boss Nation",
@@ -16,7 +16,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={GeistSans.className}>
+        <AppProvider>{children}</AppProvider>
+      </body>
     </html>
   );
 }
