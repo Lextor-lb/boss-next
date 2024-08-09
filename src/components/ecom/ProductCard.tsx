@@ -11,28 +11,27 @@ const ProductCard = ({
   name,
   productBrand,
   salePrice,
+  medias,
 }: {
   id: number;
   name: string;
   salePrice: number;
-  productBrand: {
-    id: number;
-    name: string;
-  };
+  productBrand: string;
+  medias: any;
 }) => {
   const router = useRouter();
   return (
     <div
       onClick={() => router.push(`/products/${id}`)}
       key={id}
-      className=" p-4  cursor-pointer"
+      className=" cursor-pointer"
     >
       <div className=" relative">
         <Image
-          src={"https://amt.santar.store/uploads/sample/boy.jpg"}
+          src={medias[0]?.url}
           width={600}
           height={600}
-          className=" h-[300px] object-contain !w-full lg:w-[500px]"
+          className=" lg:h-[500px] h-[300px] object-cover !w-full "
           alt=""
         />
         <div className=" absolute  top-3 right-3">
@@ -50,7 +49,7 @@ const ProductCard = ({
             variant={"secondary"}
             className=" opacity-90 text-[12px] rounded-none"
           >
-            {productBrand.name}
+            {productBrand}
           </Badge>
         </div>
       </div>
@@ -62,9 +61,6 @@ const ProductCard = ({
           {new Intl.NumberFormat("ja-JP").format(salePrice)} MMK
         </p>
       </div>
-      <Button variant={"outline"} className=" w-full ">
-        <span className=" me-2">Add to cart</span> <Plus />
-      </Button>
     </div>
   );
 };

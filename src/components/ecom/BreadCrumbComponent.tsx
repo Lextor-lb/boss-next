@@ -22,7 +22,7 @@ const BreadCrumbComponent = ({
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbPage className=" font-bold text-xs">
+              <BreadcrumbPage className=" font-semibold text-base">
                 {path}
               </BreadcrumbPage>
             </BreadcrumbItem>
@@ -32,7 +32,7 @@ const BreadCrumbComponent = ({
               </BreadcrumbSeparator>
             )}
             <BreadcrumbItem>
-              <BreadcrumbPage className="text-primary/75 text-xs !font-light">
+              <BreadcrumbPage className="text-primary/75 text-sm ">
                 {currentPage}
               </BreadcrumbPage>
             </BreadcrumbItem>

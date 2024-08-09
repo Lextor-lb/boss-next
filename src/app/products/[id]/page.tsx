@@ -1,11 +1,12 @@
 "use client";
 
+import { useAppProvider } from "@/app/Provider/AppProvider";
 import { BreadCrumbComponent, Container } from "@/components/ecom";
 import HotDealAlert from "@/components/ecom/HotDealAlert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { Backend_URL, getFetch } from "@/lib/fetch";
+import { Backend_URL, getFetch, getFetchForEcom } from "@/lib/fetch";
 import { DashIcon } from "@radix-ui/react-icons";
 import { Heart, Plus, PlusIcon, ShoppingCart } from "lucide-react";
 import Image from "next/image";
@@ -20,9 +21,12 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
   const [quantity, setQuantity] = useState<number>(1);
   const [totalAvailable, setTotalAvailable] = useState<number>(1);
   const [onlyLeft, setOnlyLeft] = useState<string>("");
+  const [variantId, setVariantId] = useState<number>();
+
+  const { cartItems, setCartItems } = useAppProvider();
 
   const getData = (url: string) => {
-    return getFetch(url);
+    return getFetchForEcom(url);
   };
 
   const {
@@ -30,6 +34,20 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
     error,
     isLoading,
   } = useSWR(`${Backend_URL}/ecommerce-products/${params.id}`, getData);
+
+  const addToCart = () => () => {
+    if (!cartItems.some((el: any) => el.selectedVariant === variantId)) {
+      const item = {
+        ...productData,
+        quantity,
+        selectedVariant: variantId,
+        selectedProduct: productData.productVariants.find(
+          (el: any) => el.id === variantId
+        ),
+      };
+      setCartItems((prev: any) => [...prev, item]);
+    }
+  };
 
   useEffect(() => {
     if (productData) {
@@ -51,6 +69,7 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
           )
           .map((el: any) => el.productSizing)
       );
+      setVariantId(productData.productVariants[0].id);
     }
   }, [productData]);
 
@@ -70,12 +89,15 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
     const filteredImages = productData.productVariants
       .filter((variant: any) => variant.colorCode === colorCode)
       .map((variant: any) => variant.mediaUrl);
+
     setImageToShow(filteredImages);
+
     setAvailableSizes(
       productData.productVariants
         .filter((variant: any) => variant.colorCode === colorCode)
         .map((variant: any) => variant.productSizing)
     );
+
     setTotalAvailable(
       productData.productVariants.filter(
         (variant: any) =>
@@ -164,12 +186,21 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
                           {
                             mediaUrl,
                             colorCode,
-                          }: { mediaUrl: string; colorCode: string },
+                            id,
+                          }: {
+                            mediaUrl: string;
+                            colorCode: string;
+                            id: number;
+                          },
                           index: number
                         ) => (
                           <div
                             key={index}
-                            onClick={() => handleColorChange(colorCode)}
+                            onClick={() => {
+                              handleColorChange(colorCode);
+                              setVariantId(id);
+                              console.log(colorCode, selectedColor);
+                            }}
                             className={`cursor-pointer rounded-full p-1 ${
                               colorCode === selectedColor
                                 ? "border border-input"
@@ -178,7 +209,7 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
                           >
                             <div
                               style={{ backgroundImage: `url(${mediaUrl})` }}
-                              className="lg:w-7 lg:h-7 h-4 w-4 rounded-full bg-cover bg-center"
+                              className="lg:w-7 lg:h-7 h-4 bg-red-900 w-4 rounded-full bg-cover bg-center"
                             ></div>
                           </div>
                         )
@@ -195,6 +226,11 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
                     onValueChange={(e) => {
                       setSelectedSize(e);
                       setOnlyLeft("");
+                      setVariantId(
+                        productData.productVariants.find(
+                          (el: any) => el.productSizing == e
+                        ).id
+                      );
                     }}
                     size="sm"
                     type="single"
@@ -249,9 +285,19 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
                   )}
                 </div>
                 <div className=" pt-2 flex gap-2">
-                  <Button size={"sm"} className=" w-full lg:w-3/5">
-                    <span className=" me-1">Add to Cart</span>
-                    <Plus size={18} />
+                  <Button
+                    onClick={addToCart()}
+                    size={"sm"}
+                    disabled={isLoading}
+                    className=" w-full lg:w-3/5"
+                  >
+                    {cartItems.some(
+                      (el: any) => el.selectedVariant === variantId
+                    ) ? (
+                      <span className=" me-1">Added to Cart</span>
+                    ) : (
+                      <span className=" me-1">Add to Cart</span>
+                    )}
                   </Button>
                   <Button size={"sm"} variant={"outline"}>
                     <Heart />

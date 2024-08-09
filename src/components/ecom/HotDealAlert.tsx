@@ -19,7 +19,6 @@ import ProductCard from "./ProductCard";
 const HotDealAlert = ({ data, isLoading }: any) => {
   const next = useRef<HTMLButtonElement | null>(null);
   const previous = useRef<HTMLButtonElement | null>(null);
-  console.log(data);
   const router = useRouter();
   return (
     <div className=" space-y-4 mb-12">
@@ -60,7 +59,7 @@ const HotDealAlert = ({ data, isLoading }: any) => {
               ) : (
                 data.data.map(
                   (
-                    { name, media, productBrand, id, salePrice }: any,
+                    { name, medias, productBrand, id, salePrice }: any,
                     index: number
                   ) => (
                     <CarouselItem
@@ -72,6 +71,7 @@ const HotDealAlert = ({ data, isLoading }: any) => {
                         name={name}
                         productBrand={productBrand}
                         salePrice={salePrice}
+                        medias={medias}
                       />
                     </CarouselItem>
                   )

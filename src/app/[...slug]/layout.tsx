@@ -1,9 +1,9 @@
 import AppLayout from "@/components/ecom/AppLayout";
 import React from "react";
 
-const Layout = ({ children }: any) => {
+const Layout = ({ children, params }: any) => {
   return (
-    <AppLayout>
+    <AppLayout params={params}>
       <div className=" py-3">{children}</div>
     </AppLayout>
   );

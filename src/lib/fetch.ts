@@ -314,3 +314,30 @@ export const putMediaFetch = async (
     throw error;
   }
 };
+
+export const getFetchForEcom = async (
+  url: string,
+  body: any = null,
+  headers: Record<string, string> = {}
+) => {
+  try {
+    const options: RequestInit = {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    const response = await fetch(url, options);
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "An error occurred");
+    }
+
+    return data;
+  } catch (error: any) {
+    console.error("Fetch API Error:", error.message);
+    throw new Error(error.message || "An error occurred");
+  }
+};

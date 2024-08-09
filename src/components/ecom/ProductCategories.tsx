@@ -3,7 +3,7 @@ import Container from "./Container";
 import Heading from "./Heading";
 import { Button } from "../ui/button";
 import { IconLeft, IconRight } from "react-day-picker";
-import { Backend_URL, getFetch } from "@/lib/fetch";
+import { Backend_URL, getFetch, getFetchForEcom } from "@/lib/fetch";
 import useSWR from "swr";
 import {
   Carousel,
@@ -17,7 +17,7 @@ import Image from "next/image";
 
 const ProductCategories = () => {
   const getData = (url: string) => {
-    return getFetch(url);
+    return getFetchForEcom(url);
   };
 
   const { data, error, isLoading } = useSWR(
@@ -64,8 +64,8 @@ const ProductCategories = () => {
               className="w-full"
             >
               <CarouselContent>
-                {error || isLoading ? (
-                  <CarouselItem className="">
+                {error || isLoading || data?.length == 0 ? (
+                  <CarouselItem className=" h-[500px] bg-neutral-700">
                     <div className=" py-12"></div>
                   </CarouselItem>
                 ) : (

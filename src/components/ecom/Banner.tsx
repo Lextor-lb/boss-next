@@ -1,17 +1,17 @@
 import React from "react";
 import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
-import { Backend_URL, getFetch } from "@/lib/fetch";
+import { Backend_URL, getFetch, getFetchForEcom } from "@/lib/fetch";
 import useSWR from "swr";
 import Image from "next/image";
 
 const Banner = () => {
   const getData = (url: string) => {
-    return getFetch(url);
+    return getFetchForEcom(url);
   };
 
   const { data, error, isLoading } = useSWR(
-    `${Backend_URL}/slider/all`,
+    `${Backend_URL}/slider/1`,
     getData
   );
 
@@ -24,6 +24,7 @@ const Banner = () => {
           phoneImage: el.mobileImage,
         }
     );
+
   const sorting2 =
     data &&
     data?.data?.filter(
@@ -53,7 +54,7 @@ const Banner = () => {
           phoneImage: el.mobileImage,
         }
     );
-  console.log(sorting1);
+
   return (
     <div className="">
       <div className="flex justify-center object-contain items-center">
@@ -67,7 +68,9 @@ const Banner = () => {
         >
           <CarouselContent>
             {error || isLoading ? (
-              <CarouselItem className=" h-[500px] bg-neutral-600 animate-pulse"></CarouselItem>
+              <CarouselItem className=" h-[500px] flex justify-center items-center   text-red-300 py-12 bg-neutral-600">
+                <p className=" text-3xl ">up to 60% off</p>
+              </CarouselItem>
             ) : (
               <>
                 <>

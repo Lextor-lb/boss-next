@@ -41,9 +41,9 @@ const Footer = () => {
               >
                 New in
               </li>
-              <li onClick={() => router.push("/men")}>Men</li>
-              <li onClick={() => router.push("/women")}>Women</li>
-              <li onClick={() => router.push("/unisex")}>Unisex</li>
+              <li onClick={() => router.push("/men?page=1")}>Men</li>
+              <li onClick={() => router.push("/women?page=1")}>Women</li>
+              <li onClick={() => router.push("/unisex?page=1")}>Unisex</li>
             </ul>
           </div>
           <div className=" space-y-3">
@@ -76,7 +76,7 @@ const Footer = () => {
           </div>
         </div>
         <hr className=" border-3 border-secondary" />
-        <p className=" text-xs font-semibold text-center py-3">
+        <p className=" text-xs font-medium text-center py-3">
           Copyright © 2024 BossNation | All Rights Reserved |{" "}
           <span className=" underline">Terms and Conditions</span> |{" "}
           <span className=" underline">Privacy Policy</span>

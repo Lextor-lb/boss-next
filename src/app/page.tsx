@@ -12,7 +12,7 @@ import {
   Products,
 } from "@/components/ecom";
 import useSWR from "swr";
-import { Backend_URL, getFetch } from "@/lib/fetch";
+import { Backend_URL, getFetchForEcom } from "@/lib/fetch";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useState } from "react";
@@ -21,6 +21,7 @@ import CallToAction from "@/components/ecom/CallToAction";
 import Footer from "@/components/ecom/Footer";
 import AppLayout from "@/components/ecom/AppLayout";
 import { useRouter } from "next/navigation";
+import { AppProvider } from "./Provider/AppProvider";
 
 export default function Home() {
   const handleLogin = async () => {
@@ -34,13 +35,13 @@ export default function Home() {
   };
 
   const getData = (url: string) => {
-    return getFetch(url);
+    return getFetchForEcom(url);
   };
 
   const router = useRouter();
 
   const { data, error, isLoading } = useSWR(
-    `${Backend_URL}/ecommerce-Products/riddle/man?page=${1}`,
+    `${Backend_URL}/ecommerce-Products/riddle/man?limit=${12}`,
     getData
   );
 
@@ -53,7 +54,7 @@ export default function Home() {
         ) : (
           <>
             <Container>
-              <div className="space-y-4">
+              <div className="space-y-4 mt-5">
                 <BreadCrumbComponent path="Home" currentPage="Best Sellers" />
                 <Heading
                   header="Best selling products for you"
@@ -66,9 +67,9 @@ export default function Home() {
             </Container>
             {!isLoading && (
               <Button
-                className=" w-full bg-transparent flex !py-4 !text-xs rounded-none justify-center items-center"
+                className=" w-full mt-5 bg-transparent flex !py-4 !text-xs rounded-none justify-center items-center"
                 variant={"outline"}
-                onClick={() => router.push("/new-in")}
+                onClick={() => router.push("/new-in?page=1")}
               >
                 <Plus />{" "}
                 <span className=" capitalize !text-xs"> VIEW MORE</span>
