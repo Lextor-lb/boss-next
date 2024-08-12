@@ -11,6 +11,7 @@ import { DashIcon } from "@radix-ui/react-icons";
 import { Heart, Plus, PlusIcon, ShoppingCart } from "lucide-react";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
+import SweetAlert2 from "react-sweetalert2";
 import useSWR from "swr";
 
 const ProductDetailPage = ({ params }: { params: { id: string } }) => {
@@ -23,7 +24,7 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
   const [onlyLeft, setOnlyLeft] = useState<string>("");
   const [variantId, setVariantId] = useState<number>();
 
-  const { cartItems, setCartItems } = useAppProvider();
+  const { cartItems, setCartItems, handleLogin } = useAppProvider();
 
   const getData = (url: string) => {
     return getFetchForEcom(url);
@@ -44,6 +45,13 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
         selectedProduct: productData.productVariants.find(
           (el: any) => el.id === variantId
         ),
+        discountInPrice:
+          productData.salePrice -
+          productData.salePrice *
+            (1 - (productData.discountPrice as number) / 100),
+        priceAfterDiscount:
+          productData.salePrice *
+          (1 - (productData.discountPrice as number) / 100),
       };
       setCartItems((prev: any) => [...prev, item]);
     }
@@ -53,7 +61,6 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
     if (productData) {
       const initialVariant = productData.productVariants[0];
       setSelectedColor(initialVariant?.colorCode);
-      setImageToShow([initialVariant.mediaUrl]);
 
       setSelectedSize(
         productData.productVariants.find(
@@ -127,23 +134,141 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
     getData
   );
 
+  const [isClient, setIsClient] = useState(false);
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  const [swalProps, setSwalProps] = useState({
+    show: false,
+    showConfirmButton: false,
+  });
+
+  const addToWishList = () => {
+    if (isClient) {
+      if (localStorage.getItem("auth")) {
+        console.log("add here");
+      } else {
+        setSwalProps({
+          ...swalProps,
+          show: true,
+        });
+      }
+    }
+  };
+
   return (
     <>
-      {isLoading ? null : (
+      {isLoading ? (
+        <Container>
+          <div className="grid lg:grid-cols-5 gap-5 h-auto">
+            <div className="overflow-auto w-full lg:col-span-2">
+              <div className=" flex gap-3 lg:flex-col w-full bg-neutral-500 animate-pulse lg:h-[700px] overflow-auto  h-[400px]"></div>
+            </div>
+            <div className="lg:p-10 lg:col-span-3 space-y-2 lg:space-y-4 ">
+              <div className=" hidden lg:block">
+                <BreadCrumbComponent path="Home" currentPage="Best Sellers" />
+              </div>
+              <div className=" space-y-1">
+                <div className="flex gap-3 items-center">
+                  <span className=" h-3 w-24 bg-neutral-500 animate-pulse"></span>
+                </div>
+                <div className=" h-3 w-24 bg-neutral-500 animate-pulse"></div>
+              </div>
+              <div className=" h-3 w-24 bg-neutral-500 animate-pulse"></div>
+
+              <div>
+                <p className="text-neutral-500 mb-2 text-xs lg:text-sm uppercase">
+                  available colors
+                </p>
+                <div className=" flex gap-3">
+                  <div className=" h-7 w-7 bg-neutral-500 rounded-full animate-pulse"></div>
+                  <div className=" h-7 w-7 bg-neutral-500 rounded-full animate-pulse"></div>
+                  <div className=" h-7 w-7 bg-neutral-500 rounded-full animate-pulse"></div>
+                  <div className=" h-7 w-7 bg-neutral-500 rounded-full animate-pulse"></div>
+                </div>
+              </div>
+              <div className="space-y-3">
+                <p className="text-neutral-500 mb-2 text-xs lg:text-sm uppercase">
+                  Select Size
+                </p>
+                <div className=" flex gap-3">
+                  <div className=" h-7 w-7 bg-neutral-500 rounded-full animate-pulse"></div>
+                  <div className=" h-7 w-7 bg-neutral-500 rounded-full animate-pulse"></div>
+                  <div className=" h-7 w-7 bg-neutral-500 rounded-full animate-pulse"></div>
+                  <div className=" h-7 w-7 bg-neutral-500 rounded-full animate-pulse"></div>
+                </div>
+              </div>
+              <div>
+                <p className="text-neutral-500 mb-2 text-xs lg:text-sm uppercase">
+                  Quantity
+                </p>
+                <div className=" flex gap-3">
+                  <div className=" h-7 w-7 bg-neutral-500 rounded-full animate-pulse"></div>
+                  <div className=" h-7 w-7 bg-neutral-500 rounded-full animate-pulse"></div>
+                  <div className=" h-7 w-7 bg-neutral-500 rounded-full animate-pulse"></div>
+                  <div className=" h-7 w-7 bg-neutral-500 rounded-full animate-pulse"></div>
+                </div>
+              </div>
+              <div className=" flex gap-3">
+                <div className=" h-3 w-12 bg-neutral-500 animate-pulse"></div>
+                <div className=" h-3 w-12 bg-neutral-500 animate-pulse"></div>
+                <div className=" h-3 w-12 bg-neutral-500 animate-pulse"></div>
+                <div className=" h-3 w-12 bg-neutral-500 animate-pulse"></div>
+              </div>
+              <div className=" h-3 w-12 bg-neutral-500 animate-pulse"></div>
+
+              <div className=" pt-2 flex gap-2">
+                <Button
+                  onClick={addToCart()}
+                  disabled={isLoading}
+                  className=" w-full lg:w-3/5"
+                >
+                  {cartItems.some(
+                    (el: any) => el.selectedVariant === variantId
+                  ) ? (
+                    <span className=" me-1">Added to Cart</span>
+                  ) : (
+                    <span className=" me-1">Add to Cart</span>
+                  )}
+                </Button>
+                <Button
+                  onClick={() => addToWishList()}
+                  size={"sm"}
+                  variant={"outline"}
+                >
+                  <Heart />
+                </Button>
+              </div>
+            </div>
+          </div>
+        </Container>
+      ) : (
         <Container>
           <div>
             <div className="grid lg:grid-cols-5 gap-5 h-auto">
               <div className="overflow-auto w-full lg:col-span-2">
-                <div className=" flex gap-3 lg:flex-col w-full overflow-auto">
-                  {imageToShow.length === 0 ? (
-                    <div className="bg-neutral-500 animate-pulse h-auto"></div>
+                <div className=" flex gap-3 lg:flex-col w-full lg:h-[700px] overflow-auto  h-[400px]">
+                  {imageToShow.length < 1 ? (
+                    <>
+                      {productData.mediaUrls.map(({ url }: any, index: any) => (
+                        <Image
+                          key={index}
+                          src={url}
+                          alt="product image"
+                          className="!w-full !h-[full] object-cover"
+                          width={300}
+                          height={300}
+                        />
+                      ))}
+                    </>
                   ) : (
                     imageToShow.map((el, index) => (
                       <Image
                         key={index}
                         src={el}
                         alt="product image"
-                        className="!w-full !h-full"
+                        className="!w-full !h-[full] object-cover"
                         width={300}
                         height={300}
                       />
@@ -152,21 +277,49 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
                 </div>
               </div>
               <div className="lg:p-10 lg:col-span-3 space-y-2 lg:space-y-4 ">
-                <BreadCrumbComponent path="Home" currentPage="Best Sellers" />
+                <div className=" hidden lg:block">
+                  <BreadCrumbComponent path="Home" currentPage="Best Sellers" />
+                </div>
                 <div className=" space-y-1">
                   <div className="flex gap-3 items-center">
                     <p className="lg:text-xl text-lg font-semibold">
-                      {productData.name}
+                      {productData?.name}
                     </p>
                   </div>
                   <p className=" font-light text-primary/60 lg:text-base text-xs">
                     {productData?.productBrand}
                   </p>
                 </div>
-                <p className="font-semibold text-sm">
-                  {new Intl.NumberFormat("ja-JP").format(productData.salePrice)}{" "}
-                  MMK
-                </p>
+                {(productData?.discountPrice as number) > 0 ? (
+                  <div className=" space-y-1.5 text-sm lg:text-base ">
+                    <Badge className=" text-black bg-neutral-300">
+                      {productData.discountPrice}%
+                    </Badge>
+
+                    <div className="lg:flex gap-2 space-y-1 items-center">
+                      <p className=" line-through opacity-80">
+                        {new Intl.NumberFormat("ja-JP").format(
+                          productData.salePrice
+                        )}{" "}
+                        MMK
+                      </p>
+                      <p className=" text-sm !mt-0 lg:text-base">
+                        {new Intl.NumberFormat("ja-JP").format(
+                          productData.salePrice *
+                            (1 - (productData.discountPrice as number) / 100)
+                        )}{" "}
+                        MMK
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <p className=" text-sm">
+                    {new Intl.NumberFormat("ja-JP").format(
+                      productData.salePrice
+                    )}{" "}
+                    MMK
+                  </p>
+                )}
                 <Badge>{productData.productFitting}</Badge>
                 <div>
                   <p className="text-neutral-500 mb-2 text-xs lg:text-sm uppercase">
@@ -199,7 +352,6 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
                             onClick={() => {
                               handleColorChange(colorCode);
                               setVariantId(id);
-                              console.log(colorCode, selectedColor);
                             }}
                             className={`cursor-pointer rounded-full p-1 ${
                               colorCode === selectedColor
@@ -287,7 +439,6 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
                 <div className=" pt-2 flex gap-2">
                   <Button
                     onClick={addToCart()}
-                    size={"sm"}
                     disabled={isLoading}
                     className=" w-full lg:w-3/5"
                   >
@@ -299,7 +450,11 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
                       <span className=" me-1">Add to Cart</span>
                     )}
                   </Button>
-                  <Button size={"sm"} variant={"outline"}>
+                  <Button
+                    onClick={() => addToWishList()}
+                    size={"sm"}
+                    variant={"outline"}
+                  >
                     <Heart />
                   </Button>
                 </div>
@@ -308,6 +463,47 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
             <hr className=" my-8" />
             <HotDealAlert data={data} isLoading={dealLoading} />
           </div>
+          {isClient && (
+            <SweetAlert2 {...swalProps}>
+              <div className=" pointer-events-none space-y-3 text-center">
+                <p className=" pointer-events-none font-medium">Wishlist</p>
+                <p className=" pointer-events-none text-black/50 text-sm">
+                  Your wishlist is currently empty. Sign in or create an account
+                  to save your wishlist across all your devices.
+                </p>
+                <div className="  pointer-events-none flex gap-3 justify-center items-center">
+                  <Button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSwalProps({
+                        ...swalProps,
+                        show: false,
+                      });
+                    }}
+                    size={"sm"}
+                    className="  pointer-events-auto"
+                    variant={"outline"}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={(e) => {
+                      handleLogin();
+                      e.stopPropagation();
+                      setSwalProps({
+                        ...swalProps,
+                        show: false,
+                      });
+                    }}
+                    size={"sm"}
+                    className="  pointer-events-auto"
+                  >
+                    Sign In
+                  </Button>
+                </div>
+              </div>
+            </SweetAlert2>
+          )}
         </Container>
       )}
     </>

@@ -70,7 +70,10 @@ const ProductCategories = () => {
                   </CarouselItem>
                 ) : (
                   data.map(({ name, media }: any, index: number) => (
-                    <CarouselItem key={index} className="lg:basis-1/3">
+                    <CarouselItem
+                      key={index}
+                      className=" basis-2/3 lg:basis-1/3"
+                    >
                       <Image
                         src={media.url}
                         className=" w-full object-cover h-[500px] "
@@ -78,9 +81,7 @@ const ProductCategories = () => {
                         width={300}
                         height={600}
                       />
-                      <div className=" font-bold p-3 text-sm lg:text-base ">
-                        {name}
-                      </div>
+                      <div className="  p-3 text-sm lg:text-base ">{name}</div>
                     </CarouselItem>
                   ))
                 )}

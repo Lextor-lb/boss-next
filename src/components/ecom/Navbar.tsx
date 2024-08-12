@@ -16,7 +16,7 @@ const Navbar = () => {
   const { searchInputValue, setSearchInputValue } = useAppProvider();
 
   return (
-    <div className="z-[50] h-[100px] fixed flex justify-center items-center bg-secondary top-0 w-full border-b-2 border-input py-3">
+    <div className="z-[50] h-[80px] lg:h-[100px] fixed flex justify-center items-center bg-secondary top-0 w-full border-b-2 border-input py-3">
       <Container className=" flex justify-center flex-col  h-full">
         <div className=" grid grid-cols-2 lg:grid-cols-3 items-center gap-3">
           <p
@@ -69,13 +69,20 @@ const Navbar = () => {
                 className=" border-s-0 w-2/3 border-0 rounded-s-none"
               />
             </div>
-            <ControlSheet
-              buttonName={<Heart />}
-              title="Wish List"
-              desc="Your wishlist is here"
-            >
-              Wish list
-            </ControlSheet>
+            <div className=" block lg:hidden">
+              <ControlSheet buttonName={<Search />} title="" desc="">
+                search
+              </ControlSheet>
+            </div>
+            <div className=" hidden lg:block">
+              <ControlSheet
+                buttonName={<Heart />}
+                title="Wish List"
+                desc="Your wishlist is here"
+              >
+                Wish list
+              </ControlSheet>
+            </div>
             <ControlSheet
               buttonName={<ShoppingCart />}
               title="Add to Cart"
@@ -84,9 +91,11 @@ const Navbar = () => {
             >
               <Cart closeRef={closeRef} />
             </ControlSheet>
-            <ControlSheet buttonName={<User />} title="User Profile">
-              profile
-            </ControlSheet>
+            <div className=" hidden lg:block">
+              <ControlSheet buttonName={<User />} title="User Profile">
+                profile
+              </ControlSheet>
+            </div>
             <div className=" block lg:hidden">
               <ControlSheet
                 buttonName={<HamburgerMenuIcon width={24} height={24} />}

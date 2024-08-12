@@ -3,13 +3,15 @@ import React from "react";
 import { Button } from "../ui/button";
 import { X } from "lucide-react";
 import { useAppProvider } from "@/app/Provider/AppProvider";
+import { Badge } from "../ui/badge";
 
 const CartItem = ({ data }: any) => {
   const { cartItems, setCartItems } = useAppProvider();
-  console.log("cart", cartItems);
+
   const remove = (id: number) => {
     setCartItems(cartItems.filter((el: any) => el.selectedProduct.id !== id));
   };
+
   return (
     <div>
       <div className=" grid grid-cols-3 gap-4">
@@ -35,7 +37,7 @@ const CartItem = ({ data }: any) => {
         <div className=" col-span-2">
           <div className=" space-y-2">
             <div className=" flex items-center gap-2">
-              <p className=" w-[100px] text-xs lg:text-sm font-medium">
+              <p className=" w-[100px] text-sm lg:text-sm font-normal">
                 {data?.name}
               </p>
               <span>-</span>
@@ -46,12 +48,35 @@ const CartItem = ({ data }: any) => {
                   }}
                   className="lg:w-7 lg:h-7 h-4 bg-red-900 w-4 rounded-full bg-cover bg-center"
                 ></div>
-                <p className=" text-xs text-primary/60 lg:text-sm font-medium">
+                <p className=" text-xs text-primary/60 lg:text-sm font-normal">
                   {data.selectedProduct.productSizing}
                 </p>
               </div>
             </div>
-            <p className=" text-xs lg:text-sm font-medium">{data?.salePrice}</p>
+            {(data.discountPrice as number) > 0 ? (
+              <div className=" space-y-1 text-xs lg:text-sm">
+                <Badge className=" text-black font-normal h-4 text-xs bg-neutral-300">
+                  {data.discountPrice}%
+                </Badge>
+
+                <div className="lg:flex gap-2 items-center">
+                  <p className=" line-through">
+                    {new Intl.NumberFormat("ja-JP").format(data.salePrice)} MMK
+                  </p>
+                  <p className="text-xs lg:text-sm">
+                    {new Intl.NumberFormat("ja-JP").format(
+                      data.salePrice *
+                        (1 - (data.discountPrice as number) / 100)
+                    )}{" "}
+                    MMK
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <p className=" text-xs lg:text-sm">
+                {new Intl.NumberFormat("ja-JP").format(data.salePrice)} MMK
+              </p>
+            )}
           </div>
         </div>
       </div>

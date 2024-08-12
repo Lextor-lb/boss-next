@@ -8,11 +8,13 @@ import { Input } from "../ui/input";
 import { Slider } from "../ui/slider";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
+import { Checkbox } from "../ui/checkbox";
 
 const FilterForm = ({ closeRef }: any) => {
   const [isClient, setIsClient] = useState(false);
   const [genders, setGenders] = useState<string[]>([]);
   const [brands, setBrands] = useState<(string | number)[]>([]);
+  const [brandName, setBrandName] = useState<string[]>([]);
   const [type, setType] = useState<(string | number)[]>([]);
   const [range, setRange] = useState([0, 0]);
   const [open, setOpen] = useState<number[]>([1, 2, 3, 4]);
@@ -28,6 +30,7 @@ const FilterForm = ({ closeRef }: any) => {
       setBrands(filters.brands || []);
       setType(filters.type || []);
       setRange(filters.range || [0, 0]);
+      setBrandName(filters.brandName || []);
       setOpen(filters.open || [1, 2, 3, 4]);
     }
   }, [isClient]);
@@ -94,7 +97,7 @@ const FilterForm = ({ closeRef }: any) => {
     isClient &&
       localStorage.setItem(
         "filters",
-        JSON.stringify({ genders, brands, type, range, open })
+        JSON.stringify({ genders, brands, type, range, open, brandName })
       );
 
     // Create an array to hold the query parameters
@@ -122,9 +125,15 @@ const FilterForm = ({ closeRef }: any) => {
     }
 
     // Create the URL with the query parameters
-    const queryString =
-      queryParams.length > 0 ? `/${queryParams.join("&")}` : "";
-    router.push(`/products-filter${queryString}&page=1`);
+    if (brandName.length > 0) {
+      const queryString =
+        queryParams.length > 0 ? `/${queryParams.join("&")}` : "";
+      router.push(`/products-filter${queryString}&page=1/${brandName}`);
+    } else {
+      const queryString =
+        queryParams.length > 0 ? `/${queryParams.join("&")}` : "";
+      router.push(`/products-filter${queryString}&page=1`);
+    }
   };
 
   return (
@@ -186,13 +195,23 @@ const FilterForm = ({ closeRef }: any) => {
               {!brandLoading &&
                 brandData?.data?.map(
                   ({ id, name }: { id: number; name: string }) => (
-                    <FilterItem
+                    <div
                       key={id}
-                      run={handleBrandChange}
-                      name={name}
-                      value={id}
-                      isChecked={brands.includes(id)}
-                    />
+                      className="bg-secondary flex gap-2 rounded items-center p-2"
+                    >
+                      <Checkbox
+                        checked={brands.includes(id)}
+                        onCheckedChange={() => {
+                          handleBrandChange(id);
+                          setBrandName((prev) =>
+                            prev.includes(name)
+                              ? prev.filter((item) => item !== name)
+                              : [...prev, name]
+                          );
+                        }}
+                      />
+                      <span className="text-sm font-medium">{name}</span>
+                    </div>
                   )
                 )}
             </div>
@@ -281,7 +300,16 @@ const FilterForm = ({ closeRef }: any) => {
           >
             Cancel
           </Button>
-          <Button type="submit" size="sm">
+          <Button
+            disabled={
+              genders.length == 0 &&
+              brands.length == 0 &&
+              type.length == 0 &&
+              range[1] == 0
+            }
+            type="submit"
+            size="sm"
+          >
             Save changes
           </Button>
         </div>

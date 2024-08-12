@@ -28,6 +28,7 @@ interface Product {
   productBrand: string;
   productType: ProductType;
   medias: any;
+  discountPrice?: number;
 }
 
 const Products = ({
@@ -42,7 +43,7 @@ const Products = ({
     <div className=" space-y-3">
       <>
         {isLoading ? (
-          <div className=" grid grid-cols-2 gap-x-3 gap-y-8 lg:grid-cols-4">
+          <div className=" grid grid-cols-2 gap-x-3 gap-y-24 lg:grid-cols-4">
             <ProductSkeleton />
           </div>
         ) : (
@@ -54,7 +55,15 @@ const Products = ({
             ) : (
               <>
                 {data.map(
-                  ({ name, gender, productBrand, salePrice, id, medias }) => (
+                  ({
+                    name,
+                    gender,
+                    productBrand,
+                    salePrice,
+                    id,
+                    medias,
+                    discountPrice,
+                  }) => (
                     <ProductCard
                       id={id}
                       key={id}
@@ -62,6 +71,7 @@ const Products = ({
                       productBrand={productBrand}
                       salePrice={salePrice}
                       medias={medias}
+                      discountPrice={discountPrice}
                     />
                   )
                 )}
