@@ -137,9 +137,14 @@ const Navbar = () => {
               <Cart closeRef={closeRef} />
             </ControlSheet>
             <div className=" hidden lg:block">
-              <ControlSheet buttonName={<User />} title="User Profile">
-                profile
-              </ControlSheet>
+              <Button
+                onClick={() => router.push("/profile")}
+                size={"sm"}
+                variant={"ghost"}
+                className="relative"
+              >
+                <User />
+              </Button>
             </div>
             <div className=" block lg:hidden">
               <ControlSheet
@@ -183,12 +188,21 @@ const Navbar = () => {
                   <p
                     onClick={() => {
                       setSearchInputValue("");
-
                       router.push("/unisex?page=1");
                     }}
                     className=" text-sm cursor-pointer uppercase"
                   >
                     Unisex
+                  </p>
+                  <hr className="  border-1.5 border-input" />
+                  <p
+                    onClick={() => {
+                      setSearchInputValue("");
+                      router.push("/profile");
+                    }}
+                    className=" text-sm cursor-pointer uppercase"
+                  >
+                    Profile
                   </p>
                   <hr className="  border-1.5 border-input" />
                 </div>
