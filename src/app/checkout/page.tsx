@@ -14,7 +14,9 @@ const Checkout = () => {
 
   return (
     <Container className=" space-y-3 pt-4">
-      <p className=" text-sm lg:text-sm pb-3 font-normal">Shopping Bag | Checkout</p>
+      <p className=" text-sm lg:text-sm pb-3 font-normal">
+        Shopping Bag | Checkout
+      </p>
       <div className=" grid grid-cols-12 gap-4">
         <div className=" col-span-full space-y-3 lg:col-span-9">
           <p className=" text-xl lg:text-3xl pb-3 capitalize font-semibold">
@@ -62,8 +64,8 @@ const Checkout = () => {
         <div className=" col-span-full lg:col-span-3">
           <OrderSummary
             buttonName={"Place Order"}
-            discount={0}
             cost={totalCost}
+            disabled={true}
             run={() => {}}
           />
         </div>

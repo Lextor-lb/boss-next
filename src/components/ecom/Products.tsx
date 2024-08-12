@@ -29,6 +29,7 @@ interface Product {
   productType: ProductType;
   medias: any;
   discountPrice?: number;
+  productCode: any;
 }
 
 const Products = ({
@@ -62,6 +63,7 @@ const Products = ({
                     salePrice,
                     id,
                     medias,
+                    productCode,
                     discountPrice,
                   }) => (
                     <ProductCard
@@ -72,6 +74,7 @@ const Products = ({
                       salePrice={salePrice}
                       medias={medias}
                       discountPrice={discountPrice}
+                      productCode={productCode}
                     />
                   )
                 )}

@@ -18,7 +18,7 @@ import { useAppProvider } from "@/app/Provider/AppProvider";
 import ControlSheet from "@/components/ecom/ControlSheet";
 import FilterForm from "@/components/ecom/FilterForm";
 
-const GeneralizedPage = ({ params }: { params: any }) => {
+const CategoryPage = ({ params }: { params: any }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [limit, setLimit] = useState(8);
   const { searchInputValue, setSearchInputValue } = useAppProvider();
@@ -36,12 +36,14 @@ const GeneralizedPage = ({ params }: { params: any }) => {
   const { data, isLoading, error } = useSWR(
     searchInputValue !== ""
       ? `${Backend_URL}/ecommerce-Products/riddle/${params.slug[0]}?search=${searchInputValue}`
-      : `${Backend_URL}/ecommerce-Products/riddle/${
-          params.slug[0]
-        }?page=${page}&limit=${12}`,
+      : `${Backend_URL}/ecommerce-Products/riddle?categoryId=${decodeURIComponent(
+          params.slug[1]
+        )}?page=${page}&limit=${12}`,
     getData
   );
-
+  
+  console.log(data);
+  console.log(decodeURIComponent(params.slug[1]));
   return (
     <div className=" py-8 space-y-12">
       <Container>
@@ -113,4 +115,4 @@ const GeneralizedPage = ({ params }: { params: any }) => {
   );
 };
 
-export default GeneralizedPage;
+export default CategoryPage;

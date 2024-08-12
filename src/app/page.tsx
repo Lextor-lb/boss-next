@@ -18,6 +18,7 @@ import { Plus } from "lucide-react";
 import ErrorComponent from "@/components/ErrorComponent";
 import AppLayout from "@/components/ecom/AppLayout";
 import { useRouter } from "next/navigation";
+import { useAppProvider } from "./Provider/AppProvider";
 
 export default function Home() {
   const handleLogin = async () => {
@@ -30,6 +31,8 @@ export default function Home() {
     }
   };
 
+  const { searchInputValue, setSearchInputValue } = useAppProvider();
+
   const getData = (url: string) => {
     return getFetchForEcom(url);
   };
@@ -37,14 +40,16 @@ export default function Home() {
   const router = useRouter();
 
   const { data, error, isLoading } = useSWR(
-    `${Backend_URL}/ecommerce-Products/riddle/man?limit=${12}`,
+    searchInputValue !== ""
+      ? `${Backend_URL}/ecommerce-Products/riddle/man?search=${searchInputValue}`
+      : `${Backend_URL}/ecommerce-Products/riddle/man?limit=${12}`,
     getData
   );
 
   return (
     <main className=" min-h-screen w-screen overflow-x-hidden bg-secondary">
       <AppLayout>
-        {/* <Banner /> */}
+      <Banner />
         {error ? (
           <ErrorComponent refetch={() => {}} />
         ) : (

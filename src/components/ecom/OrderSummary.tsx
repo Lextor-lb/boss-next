@@ -6,22 +6,19 @@ import { useAppProvider } from "@/app/Provider/AppProvider";
 import { Tag } from "lucide-react";
 import { Backend_URL, getFetchForEcom } from "@/lib/fetch";
 import useSWR from "swr";
-import SweetAlert2 from "react-sweetalert2";
 
 const OrderSummary = ({
   cost,
-  discount,
   run,
   buttonName,
   disabled,
 }: {
   cost: number;
-  discount: number;
   run: () => void;
   buttonName: string;
   disabled: boolean;
 }) => {
-  const { cartItems, handleLogin } = useAppProvider();
+  const { cartItems } = useAppProvider();
 
   const [couponCode, setCouponCode] = useState("");
   const [inputValue, setInputValue] = useState("");
@@ -29,18 +26,16 @@ const OrderSummary = ({
   const [couponDiscount, setCouponDiscount] = useState(0);
   const [error, setError] = useState("");
 
-  const getData = (url: string) => {
-    return getFetchForEcom(url);
-  };
+  const getData = (url: string) => getFetchForEcom(url);
 
   const { data, error: fetchError } = useSWR(
     couponCode !== "" ? `${Backend_URL}/coupon/${couponCode}` : null,
     getData,
     {
       onSuccess: (data) => {
-        if (data?.valid) {
+        if (data) {
           setValidCoupon(true);
-          setCouponDiscount(data.discountAmount);
+          setCouponDiscount(data.discount);
           setError("");
         } else {
           setError("Invalid coupon code.");
@@ -66,20 +61,19 @@ const OrderSummary = ({
     }
   };
 
-  const subtotal = cartItems.reduce(
-    (pv: any, cv: any) => pv + cv.priceAfterDiscount,
-    0
-  );
+  const subtotal = cartItems
+    .reduce((pv: number, cv: any) => pv + cv.priceAfterDiscount, 0)
+    .toFixed(0);
 
-  console.log(data);
-
-  const estimatedTotal = subtotal - discount - couponDiscount;
+  const estimatedTotal = validCoupon
+    ? (subtotal * (1 - couponDiscount / 100)).toFixed(0)
+    : subtotal;
 
   return (
     <div className="lg:border-2 lg:border-input lg:p-5 lg:bg-secondary">
       <p className="text-lg font-semibold mb-6">Order Summary</p>
       <div className="text-sm space-y-4">
-        {cartItems?.length == 0 ? (
+        {cartItems?.length === 0 ? (
           <div className="flex justify-between">
             <p>Price</p>
             <p>0</p>
@@ -93,21 +87,17 @@ const OrderSummary = ({
           ))
         )}
         <div className="flex justify-between">
-          <p>Discount</p>
-          <p>{new Intl.NumberFormat("ja-JP").format(discount)}</p>
-        </div>
-        <div className="flex justify-between">
           <p>Coupon Applied</p>
-          <p>{validCoupon ? couponCode : "-"}</p>
+          <i>{validCoupon ? couponCode : "-"}</i>
         </div>
         <div className="flex justify-between">
           <p>Coupon Discount</p>
-          <p>{new Intl.NumberFormat("ja-JP").format(couponDiscount)}</p>
+          <p>{validCoupon ? `${couponDiscount}%` : "-"}</p>
         </div>
         <hr className="border-1.5" />
         <div className="flex justify-between">
           <p>Subtotal</p>
-          <p>{new Intl.NumberFormat("ja-JP").format(subtotal)}</p>
+          <p>{new Intl.NumberFormat("ja-JP").format(estimatedTotal)}</p>
         </div>
         <div className="flex justify-between">
           <p>Delivery</p>

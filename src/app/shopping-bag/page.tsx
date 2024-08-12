@@ -169,7 +169,6 @@ const ShoppingBag = () => {
           <OrderSummary
             disabled={cartItems.length == 0}
             buttonName="Proceed to checkout"
-            discount={0}
             cost={totalCost}
             run={handleClick}
           />
