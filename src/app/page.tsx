@@ -15,13 +15,9 @@ import useSWR from "swr";
 import { Backend_URL, getFetchForEcom } from "@/lib/fetch";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import { useState } from "react";
 import ErrorComponent from "@/components/ErrorComponent";
-import CallToAction from "@/components/ecom/CallToAction";
-import Footer from "@/components/ecom/Footer";
 import AppLayout from "@/components/ecom/AppLayout";
 import { useRouter } from "next/navigation";
-import { AppProvider } from "./Provider/AppProvider";
 
 export default function Home() {
   const handleLogin = async () => {
@@ -48,19 +44,19 @@ export default function Home() {
   return (
     <main className=" min-h-screen w-screen overflow-x-hidden bg-secondary">
       <AppLayout>
-        <Banner />
+        {/* <Banner /> */}
         {error ? (
           <ErrorComponent refetch={() => {}} />
         ) : (
           <>
             <Container>
-              <div className="space-y-4 mt-5">
+              <div className="space-y-4 mt-12">
                 <BreadCrumbComponent path="Home" currentPage="Best Sellers" />
                 <Heading
                   header="Best selling products for you"
                   desc="the latest and greatest products that every man needs to enhance his lifestyle"
                 />
-                <div className=" space-y-3 ">
+                <div className=" pt-8 space-y-4 ">
                   <Products isLoading={isLoading} data={data?.data} />
                 </div>
               </div>

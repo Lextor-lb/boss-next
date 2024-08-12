@@ -29,7 +29,7 @@ const GeneralizedPage = ({ params }: { params: any }) => {
 
   const router = useRouter();
 
-  const decodedString = decodeURIComponent(params.slug);
+  const decodedString = decodeURIComponent(params.slug[0]);
 
   const { data, isLoading, error } = useSWR(
     `${Backend_URL}/ecommerce-Products/riddle?${decodedString}`,
@@ -37,12 +37,24 @@ const GeneralizedPage = ({ params }: { params: any }) => {
   );
 
   let newString = decodedString.replace(/&page=\d+/, "");
+
   return (
-    <div className=" space-y-4">
+    <div className=" py-8 space-y-4">
       <Container>
-        <BreadCrumbComponent path="Home" currentPage="Filtered Products" />
+        <BreadCrumbComponent
+          path="Home"
+          currentPage={
+            params.slug[1]
+              ? decodeURIComponent(params.slug[1])
+              : "Filtered Products"
+          }
+        />
         <Heading
-          header={`Your filtered Products`}
+          header={
+            params.slug[1]
+              ? decodeURIComponent(params.slug[1])
+              : "Filtered Products"
+          }
           desc={`the latest and greatest products to enhance his lifestyle`}
         />
       </Container>

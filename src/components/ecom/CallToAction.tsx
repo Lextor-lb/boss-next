@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 const CallToAction = () => {
   const router = useRouter();
   return (
-    <Container className=" my-12 lg:!w-[60%]">
+    <Container className=" my-12 lg:my-24 lg:!w-[60%]">
       <div className=" bg-neutral-200 lg:flex-row flex-col flex gap-3 justify-between items-center p-5 lg:px-[56px] lg:py-[64px]">
         <p className=" text-sm lg:text-xl flex flex-col font-semibold">
           <span>Discover our latest arrivals and</span>

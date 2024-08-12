@@ -7,7 +7,7 @@ const AppLayout = ({ children }: any) => {
   return (
     <div>
       <Navbar />
-      <div className="h-[100px]"></div>
+      <div className="h-[80px] lg:h-[100px]"></div>
       {children}
       <CallToAction />
       <Footer />

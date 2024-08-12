@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import {
   Sheet,
   SheetClose,
@@ -10,6 +12,8 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Button } from "../ui/button";
+import { Badge } from "../ui/badge";
+import { useAppProvider } from "@/app/Provider/AppProvider";
 
 type controls = {
   buttonName: any;
@@ -27,6 +31,8 @@ const ControlSheet = ({
   closeRef,
 }: controls) => {
   const [open, setOpen] = useState(false);
+  const { cartItems } = useAppProvider();
+
   return (
     <Sheet
       open={open}
@@ -40,12 +46,17 @@ const ControlSheet = ({
             {buttonName}
           </Button>
         ) : (
-          <Button size={"sm"} variant={"ghost"}>
+          <Button size={"sm"} variant={"ghost"} className=" relative">
+            {title == "Add to Cart" && cartItems?.length > 0 && (
+              <span className=" absolute -top-[0.8px] rounded-full right-1.5 h-3.5 w-3.5 bg-red-600 text-red-50 !p-0 flex justify-center items-center">
+                {cartItems?.length}
+              </span>
+            )}
             {buttonName}
           </Button>
         )}
       </SheetTrigger>
-      <SheetContent className=" w-screen lg:w-2/3 space-y-2">
+      <SheetContent className=" w-[90%] lg:w-2/3 space-y-2">
         <SheetHeader>
           <SheetTitle className=" text-start !pb-0">{title}</SheetTitle>
           <SheetDescription className="!mt-0 text-start">

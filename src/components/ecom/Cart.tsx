@@ -1,11 +1,15 @@
+"use client";
+
 import React from "react";
 import CartItem from "./CartItem";
 import { useAppProvider } from "@/app/Provider/AppProvider";
 import { Button } from "../ui/button";
+import { useRouter } from "next/navigation";
 
 const Cart = ({ closeRef }: any) => {
-  const { cartItems } = useAppProvider();
-  const total = cartItems.reduce((pv: any, cv: any) => pv + cv.salePrice, 0);
+  const { cartItems, totalCost } = useAppProvider();
+
+  const router = useRouter();
   return (
     <div className=" space-y-3 bg-white pt-4 z-50 overflow-scroll h-[90%] relative">
       {cartItems.length == 0 ? (
@@ -20,7 +24,7 @@ const Cart = ({ closeRef }: any) => {
       <div className=" bg-white absolute bottom-0 w-full">
         <div className=" flex items-center bg-white pt-3 justify-between">
           <p>Total</p>
-          <p>{new Intl.NumberFormat("ja-JP").format(total)}</p>
+          <p>{new Intl.NumberFormat("ja-JP").format(totalCost)}</p>
         </div>
         <hr className=" my-3" />
         <div className=" space-y-1">
@@ -31,7 +35,12 @@ const Cart = ({ closeRef }: any) => {
           >
             Continue Shopping
           </Button>
-          <Button size={"sm"} className=" w-full text-center">
+          <Button
+            onClick={() => router.push("/shopping-bag")}
+            size={"sm"}
+            disabled={cartItems.length == 0}
+            className=" w-full text-center"
+          >
             Shopping Bag
           </Button>
         </div>

@@ -41,7 +41,7 @@ const GeneralizedPage = ({ params }: { params: any }) => {
   );
 
   return (
-    <div className=" space-y-4">
+    <div className=" py-8 space-y-12">
       <Container>
         <BreadCrumbComponent
           path="Home"
@@ -75,13 +75,14 @@ const GeneralizedPage = ({ params }: { params: any }) => {
           </div>
         </Container>
       </div>
+
       {error ? (
         <ErrorComponent refetch={() => {}} />
       ) : (
         <>
           <Container>
             {isLoading ? (
-              <div className=" grid grid-cols-2 gap-x-3 gap-y-8 lg:grid-cols-4">
+              <div className=" mb-12 grid grid-cols-2 gap-x-3 gap-y-12 lg:grid-cols-4">
                 <ProductSkeleton />
               </div>
             ) : (
