@@ -1,3 +1,4 @@
+"use client";
 import React, { useRef } from "react";
 import Container from "./Container";
 import Heading from "./Heading";
@@ -14,20 +15,24 @@ import {
 } from "../ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 const ProductCategories = () => {
   const getData = (url: string) => {
     return getFetchForEcom(url);
   };
 
+  const router = useRouter();
+
   const { data, error, isLoading } = useSWR(
-    `${Backend_URL}/ecommerce-categories
-    `,
+    `${Backend_URL}/ecommerce-categories`,
     getData
   );
 
   const next = useRef<HTMLButtonElement | null>(null);
   const previous = useRef<HTMLButtonElement | null>(null);
+
+  console.log(data);
 
   return (
     <Container>
@@ -69,21 +74,32 @@ const ProductCategories = () => {
                     <div className=" py-12"></div>
                   </CarouselItem>
                 ) : (
-                  data.map(({ name, media }: any, index: number) => (
-                    <CarouselItem
-                      key={index}
-                      className=" basis-2/3 lg:basis-1/3"
-                    >
-                      <Image
-                        src={media.url}
-                        className=" w-full object-cover h-[500px] "
-                        alt=""
-                        width={300}
-                        height={600}
-                      />
-                      <div className="  p-3 text-sm lg:text-base ">{name}</div>
-                    </CarouselItem>
-                  ))
+                  data.map(
+                    ({ name, media, productCategory }: any, index: number) => (
+                      <CarouselItem
+                        key={index}
+                        onClick={() =>
+                          router.push(
+                            `/categories/${name.toLowerCase()}/${
+                              productCategory.id
+                            }`
+                          )
+                        }
+                        className=" basis-2/3 lg:basis-1/3"
+                      >
+                        <Image
+                          src={media.url}
+                          className=" w-full object-cover h-[500px] "
+                          alt=""
+                          width={300}
+                          height={600}
+                        />
+                        <div className="  p-3 text-sm lg:text-base ">
+                          {name}
+                        </div>
+                      </CarouselItem>
+                    )
+                  )
                 )}
               </CarouselContent>
               <div className=" hidden">

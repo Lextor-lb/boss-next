@@ -13,13 +13,11 @@ import { SlidersHorizontal } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { useRef, useState } from "react";
 import useSWR from "swr";
-import { useAppProvider } from "@/app/Provider/AppProvider";
 import ControlSheet from "@/components/ecom/ControlSheet";
 import FilterForm from "@/components/ecom/FilterForm";
 
 const GeneralizedPage = ({ params }: { params: any }) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const { searchInputValue, setSearchInputValue } = useAppProvider();
 
   const getData = (url: string) => {
     return getFetchForEcom(url);
@@ -101,7 +99,9 @@ const GeneralizedPage = ({ params }: { params: any }) => {
                     totalPages={data?.totalPages}
                     onPageChange={(page) => {
                       router.replace(
-                        `/products-filter/${newString}&page=${page}`
+                        `/products-filter/${newString}&page=${page}/${decodeURIComponent(
+                          params.slug[1]
+                        )}`
                       );
                       setCurrentPage(page);
                     }}

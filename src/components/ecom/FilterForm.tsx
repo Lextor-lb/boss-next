@@ -77,8 +77,6 @@ const FilterForm = ({ closeRef }: any) => {
     getData
   );
 
-  console.log(typesData);
-
   // Function to handle input changes
   const handleInputChange = (index: number, value: string) => {
     const newRange = [...range];

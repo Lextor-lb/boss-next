@@ -15,6 +15,7 @@ const ProductCard = ({
   salePrice,
   medias,
   discountPrice,
+  productCode,
 }: {
   id: number;
   name: string;
@@ -22,6 +23,7 @@ const ProductCard = ({
   productBrand: string;
   medias: any;
   discountPrice?: number;
+  productCode: any;
 }) => {
   const router = useRouter();
 
@@ -88,7 +90,9 @@ const ProductCard = ({
       </div>
       <div className=" space-y-4 p-3">
         <div className=" space-y-1.5">
-          <p className=" text- font-medium">{name}</p>
+          <p className=" text- font-medium">
+            {name} {productCode}
+          </p>
         </div>
         {(discountPrice as number) > 0 ? (
           <div className=" space-y-0.5 text-sm">

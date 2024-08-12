@@ -20,7 +20,10 @@ const Navbar = () => {
       <Container className=" flex justify-center flex-col  h-full">
         <div className=" grid grid-cols-2 lg:grid-cols-3 items-center gap-3">
           <p
-            onClick={() => router.push("/")}
+            onClick={() => {
+              setSearchInputValue("");
+              router.push("/");
+            }}
             className="lg:text-xl text-lg cursor-pointer font-semibold"
           >
             Boss Nation
@@ -28,25 +31,41 @@ const Navbar = () => {
           {/* nav links */}
           <div className=" hidden lg:flex justify-around">
             <p
-              onClick={() => router.push("/new-in?page=1")}
+              onClick={() => {
+                setSearchInputValue("");
+
+                router.push("/new-in?page=1");
+              }}
               className=" text-sm cursor-pointer uppercase"
             >
               New In
             </p>
             <p
-              onClick={() => router.push("/men?page=1")}
+              onClick={() => {
+                setSearchInputValue("");
+
+                router.push("/men?page=1");
+              }}
               className=" text-sm cursor-pointer uppercase"
             >
               Men
             </p>
             <p
-              onClick={() => router.push("/women?page=1")}
+              onClick={() => {
+                setSearchInputValue("");
+
+                router.push("/women?page=1");
+              }}
               className=" text-sm cursor-pointer uppercase"
             >
               Women
             </p>
             <p
-              onClick={() => router.push("/unisex?page=1")}
+              onClick={() => {
+                setSearchInputValue("");
+
+                router.push("/unisex?page=1");
+              }}
               className=" text-sm cursor-pointer uppercase"
             >
               Unisex
@@ -55,10 +74,10 @@ const Navbar = () => {
 
           {/* controls */}
           <div className=" flex justify-end items-center">
-            <div className="border-input hidden w-1/2 border-e-0 rounded lg:flex items-center">
+            <div className="border-input border-2 w-[300px] rounded hidden lg:flex items-center">
               <Button
                 className=" !h-8 border-0 -me-2 rounded-e-0"
-                variant={"outline"}
+                variant={"ghost"}
               >
                 <Search />
               </Button>
@@ -66,12 +85,38 @@ const Navbar = () => {
                 value={searchInputValue}
                 onChange={(e) => setSearchInputValue(e.target.value)}
                 placeholder="Search..."
-                className=" border-s-0 w-2/3 border-0 rounded-s-none"
+                className="w-[80%] border-none h-4 bg-transparent rounded-none focus:outline-none focus:border-0 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
               />
             </div>
             <div className=" block lg:hidden">
-              <ControlSheet buttonName={<Search />} title="" desc="">
-                search
+              <ControlSheet
+                buttonName={<Search />}
+                title=""
+                desc=""
+                closeRef={closeRef}
+              >
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    closeRef.current && closeRef.current.click();
+                  }}
+                >
+                  <div className="border-input w-full  rounded border flex items-center">
+                    <Button
+                      type="submit"
+                      className=" !h-8 border-0 -me-2 rounded-e-0"
+                      variant={"outline"}
+                    >
+                      <Search />
+                    </Button>
+                    <Input
+                      value={searchInputValue}
+                      onChange={(e) => setSearchInputValue(e.target.value)}
+                      placeholder="Search..."
+                      className="w-[80%] border-none h-9 bg-transparent rounded-none focus:outline-none focus:border-0 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                    />
+                  </div>
+                </form>
               </ControlSheet>
             </div>
             <div className=" hidden lg:block">
@@ -103,28 +148,44 @@ const Navbar = () => {
               >
                 <div className=" space-y-3">
                   <p
-                    onClick={() => router.push("/new-in?page=1")}
+                    onClick={() => {
+                      setSearchInputValue("");
+
+                      router.push("/new-in?page=1");
+                    }}
                     className=" text-sm cursor-pointer uppercase"
                   >
                     New In
                   </p>
                   <hr className="  border-1.5 border-input" />
                   <p
-                    onClick={() => router.push("/men?page=1")}
+                    onClick={() => {
+                      setSearchInputValue("");
+
+                      router.push("/men?page=1");
+                    }}
                     className=" text-sm cursor-pointer uppercase"
                   >
                     Men
                   </p>
                   <hr className="  border-1.5 border-input" />
                   <p
-                    onClick={() => router.push("/women?page=1")}
+                    onClick={() => {
+                      setSearchInputValue("");
+
+                      router.push("/women?page=1");
+                    }}
                     className=" text-sm cursor-pointer uppercase"
                   >
                     Women
                   </p>
                   <hr className="  border-1.5 border-input" />
                   <p
-                    onClick={() => router.push("/unisex?page=1")}
+                    onClick={() => {
+                      setSearchInputValue("");
+
+                      router.push("/unisex?page=1");
+                    }}
                     className=" text-sm cursor-pointer uppercase"
                   >
                     Unisex

@@ -4,9 +4,11 @@ import React from "react";
 import Container from "./Container";
 import { Mail, Phone } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useAppProvider } from "@/app/Provider/AppProvider";
 
 const Footer = () => {
   const router = useRouter();
+  const { searchInputValue, setSearchInputValue } = useAppProvider();
   return (
     <div className=" text-secondary/80 bg-primary">
       <Container>
@@ -36,14 +38,38 @@ const Footer = () => {
             </p>
             <ul className=" space-y-3 text-xs lg:text-sm capitalize">
               <li
-                onClick={() => router.push("/new-in")}
+                onClick={() => {
+                  router.push("/new-in");
+                  setSearchInputValue("");
+                }}
                 className=" cursor-pointer"
               >
                 New in
               </li>
-              <li onClick={() => router.push("/men?page=1")}>Men</li>
-              <li onClick={() => router.push("/women?page=1")}>Women</li>
-              <li onClick={() => router.push("/unisex?page=1")}>Unisex</li>
+              <li
+                onClick={() => {
+                  router.push("/men?page=1");
+                  setSearchInputValue("");
+                }}
+              >
+                Men
+              </li>
+              <li
+                onClick={() => {
+                  router.push("/women?page=1");
+                  setSearchInputValue("");
+                }}
+              >
+                Women
+              </li>
+              <li
+                onClick={() => {
+                  router.push("/unisex?page=1");
+                  setSearchInputValue("");
+                }}
+              >
+                Unisex
+              </li>
             </ul>
           </div>
           <div className=" space-y-3">

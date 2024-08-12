@@ -32,7 +32,7 @@ const BreadCrumbComponent = ({
               </BreadcrumbSeparator>
             )}
             <BreadcrumbItem>
-              <BreadcrumbPage className="text-primary/75 text-sm ">
+              <BreadcrumbPage className="text-primary/75 capitalize text-sm ">
                 {currentPage}
               </BreadcrumbPage>
             </BreadcrumbItem>
