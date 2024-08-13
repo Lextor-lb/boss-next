@@ -15,7 +15,7 @@ import { Backend_URL, getFetch } from "@/lib/fetch";
 import useSWR from "swr";
 import { Button } from "@/components/ui/button";
 
-type LevelTable = {
+type CouponList = {
   data: [];
   handleCheckboxChange: (e: any) => void;
   dropLevel: () => void;
@@ -42,7 +42,7 @@ const LevelListTable = ({
   setDeleteId,
   refetch,
   setPromotionId,
-}: LevelTable) => {
+}: CouponList) => {
   const getList = (url: string) => {
     return getFetch(url);
   };

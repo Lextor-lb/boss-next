@@ -51,6 +51,7 @@ const Footer = () => {
                   router.push("/men?page=1");
                   setSearchInputValue("");
                 }}
+                className=" cursor-pointer"
               >
                 Men
               </li>
@@ -59,6 +60,7 @@ const Footer = () => {
                   router.push("/women?page=1");
                   setSearchInputValue("");
                 }}
+                className=" cursor-pointer"
               >
                 Women
               </li>
@@ -67,6 +69,7 @@ const Footer = () => {
                   router.push("/unisex?page=1");
                   setSearchInputValue("");
                 }}
+                className=" cursor-pointer"
               >
                 Unisex
               </li>

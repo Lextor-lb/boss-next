@@ -40,6 +40,12 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const [cartItems, setCartItems] = useState<any[]>([]);
   const [idToken, setIdToken] = useState<string | null>(null);
 
+  const [couponCode, setCouponCode] = useState("");
+  const [inputValue, setInputValue] = useState("");
+  const [validCoupon, setValidCoupon] = useState(false);
+  const [couponDiscount, setCouponDiscount] = useState(0);
+  const [error, setError] = useState("");
+
   useEffect(() => {
     setIsClient(true);
   }, []);
@@ -118,6 +124,16 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
         totalCost,
         isClient,
         handleLogin,
+        couponCode,
+        setCouponCode,
+        inputValue,
+        setInputValue,
+        validCoupon,
+        setValidCoupon,
+        couponDiscount,
+        setCouponDiscount,
+        error,
+        setError,
       }}
     >
       {children}

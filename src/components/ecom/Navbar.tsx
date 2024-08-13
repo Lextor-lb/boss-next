@@ -63,7 +63,6 @@ const Navbar = () => {
             <p
               onClick={() => {
                 setSearchInputValue("");
-
                 router.push("/unisex?page=1");
               }}
               className=" text-sm cursor-pointer uppercase"
@@ -128,6 +127,7 @@ const Navbar = () => {
                 Wish list
               </ControlSheet>
             </div>
+
             <ControlSheet
               buttonName={<ShoppingCart />}
               title="Add to Cart"
@@ -136,12 +136,16 @@ const Navbar = () => {
             >
               <Cart closeRef={closeRef} />
             </ControlSheet>
+
             <div className=" hidden lg:block">
               <Button
-                onClick={() => router.push("/profile")}
+                onClick={() => {
+                  setSearchInputValue("");
+                  router.push("/profile");
+                }}
                 size={"sm"}
                 variant={"ghost"}
-                className="relative"
+                className=" relative"
               >
                 <User />
               </Button>
@@ -177,7 +181,6 @@ const Navbar = () => {
                   <p
                     onClick={() => {
                       setSearchInputValue("");
-
                       router.push("/women?page=1");
                     }}
                     className=" text-sm cursor-pointer uppercase"
@@ -204,7 +207,6 @@ const Navbar = () => {
                   >
                     Profile
                   </p>
-                  <hr className="  border-1.5 border-input" />
                 </div>
               </ControlSheet>
             </div>
@@ -216,3 +218,4 @@ const Navbar = () => {
 };
 
 export default Navbar;
+

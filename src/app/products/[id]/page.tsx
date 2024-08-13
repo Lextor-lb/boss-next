@@ -56,7 +56,7 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
       setCartItems((prev: any) => [...prev, item]);
     }
   };
-
+  console.log(productData);
   useEffect(() => {
     if (productData) {
       const initialVariant = productData.productVariants[0];

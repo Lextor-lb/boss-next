@@ -19,7 +19,7 @@ import { Backend_URL, postFetch, putFetch } from "@/lib/fetch";
 import useSWRMutation from "swr/mutation";
 import FormInput from "@/components/FormInput.components";
 
-const LevelListControlBar = ({
+const CategoryNameControlBar = ({
   refetch,
   searchInputValue,
   setSearchInputValue,
@@ -150,12 +150,12 @@ const LevelListControlBar = ({
         >
           <SheetTrigger asChild>
             <Button ref={openSheetRef} size={"sm"}>
-              <Plus /> <p className=" ms-1">Add Stock</p>
+              <Plus /> <p className=" ms-1">Add Level</p>
             </Button>
           </SheetTrigger>
           <SheetContent>
             <SheetHeader>
-              <SheetTitle>Add Stock</SheetTitle>
+              <SheetTitle>Add Level</SheetTitle>
               <SheetDescription>
                 Make new level here. Click save when you are done.
               </SheetDescription>
@@ -221,4 +221,4 @@ const LevelListControlBar = ({
   );
 };
 
-export default LevelListControlBar;
+export default CategoryNameControlBar;

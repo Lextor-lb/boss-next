@@ -94,10 +94,10 @@ const CustomerDetailPage = ({ params }: { params: { id: string } }) => {
             <div className=" grid pb-2 grid-cols-2">
               <div className=" flex gap-3 items-center">
                 <CoinsIcon />
-                <p className=" text-gray-500 text-sm"> {data?.total_sale}</p>
+                <p className=" text-gray-500 text-sm"> {data?.totalPrice}</p>
               </div>
               <p className="text-sm  font-light">
-                {data?.total_voucher} (vouchers)
+                {data?.vouchers.length} (vouchers)
               </p>
             </div>
             <div className=" grid pb-2 grid-cols-2">
@@ -115,8 +115,7 @@ const CustomerDetailPage = ({ params }: { params: { id: string } }) => {
         {isLoading ? (
           <TableSkeletonLoader />
         ) : (
-          // <TodayReportTable data={data.voucher} />
-          <></>
+          <TodayReportTable data={data.vouchers} />
         )}
       </div>
     </Container>

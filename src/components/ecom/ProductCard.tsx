@@ -76,7 +76,7 @@ const ProductCard = ({
             className=" h-6 w-6 p-0.5 rounded-full"
             size={"sm"}
           >
-            <Heart size={16} />
+            <Heart size={18} color="#333" />
           </Button>
         </div>
         <div className=" absolute left-3 bottom-3">

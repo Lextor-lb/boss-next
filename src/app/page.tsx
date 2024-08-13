@@ -49,13 +49,13 @@ export default function Home() {
   return (
     <main className=" min-h-screen w-screen overflow-x-hidden bg-secondary">
       <AppLayout>
-      <Banner />
+        <Banner />
         {error ? (
           <ErrorComponent refetch={() => {}} />
         ) : (
           <>
             <Container>
-              <div className="space-y-4 mt-12">
+              <div className="space-y-4 lg:pt-24 pt-12">
                 <BreadCrumbComponent path="Home" currentPage="Best Sellers" />
                 <Heading
                   header="Best selling products for you"
