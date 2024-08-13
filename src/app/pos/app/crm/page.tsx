@@ -26,6 +26,12 @@ const CRM = () => {
     getData
   );
 
+  const {
+    data: analysisData,
+    isLoading: analysisLoading,
+    error: analysisError,
+  } = useSWR(`${Backend_URL}/customers/analysis`, getData);
+
   // for pagination
   const incrementPage = () => {
     setCurrentPage(currentPage + 1);
@@ -46,6 +52,8 @@ const CRM = () => {
   };
 
   const router = useRouter();
+
+  console.log(data);
   return (
     <Container>
       <div className=" space-y-4">

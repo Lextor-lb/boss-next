@@ -18,13 +18,19 @@ const OrderSummary = ({
   buttonName: string;
   disabled: boolean;
 }) => {
-  const { cartItems } = useAppProvider();
-
-  const [couponCode, setCouponCode] = useState("");
-  const [inputValue, setInputValue] = useState("");
-  const [validCoupon, setValidCoupon] = useState(false);
-  const [couponDiscount, setCouponDiscount] = useState(0);
-  const [error, setError] = useState("");
+  const {
+    cartItems,
+    couponCode,
+    setCouponCode,
+    inputValue,
+    setInputValue,
+    validCoupon,
+    setValidCoupon,
+    couponDiscount,
+    setCouponDiscount,
+    error,
+    setError,
+  } = useAppProvider();
 
   const getData = (url: string) => getFetchForEcom(url);
 

@@ -12,6 +12,10 @@ import {
   Coins,
   UserPlus,
   Crown,
+  FolderOpen,
+  SlidersIcon,
+  Hash,
+  Newspaper,
 } from "lucide-react";
 import { RulerSquareIcon } from "@radix-ui/react-icons";
 import { ReactNode } from "react";
@@ -173,5 +177,34 @@ export const sidebarMenuItems: menuItems = [
     pageName: "Stock Control",
     path: "/pos/app/control-stock",
     icon: <Users2 size={20} strokeWidth={1.5} />,
+  },
+
+  {
+    id: 26,
+    group: "Ecommerce",
+    pageName: "Order",
+    path: "/pos/app/order",
+    icon: <FolderOpen size={20} strokeWidth={1.5} />,
+  },
+  {
+    id: 27,
+    group: "Ecommerce",
+    pageName: "Slider",
+    path: "/pos/app/slider",
+    icon: <SlidersIcon size={20} strokeWidth={1.5} />,
+  },
+  {
+    id: 28,
+    group: "Ecommerce",
+    pageName: "Category Name",
+    path: "/pos/app/category-name",
+    icon: <Hash size={20} strokeWidth={1.5} />,
+  },
+  {
+    id: 29,
+    group: "Ecommerce",
+    pageName: "Coupon",
+    path: "/pos/app/coupon",
+    icon: <Newspaper size={20} strokeWidth={1.5} />,
   },
 ];

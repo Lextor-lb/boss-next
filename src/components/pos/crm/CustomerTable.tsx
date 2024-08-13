@@ -46,7 +46,7 @@ const CustomerTable = ({ data }: any) => {
                 phoneNumber: string;
                 ageRange: string;
                 special: {
-                  name: string;
+                  id: number;
                 };
               },
               index: any
@@ -68,7 +68,7 @@ const CustomerTable = ({ data }: any) => {
                   <Badge variant={"secondary"}>{ageRange}</Badge>
                 </TableCell>
                 <TableCell>
-                  <Badge variant={"secondary"}>{special.name}</Badge>
+                  {/* <Badge variant={"secondary"}>{special.id}</Badge> */}
                 </TableCell>
                 <TableCell onClick={(e) => e.stopPropagation()}>
                   <div className="flex items-center gap-3 justify-end">

@@ -75,6 +75,8 @@ const SaleReport = ({ params }: { params: { date: string } }) => {
   const goToLastPage = () => {
     setCurrentPage(data?.totalPages);
   };
+
+  console.log(data);
   return (
     <Container>
       <div className=" space-y-4">

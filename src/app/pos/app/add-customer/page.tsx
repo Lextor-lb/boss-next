@@ -39,9 +39,10 @@ const AddCustomer = () => {
     phoneNumber: z.string().min(1, { message: "This field cannot be empty!" }),
     ageRange: z.string().min(1, { message: "This field cannot be empty!" }),
     level: z.string().min(1, { message: "This field cannot be empty!" }),
+    dob: z.string().min(1, { message: "This field cannot be empty!" }),
     address: z.string().optional(),
     remark: z.string().min(1, { message: "This field cannot be empty!" }),
-    email: z.string().email({ message: "Invalid email format!" }),
+    email: z.string().email({ message: "Invalid email format!" }).nullable(),
   });
 
   type FormData = z.infer<typeof schema>;
@@ -62,7 +63,8 @@ const AddCustomer = () => {
       level: "",
       address: "",
       remark: "",
-      email: "",
+      email: null,
+      dob: "",
     },
   });
 
@@ -86,9 +88,18 @@ const AddCustomer = () => {
   } = useSWRMutation(`${Backend_URL}/customers`, postFetcher);
 
   const onSubmit = async (value: any) => {
+    console.log("value", value.level);
     const formData = new FormData();
+    formData.append("name", value.name);
+    formData.append("gender", value.gender);
+    formData.append("ageRange", value.ageRange);
+    formData.append("specialId", value.level);
+    if (value.email !== null) {
+      formData.append("email", value.email);
+    }
+    formData.append("name", value.name);
 
-    const res = await add(formData);
+    const res = await add(value);
     console.log(res);
   };
 
@@ -133,13 +144,13 @@ const AddCustomer = () => {
                       onValueChange={(e) => setValue("gender", e)}
                     >
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="male" id="male" />
-                        <Label htmlFor="male">Male</Label>
+                        <RadioGroupItem value="Male" id="Male" />
+                        <Label htmlFor="Male">Male</Label>
                       </div>
                       <p className=" text-gray-200">|</p>
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="female" id="female" />
-                        <Label htmlFor="female">Female</Label>
+                        <RadioGroupItem value="Female" id="Female" />
+                        <Label htmlFor="Female">Female</Label>
                       </div>
                     </RadioGroup>
                   </div>
@@ -172,6 +183,17 @@ const AddCustomer = () => {
                   )}
                 </div>
 
+                {/* age */}
+                <div className=" flex flex-col gap-1.5 col-span-full">
+                  <Label htmlFor="username">Age</Label>
+                  <Input type="date" {...register("dob")} />
+                  {errors.dob && (
+                    <p className="text-sm mt-1.5 text-red-500">
+                      {errors.dob.message}
+                    </p>
+                  )}
+                </div>
+
                 {/* age range */}
                 <div className="space-y-1 col-span-full">
                   <Label htmlFor="username">Age Range</Label>
@@ -182,21 +204,26 @@ const AddCustomer = () => {
                       onValueChange={(e) => setValue("ageRange", e)}
                     >
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="young" id="young" />
-                        <Label htmlFor="male">Young</Label>
+                        <RadioGroupItem value="YOUNG" id="YOUNG" />
+                        <Label htmlFor="YOUNG">Young</Label>
                       </div>
                       <p className=" text-gray-200">|</p>
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="middle" id="middle" />
-                        <Label htmlFor="female">Middle</Label>
+                        <RadioGroupItem value="MIDDLE" id="MIDDLE" />
+                        <Label htmlFor="MIDDLE">Middle</Label>
                       </div>
                       <p className=" text-gray-200">|</p>
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="old" id="old" />
-                        <Label htmlFor="female">Old</Label>
+                        <RadioGroupItem value="OLD" id="OLD" />
+                        <Label htmlFor="OLD">Old</Label>
                       </div>
                     </RadioGroup>
                   </div>
+                  {errors.ageRange && (
+                    <p className="text-sm mt-1.5 text-red-500">
+                      {errors.ageRange.message}
+                    </p>
+                  )}
                 </div>
 
                 {/* level */}

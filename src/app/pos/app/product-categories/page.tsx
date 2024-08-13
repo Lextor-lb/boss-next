@@ -170,7 +170,11 @@ export default function ProductCategoriesPage() {
   return (
     <Container>
       <div className="space-y-3">
-        <NavHeader parentPage="Categories" path="Product" currentPage="Categories" />
+        <NavHeader
+          parentPage="Categories"
+          path="Product"
+          currentPage="Categories"
+        />
 
         <ProductCategoryControlBar
           isSelected={idsToDelete.length > 0}

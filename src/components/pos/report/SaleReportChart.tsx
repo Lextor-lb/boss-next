@@ -110,32 +110,6 @@ const SaleReportChartComponent = ({ chartData }: any) => {
                 <Line data={finalData} />
               </div>
             </div>
-            <div className="col-span-4">
-              <div>
-                <p className="text-end text-lg font-semibold">Other Analysis</p>
-                <ul className="p-4 space-y-4">
-                  {otherAnalysisData.map(({ id, icon, type, path }) => (
-                    <li onClick={() => router.push(`/${path}`)} key={id}>
-                      <div className="flex justify-between items-center">
-                        <div className="flex items-center gap-3">
-                          <span className="border-2 rounded border-primary bg-slate-50 p-3">
-                            {icon}
-                          </span>
-                          <div>
-                            <p className="text-sm tracking-wider font-medium">
-                              {type}
-                            </p>
-                          </div>
-                        </div>
-                        <div>
-                          <ChevronRight />
-                        </div>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
           </div>
         </>
       )}

@@ -1,8 +1,8 @@
 // lib/auth.ts
 
-import axios from 'axios';
-import Cookies from 'js-cookie';
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import axios from "axios";
+import Cookies from "js-cookie";
+import jwt, { JwtPayload } from "jsonwebtoken";
 
 const Backend_URL = process.env.NEXT_PUBLIC_BACKEND_URL; // Replace with your API URL
 
@@ -22,21 +22,21 @@ interface LoginResponse {
 }
 
 export function setTokens({ accessToken, refreshToken }: Tokens): void {
-  Cookies.set('accessToken', accessToken);
-  Cookies.set('refreshToken', refreshToken);
+  Cookies.set("accessToken", accessToken);
+  Cookies.set("refreshToken", refreshToken);
 }
 
 export function getAccessToken(): string | undefined {
-  return Cookies.get('accessToken');
+  return Cookies.get("accessToken");
 }
 
 export function getRefreshToken(): string | undefined {
-  return Cookies.get('refreshToken');
+  return Cookies.get("refreshToken");
 }
 
 export function clearTokens(): void {
-  Cookies.remove('accessToken');
-  Cookies.remove('refreshToken');
+  Cookies.remove("accessToken");
+  Cookies.remove("refreshToken");
 }
 
 export function decodeToken(token: string): JwtPayload | null {
@@ -48,7 +48,7 @@ export function decodeToken(token: string): JwtPayload | null {
 }
 
 function isJwtPayload(token: any): token is JwtPayload {
-  return typeof token === 'object' && token !== null && 'exp' in token;
+  return typeof token === "object" && token !== null && "exp" in token;
 }
 
 export function isAccessTokenExpired(token: string): boolean {
@@ -64,7 +64,10 @@ export async function refreshAccessToken(): Promise<string | null> {
   if (!refreshToken) return null;
 
   try {
-    const res = await axios.post<{ accessToken: string }>(`${Backend_URL}/auth/refreshToken`, { refreshToken });
+    const res = await axios.post<{ accessToken: string }>(
+      `${Backend_URL}/auth/refreshToken`,
+      { refreshToken }
+    );
     const { accessToken } = res.data;
     setTokens({ accessToken, refreshToken });
     return accessToken;
@@ -74,30 +77,33 @@ export async function refreshAccessToken(): Promise<string | null> {
   }
 }
 
-export async function login(email: string, password: string): Promise<LoginResponse | null> {
+export async function login(
+  email: string,
+  password: string
+): Promise<LoginResponse | null> {
   try {
-    const res = await axios.post<LoginResponse>(`${Backend_URL}/auth/login`, { email, password });
+    const res = await axios.post<LoginResponse>(`${Backend_URL}/auth/login`, {
+      email,
+      password,
+    });
     const { accessToken, refreshToken } = res.data;
     setTokens({ accessToken, refreshToken });
     return res.data;
   } catch (error) {
-    console.error('Login failed', error);
+    console.error("Login failed", error);
     return null;
   }
 }
 
 export async function getSession() {
-
   let accessToken = getAccessToken();
 
   if (!accessToken || isAccessTokenExpired(accessToken)) {
-
     const newAccessToken = await refreshAccessToken();
 
     if (newAccessToken) {
       accessToken = newAccessToken;
-    } 
-
+    }
   }
   if (accessToken) {
     return { accessToken };

@@ -68,7 +68,7 @@ const Banner = () => {
         >
           <CarouselContent>
             {error || isLoading ? (
-              <CarouselItem className=" h-[660px] flex justify-center items-center   text-red-300 py-12 bg-neutral-600">
+              <CarouselItem className=" h-[400px] lg:h-[660px] flex justify-center items-center   text-red-300 py-12 bg-neutral-600">
                 <p className=" text-3xl ">up to 60% off</p>
               </CarouselItem>
             ) : (

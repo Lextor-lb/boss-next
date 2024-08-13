@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Check } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
+import { decodeToken } from "@/lib/lib";
 
 const Checkout = () => {
   const { totalCost } = useAppProvider();
@@ -57,7 +58,7 @@ const Checkout = () => {
             </div>
             <div className=" bg-transparent border border-input text-sm flex px-2 gap-1 items-center lg:text-lg py-2">
               <Checkbox checked={true} />{" "}
-              <span className=" text-sm">Payment Method</span>
+              <span className=" text-sm">Cash On Delivery</span>
             </div>
           </div>
         </div>

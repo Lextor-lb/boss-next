@@ -44,11 +44,11 @@ const Products = ({
     <div className=" space-y-3">
       <>
         {isLoading ? (
-          <div className=" grid grid-cols-2 gap-x-3 gap-y-24 lg:grid-cols-4">
+          <div className=" grid grid-cols-2 gap-x-5 gap-y-24 lg:grid-cols-4">
             <ProductSkeleton />
           </div>
         ) : (
-          <div className=" grid grid-cols-2 gap-x-3 gap-y-8 lg:grid-cols-4">
+          <div className=" grid grid-cols-2 gap-x-4 gap-y-8 lg:grid-cols-4">
             {data.length == 0 ? (
               <div className=" h-[500px] text-red-600 col-span-full text-center">
                 Sorry, No Products found!
