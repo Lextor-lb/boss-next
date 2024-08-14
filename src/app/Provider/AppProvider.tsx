@@ -87,7 +87,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const { data, error } = useAuthLogin(idToken);
+  const { data } = useAuthLogin(idToken);
 
   useEffect(() => {
     if (data) {
@@ -99,7 +99,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
 
           localStorage.setItem("userId",data.user.id);
           localStorage.setItem("email",data.user.email);
-          localStorage.setItem("userId",data.user.name);
+          localStorage.setItem("name",data.user.name);
 
       }   
       
