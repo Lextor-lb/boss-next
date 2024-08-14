@@ -20,8 +20,8 @@ export default function BackofficeLayout({
   return (
     <div className="grid grid-cols-12 h-screen overflow-hidden">
       <div className=" col-span-2 ">
-        <div className="p-5 h-screen overflow-auto">
-          <div className=" space-y-3">
+        <div className="p-5 h-screen  overflow-auto">
+          <div className=" space-y-3 flex flex-col justify-between  h-full">
             <Sidebar />
             <Button
               variant="outline"

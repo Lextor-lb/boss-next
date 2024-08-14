@@ -4,6 +4,7 @@ import Container from "@/components/Container.components";
 import ErrorComponent from "@/components/ErrorComponent";
 import CustomerAnalysisBox from "@/components/pos/crm/CustomerAnalysisBox";
 import CustomerTable from "@/components/pos/crm/CustomerTable";
+import { PaginationComponent } from "@/components/pos/inventory";
 import NavHeader from "@/components/pos/NavHeader";
 import TableSkeletonLoader from "@/components/TableSkeletonLoader";
 import { Button } from "@/components/ui/button";
@@ -78,7 +79,17 @@ const CRM = () => {
               {isLoading ? (
                 <TableSkeletonLoader />
               ) : (
-                <CustomerTable data={data?.data} />
+                <div className=" space-y-3">
+                  <CustomerTable data={data?.data} />
+                  <PaginationComponent
+                    goToFirstPage={goToFirstPage}
+                    currentPage={currentPage}
+                    decrementPage={decrementPage}
+                    incrementPage={incrementPage}
+                    goToLastPage={goToLastPage}
+                    lastPage={data?.totalPages}
+                  />
+                </div>
               )}
             </>
           )}

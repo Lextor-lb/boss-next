@@ -210,9 +210,9 @@ const SaleForm: React.FC = () => {
                   {/* customer */}
 
                   <div className="space-y-1.5 basis-2/12">
-                    <div>
-                      <div className=" text-end">{customerPromotion} %</div>
+                    <div className=" flex gap-3 justify-between">
                       <Label>Select customers</Label>
+                      <div className=" text-end">{customerPromotion} %</div>
                     </div>
 
                     <Popover open={open} onOpenChange={setOpen}>
@@ -221,13 +221,13 @@ const SaleForm: React.FC = () => {
                           variant="outline"
                           role="combobox"
                           aria-expanded={open}
-                          className="w-[400px] text-sm justify-between !rounded-md"
+                          className="w-[300px] text-sm justify-between !rounded-md"
                         >
                           {customers ? customers : "Customers"}
                           <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </Button>
                       </PopoverTrigger>
-                      <PopoverContent className="w-[400px] p-0">
+                      <PopoverContent className="w-[300px] p-0">
                         <Command>
                           <CommandInput
                             placeholder="Search customers..."
@@ -265,7 +265,7 @@ const SaleForm: React.FC = () => {
                                           amount: 0,
                                         },
                                       });
-                                      setCustomer(e);
+                                      setCustomer(`${e}`);
                                     }}
                                   >
                                     <Check
