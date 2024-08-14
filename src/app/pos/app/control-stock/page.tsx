@@ -181,7 +181,6 @@ const StockControlPage = () => {
   } = useSWRMutation(`${Backend_URL}/product-variants`, postFetcher);
 
   const onSubmit = async (value: any) => {
-    console.log(value);
     const formData = new FormData();
     formData.append("image", value.image);
     formData.append("shopCode", value.shopCode);
@@ -204,7 +203,7 @@ const StockControlPage = () => {
       mutate(`${Backend_URL}/stock-reports?page=${currentPage}`);
     }
   };
-  
+
   console.log(data);
   return (
     <Container>

@@ -11,10 +11,10 @@ import {
 const Info = ({ title, amount }: { title: string; amount: string }) => {
   return (
     <div className="flex gap-12">
-      <p className="text-base font-light text-start w-[200px] text-primary/50">
+      <p className="text-sm font-light text-start w-[150px] text-primary/50">
         {title}
       </p>
-      <p className="text-base font-normal w-[104px] text-end text-primary/90">
+      <p className="text-sm font-normal w-[104px] text-end text-primary/90">
         {amount}
       </p>
     </div>
@@ -47,7 +47,7 @@ const Voucher = ({
         <div className="grid gap-1 grid-cols-2">
           {customerInfoData.name !== "" && (
             <div className="flex gap-4 items-center">
-              <p className=" text-sm w-[200px] text-start text-black">
+              <p className=" text-sm w-[150px] text-start text-black">
                 Customer Name
               </p>
               <p className=" text-sm text-black">{customerInfoData.name}</p>
@@ -57,8 +57,10 @@ const Voucher = ({
           <div className="flex gap-4 items-center">
             <p
               className={` text-sm ${
-                customerInfoData.name !== "" ? " w-[100px]" : " w-[200px] "
-              }text-start text-black`}
+                customerInfoData.name !== ""
+                  ? " w-[150px] text-center"
+                  : " w-[100px] text-center"
+              } text-black`}
             >
               Date
             </p>
@@ -67,7 +69,7 @@ const Voucher = ({
 
           {customerInfoData.name !== "" && (
             <div className="flex gap-4  items-center">
-              <p className=" text-sm w-[200px] text-start text-black">Phone</p>
+              <p className=" text-sm w-[150px] text-start text-black">Phone</p>
               <p className=" text-sm text-black">{customerInfoData.phone}</p>
             </div>
           )}
@@ -75,15 +77,17 @@ const Voucher = ({
           <div className="flex gap-4 items-center">
             <p
               className={` text-sm ${
-                customerInfoData.name !== "" ? " w-[200px]" : " w-[100px] "
-              }text-start text-black`}
+                customerInfoData.name !== ""
+                  ? " w-[150px] text-center"
+                  : " w-[100px]  text-center"
+              }  text-black`}
             >
               Time
             </p>
             <p className=" text-sm text-black">{time}</p>
           </div>
           <div className="flex gap-4 items-center">
-            <p className=" text-sm w-[200px] text-start text-black">
+            <p className=" text-sm w-[150px] text-start text-black">
               Voucher Code
             </p>
             <p className=" text-sm text-black">{voucherCode}</p>
@@ -157,7 +161,7 @@ const Voucher = ({
           )}
         </TableBody>
       </Table>
-      <div className="flex justify-end items-end gap-3 me-2 flex-col">
+      <div className="flex justify-end text-sm items-end gap-3 me-2 flex-col">
         <Info
           title={"Subtotal"}
           amount={new Intl.NumberFormat("ja-JP").format(subTotal)}
@@ -173,16 +177,16 @@ const Voucher = ({
           <Info title={"Total Discount %"} amount={overallDiscount} />
         )}
 
-        <hr className="border-primary/40 w-[43%]" />
+        <hr className="border-primary/40 w-[50%]" />
         <div className="flex my-3 gap-12">
-          <p className="text-lg font-normal text-start w-[200px] text-primary">
+          <p className="text-lg font-normal text-start w-[150px] text-primary">
             Total
           </p>
           <p className="text-lg font-medium w-[104px] text-end text-primary">
             {new Intl.NumberFormat("ja-JP").format(total)}
           </p>
         </div>
-        <hr className="border-primary/40 w-[43%]" />
+        <hr className="border-primary/40 w-[50%]" />
       </div>
     </div>
   );

@@ -7,7 +7,7 @@ import TableSkeletonLoader from "@/components/TableSkeletonLoader";
 import { Badge } from "@/components/ui/badge";
 import { Backend_URL, getFetch } from "@/lib/fetch";
 import { HomeIcon } from "@radix-ui/react-icons";
-import { CoinsIcon, Home, Phone } from "lucide-react";
+import { CoinsIcon, Home, Notebook, Phone } from "lucide-react";
 import React from "react";
 import useSWR from "swr";
 
@@ -106,6 +106,13 @@ const CustomerDetailPage = ({ params }: { params: { id: string } }) => {
                 <p className=" text-gray-500 text-sm">Address</p>
               </div>
               <p className=" text-sm font-light">{data?.address}</p>
+            </div>
+            <div className=" grid pb-2 grid-cols-2">
+              <div className=" flex gap-3 items-center">
+                <Notebook />
+                <p className=" text-gray-500 text-sm">Remark</p>
+              </div>
+              <p className=" text-sm font-light">{data?.remark}</p>
             </div>
           </div>
         )}
