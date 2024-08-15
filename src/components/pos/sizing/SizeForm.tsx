@@ -124,7 +124,7 @@ const SizeForm = ({
           </Label>
           <FormInput id="size" {...register("name")} type="text" />
           {errors.name && (
-            <p className="text-red-600 text-xs">{errors.name.message}</p>
+            <p className="text-red-500 text-xs">{errors.name.message}</p>
           )}
         </div>
         <div className="flex justify-between">

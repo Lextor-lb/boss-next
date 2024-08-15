@@ -24,8 +24,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Backend_URL, getFetch, postFetch } from "@/lib/fetch";
+import { Backend_URL, getFetch, postFetch, putFetch } from "@/lib/fetch";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import useSWR from "swr";
@@ -52,10 +53,15 @@ const EditCustomer = ({ params }: { params: { id: string } }) => {
     gender: z.string().min(1, { message: "This field cannot be empty!" }),
     phoneNumber: z.string().min(1, { message: "This field cannot be empty!" }),
     ageRange: z.string().min(1, { message: "This field cannot be empty!" }),
-    level: z.string().min(1, { message: "This field cannot be empty!" }),
+    specialId: z.string().min(1, { message: "This field cannot be empty!" }),
+    dob: z
+      .string()
+      .min(1, { message: "This field cannot be empty!" })
+      .optional()
+      .or(z.literal("")),
     address: z.string().optional(),
     remark: z.string().min(1, { message: "This field cannot be empty!" }),
-    email: z.string().email({ message: "Invalid email format!" }),
+    email: z.string().email({ message: "Invalid email format!" }).nullable(),
   });
 
   type FormData = z.infer<typeof schema>;
@@ -70,11 +76,11 @@ const EditCustomer = ({ params }: { params: { id: string } }) => {
     resolver: zodResolver(schema),
     defaultValues: {
       name: "",
-      email: "",
+      email: null,
       phoneNumber: "",
       gender: "male",
       ageRange: "",
-      level: "",
+      specialId: "",
       address: "",
       remark: "",
     },
@@ -84,33 +90,37 @@ const EditCustomer = ({ params }: { params: { id: string } }) => {
     if (customerData) {
       reset({
         name: customerData.name,
-        email: customerData.email,
+        email: customerData.email || null,
         phoneNumber: customerData.phoneNumber,
         gender: customerData.gender || "male",
-        ageRange: customerData.ageRange.toLowerCase(),
-        level: customerData.special.id,
+        ageRange: customerData.ageRange,
+        specialId: `${customerData.special.id}`,
         address: customerData.address,
-        remark: customerData.remark,
+        remark: customerData.remark || "",
       });
     }
   }, [customerData, reset]);
 
-  const postFetcher = async (url: string, { arg }: { arg: any }) => {
-    return postFetch(url, arg);
+  const putFetcher = async (url: string, { arg }: { arg: any }) => {
+    return putFetch(url, arg);
   };
+
+  const router = useRouter();
 
   const {
     data: addData,
     isMutating,
-    trigger: add,
-  } = useSWRMutation(`${Backend_URL}/customers`, postFetcher);
+    trigger: edit,
+    error,
+  } = useSWRMutation(`${Backend_URL}/customers/${params.id}`, putFetcher);
 
-  const onSubmit = (data: any) => {
-    console.log("here");
-    console.log(data);
+  const onSubmit = async (value: any) => {
+    value.specialId = parseInt(value.specialId);
+    const res = await edit(value);
+    if (res?.status) {
+      router.push("/pos/app/crm");
+    }
   };
-
-  console.log("customer", customerData);
 
   return (
     <Container>
@@ -128,6 +138,9 @@ const EditCustomer = ({ params }: { params: { id: string } }) => {
                 <CardDescription className=" text-sm">
                   Add customer Information here.
                 </CardDescription>
+                {error && (
+                  <p className=" text-red-500 text-sm">{error.message}</p>
+                )}
               </CardHeader>
               <CardContent className="space-y-1">
                 <div className=" grid grid-cols-2 gap-3">
@@ -147,18 +160,18 @@ const EditCustomer = ({ params }: { params: { id: string } }) => {
                     <Label htmlFor="username">Gender</Label>
                     <div className=" border p-1 rounded">
                       <RadioGroup
-                        defaultValue={"male"}
                         className=" flex justify-around"
+                        defaultValue={customerData?.gender}
                         onValueChange={(e) => setValue("gender", e)}
                       >
                         <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="male" id="male" />
-                          <Label htmlFor="male">Male</Label>
+                          <RadioGroupItem value="Male" id="Male" />
+                          <Label htmlFor="Male">Male</Label>
                         </div>
                         <p className=" text-gray-200">|</p>
                         <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="female" id="female" />
-                          <Label htmlFor="female">Female</Label>
+                          <RadioGroupItem value="Female" id="Female" />
+                          <Label htmlFor="Female">Female</Label>
                         </div>
                       </RadioGroup>
                     </div>
@@ -191,40 +204,56 @@ const EditCustomer = ({ params }: { params: { id: string } }) => {
                     )}
                   </div>
 
+                  {/* age */}
+                  <div className=" flex flex-col gap-1.5 col-span-full">
+                    <Label htmlFor="username">Age</Label>
+                    <Input type="date" {...register("dob")} />
+                    {errors.dob && (
+                      <p className="text-sm mt-1.5 text-red-500">
+                        {errors.dob.message}
+                      </p>
+                    )}
+                  </div>
+
                   {/* age range */}
                   <div className="space-y-1 col-span-full">
                     <Label htmlFor="username">Age Range</Label>
 
                     <div className=" border p-1 rounded">
                       <RadioGroup
-                        defaultValue={customerData.ageRange.toLowerCase()}
+                        defaultValue={customerData?.ageRange}
                         className=" flex justify-around"
                         onValueChange={(e) => setValue("ageRange", e)}
                       >
                         <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="young" id="young" />
-                          <Label htmlFor="male">Young</Label>
+                          <RadioGroupItem value="YOUNG" id="YOUNG" />
+                          <Label htmlFor="YOUNG">Young</Label>
                         </div>
                         <p className=" text-gray-200">|</p>
                         <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="middle" id="middle" />
-                          <Label htmlFor="female">Middle</Label>
+                          <RadioGroupItem value="MIDDLE" id="MIDDLE" />
+                          <Label htmlFor="MIDDLE">Middle</Label>
                         </div>
                         <p className=" text-gray-200">|</p>
                         <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="old" id="old" />
-                          <Label htmlFor="female">Old</Label>
+                          <RadioGroupItem value="OLD" id="OLD" />
+                          <Label htmlFor="OLD">Old</Label>
                         </div>
                       </RadioGroup>
                     </div>
+                    {errors.ageRange && (
+                      <p className="text-sm mt-1.5 text-red-500">
+                        {errors.ageRange.message}
+                      </p>
+                    )}
                   </div>
 
                   {/* level */}
                   <div className="col-span-full space-y-1.5">
                     <Label>Level</Label>
                     <Select
-                      defaultValue={customerData.special.id}
-                      onValueChange={(e) => setValue("level", e)}
+                      defaultValue={`${customerData?.special.id}`}
+                      onValueChange={(e) => setValue("specialId", e)}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select Level" />
@@ -248,9 +277,9 @@ const EditCustomer = ({ params }: { params: { id: string } }) => {
                         )}
                       </SelectContent>
                     </Select>
-                    {errors.level && (
+                    {errors.specialId && (
                       <p className="text-sm mt-1.5 text-red-500">
-                        {errors.level.message}
+                        {errors.specialId.message}
                       </p>
                     )}
                   </div>

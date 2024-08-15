@@ -142,8 +142,6 @@ export const deleteFetch = async (
       body: JSON.stringify(body), // Directly stringify the provided body
     };
 
-    console.log(body);
-
     const response = await fetch(url, options);
     const data = await response.json();
 
@@ -196,6 +194,46 @@ export const deleteSingleFetch = async (
 };
 
 export const putFetch = async (
+  url: string,
+  body: any,
+  headers: Record<string, string> = {}
+) => {
+  try {
+    const token = await findToken();
+    if (!token) {
+      throw new Error("No access token found");
+    }
+
+    const options: RequestInit = {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "multipart/form-data",
+        Authorization: `Bearer ${token}`,
+        ...headers,
+      },
+      body: JSON.stringify(body),
+    };
+
+    console.log("Request options:", body);
+
+    const response = await fetch(url, options);
+    const data = await response.json();
+
+    console.log("Response data:", data);
+    console.log(response);
+
+    if (!response.ok) {
+      throw new Error(data.message || "An error occurred");
+    }
+
+    return data;
+  } catch (error: any) {
+    throw new Error(error.message);
+  }
+};
+
+export const patchFetch = async (
   url: string,
   body: any,
   headers: Record<string, string> = {}

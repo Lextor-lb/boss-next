@@ -24,7 +24,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Backend_URL, getFetch, postFetch } from "@/lib/fetch";
+import { Backend_URL, getFetch, postFetch, postMediaFetch } from "@/lib/fetch";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -38,8 +38,12 @@ const AddCustomer = () => {
     gender: z.string().min(1, { message: "This field cannot be empty!" }),
     phoneNumber: z.string().min(1, { message: "This field cannot be empty!" }),
     ageRange: z.string().min(1, { message: "This field cannot be empty!" }),
-    level: z.string().min(1, { message: "This field cannot be empty!" }),
-    dob: z.string().min(1, { message: "This field cannot be empty!" }),
+    specialId: z.string().min(1, { message: "This field cannot be empty!" }),
+    dob: z
+      .string()
+      .min(1, { message: "This field cannot be empty!" })
+      .optional()
+      .or(z.literal("")),
     address: z.string().optional(),
     remark: z.string().min(1, { message: "This field cannot be empty!" }),
     email: z.string().email({ message: "Invalid email format!" }).nullable(),
@@ -60,7 +64,7 @@ const AddCustomer = () => {
       gender: "",
       phoneNumber: "",
       ageRange: "",
-      level: "",
+      specialId: "",
       address: "",
       remark: "",
       email: null,
@@ -85,20 +89,12 @@ const AddCustomer = () => {
     data,
     isMutating,
     trigger: add,
+    error,
   } = useSWRMutation(`${Backend_URL}/customers`, postFetcher);
 
   const onSubmit = async (value: any) => {
-    console.log("value", value.level);
-    const formData = new FormData();
-    formData.append("name", value.name);
-    formData.append("gender", value.gender);
-    formData.append("ageRange", value.ageRange);
-    formData.append("specialId", value.level);
-    if (value.email !== null) {
-      formData.append("email", value.email);
-    }
-    formData.append("name", value.name);
-
+    value.specialId = parseInt(value.specialId);
+    console.log(value);
     const res = await add(value);
     console.log(res);
   };
@@ -118,9 +114,9 @@ const AddCustomer = () => {
               <CardDescription className=" text-sm">
                 Add customer Information here.
               </CardDescription>
-              {/* {addIsError && (
-              <p className=" text-red-500 text-sm">{addError.data.error}</p>
-            )} */}
+              {error && (
+                <p className=" text-red-500 text-sm">{error.message}</p>
+              )}
             </CardHeader>
             <CardContent className="space-y-1">
               <div className=" grid grid-cols-2 gap-3">
@@ -229,7 +225,7 @@ const AddCustomer = () => {
                 {/* level */}
                 <div className="col-span-full space-y-1.5">
                   <Label>Level</Label>
-                  <Select onValueChange={(e) => setValue("level", e)}>
+                  <Select onValueChange={(e) => setValue("specialId", e)}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select Level" />
                     </SelectTrigger>
@@ -252,9 +248,9 @@ const AddCustomer = () => {
                       )}
                     </SelectContent>
                   </Select>
-                  {errors.level && (
+                  {errors.specialId && (
                     <p className="text-sm mt-1.5 text-red-500">
-                      {errors.level.message}
+                      {errors.specialId.message}
                     </p>
                   )}
                 </div>

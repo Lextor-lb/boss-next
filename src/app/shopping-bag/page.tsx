@@ -40,7 +40,7 @@ const ShoppingBag = () => {
 
   const handleClick = () => {
     if (isClient) {
-      if (localStorage.getItem("auth")) {
+      if (localStorage.getItem("userId")) {
         router.push("/checkout");
       } else {
         setSwalProps({

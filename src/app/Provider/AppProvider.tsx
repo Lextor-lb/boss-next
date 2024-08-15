@@ -1,6 +1,6 @@
 "use client";
 import { auth, provider } from "@/lib/firebase";
-import { setTokens } from "@/lib/lib";
+import { decodeToken, setTokens } from "@/lib/lib";
 import { signInWithPopup } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import React, { createContext, useContext, useEffect, useState } from "react";
@@ -10,23 +10,23 @@ const Provider = createContext<any | undefined>(undefined);
 
 const fetcher = async (url: string, idToken: string) => {
   const response = await fetch(url, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({ idToken }),
   });
 
   if (!response.ok) {
-    throw new Error('Failed to authenticate');
+    throw new Error("Failed to authenticate");
   }
-
+  console.log(response);
   return response.json();
 };
 
 const useAuthLogin = (idToken: string | null) => {
   const { data, error } = useSWR(
-    idToken ? ['https://amt.santar.store/auth/EcommerceLogin', idToken] : null,
+    idToken ? ["https://amt.santar.store/auth/EcommerceLogin", idToken] : null,
     ([url, token]) => fetcher(url, token)
   );
 
@@ -68,22 +68,25 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [cartItems, isClient]);
 
-  const totalCost = cartItems.reduce((pv: number, cv: any) => {
-    const finalPrice = cv.discountPrice
-      ? cv.salePrice * (1 - cv.discountPrice / 100)
-      : cv.salePrice;
-    return pv + finalPrice;
-  }, 0);
+  const totalCost =
+    cartItems.reduce((pv: number, cv: any) => {
+      const finalPrice = cv.discountPrice
+        ? cv.salePrice * (1 - cv.discountPrice / 100)
+        : cv.salePrice;
+      return pv + finalPrice;
+    }, 0) *
+    (1 - couponDiscount / 100);
 
   const handleLogin = async () => {
     try {
       // const result = await signInWithPopup(auth, provider);
       // const idToken = await result.user.getIdToken(true);
 
-      setIdToken("eyJhbGciOiJSUzI1NiIsImtpZCI6ImNlMzcxNzMwZWY4NmViYTI5YTUyMTJkOWI5NmYzNjc1NTA0ZjYyYmMiLCJ0eXAiOiJKV1QifQ.eyJuYW1lIjoiSGVpbiBXYWkgWWFuIEh0ZXQgMjAyMCIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BQ2c4b2NJYVJQZ3hpWmNpVVJGbmdjTGpwOVFBU1pzYUJ6SldRYlVqMUV4VFc5eGNwYnQ0VGF6VT1zOTYtYyIsImlzcyI6Imh0dHBzOi8vc2VjdXJldG9rZW4uZ29vZ2xlLmNvbS9ib3NzLWF1dGgxMjM0NTY3ODkiLCJhdWQiOiJib3NzLWF1dGgxMjM0NTY3ODkiLCJhdXRoX3RpbWUiOjE3MjM0ODEzNzEsInVzZXJfaWQiOiI5ek9GQnFPVGNXTU82V0J6STF5OWc5bTVTZ0MzIiwic3ViIjoiOXpPRkJxT1RjV01PNldCekkxeTlnOW01U2dDMyIsImlhdCI6MTcyMzQ4MTM3MywiZXhwIjoxNzIzNDg0OTczLCJlbWFpbCI6ImhlaW53YWl5YW5odGV0MjAyMEBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiZmlyZWJhc2UiOnsiaWRlbnRpdGllcyI6eyJnb29nbGUuY29tIjpbIjExNjUxNjgyNTk5MjY0ODc2MzY2MSJdLCJlbWFpbCI6WyJoZWlud2FpeWFuaHRldDIwMjBAZ21haWwuY29tIl19LCJzaWduX2luX3Byb3ZpZGVyIjoiZ29vZ2xlLmNvbSJ9fQ.MbwNe04rikdp2OKCZ9i5GA_nYJqERruA3WJuZk_03xGzx89iy8f_eZ1CPVxUKXNfObCiAjclzuB8Z_g_Pwshzr-IXtuwjF94HJdPjaSU6rbyzSbiUNr4LOwcvPBWCtDN97AtXOwnF53nMEDnf9L5v0tddVyTJO7d0HY8r4G3O_Z3D8CSpD5MTAWBwSiA_WgEPUmxJOzv-fBi40zn8nNTILLmJpbRD42kmcgn5MjUFhGKzrf2zqy7i5aEhTHjCEHLvoikuuhsNAyP03U0eaI102Cxndu5Zn07OsTARgGpQ8cyEGndk6BRpieva23Ep0mrfeeLKVIGR2SZnjNeXCiNWw"); // Set the idToken to trigger SWR fetch
-
+      setIdToken(
+        "eyJhbGciOiJSUzI1NiIsImtpZCI6ImNlMzcxNzMwZWY4NmViYTI5YTUyMTJkOWI5NmYzNjc1NTA0ZjYyYmMiLCJ0eXAiOiJKV1QifQ.eyJuYW1lIjoiS2FyWWFuIEt5YXciLCJwaWN0dXJlIjoiaHR0cHM6Ly9saDMuZ29vZ2xldXNlcmNvbnRlbnQuY29tL2EvQUNnOG9jTEFhS1dqZE5uSmhFOERXcHhoLTNvOXpzZ1JYRjMtZlJ3UlYxWkt6U2VWZjRZSk1RPXM5Ni1jIiwiaXNzIjoiaHR0cHM6Ly9zZWN1cmV0b2tlbi5nb29nbGUuY29tL2Jvc3MtYXV0aDEyMzQ1Njc4OSIsImF1ZCI6ImJvc3MtYXV0aDEyMzQ1Njc4OSIsImF1dGhfdGltZSI6MTcyMzcyNjQ0MSwidXNlcl9pZCI6InhuSTVvMXh1R3hYWE9oblRTdEFJa1djaXZhZTIiLCJzdWIiOiJ4bkk1bzF4dUd4WFhPaG5UU3RBSWtXY2l2YWUyIiwiaWF0IjoxNzIzNzI2NDQyLCJleHAiOjE3MjM3MzAwNDIsImVtYWlsIjoia2FyeWFua3lhdzAyQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJmaXJlYmFzZSI6eyJpZGVudGl0aWVzIjp7Imdvb2dsZS5jb20iOlsiMTAyNzE3MzEzMjAxNjM2ODAwNjE0Il0sImVtYWlsIjpbImthcnlhbmt5YXcwMkBnbWFpbC5jb20iXX0sInNpZ25faW5fcHJvdmlkZXIiOiJnb29nbGUuY29tIn19.ELTo5Iw-vRBRgzLXASJEgMZvOYe4qZoK0-o1mzI4IwjRlLZ5A4gnRAh8rolNAk0GOcYxElSahWWqD-VtgAfczzv0rL3e-rXcrmknOik57-i6rS8aiHV-5nN_0bxwbD1FEHVIYzBqO_XLSQNqzU-EbJDsOOAEESzj19qDFt7saj14Xees2eauQtitciQvs4A-tNqPxE9i5gTUrgvhtkz6OsGIOmW7Ji-cM0JChqO2PqjZRyqfrp_ZvaaRc5MvmELUiWGtHO4pu_hwy05WCcCBOpQmxU1Bz7uw80_vP4hhtM6CyIi9BO6E7z5PkT_RhyPaWIu8EdKznNggKgeAJjITuw"
+      );
     } catch (error) {
-      console.error('Error during login:', error);
+      console.error("Error during login:", error);
     }
   };
 
@@ -91,26 +94,22 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     if (data) {
+      console.log("API response:", data);
 
-      console.log('API response:', data);
+      if (typeof window !== "undefined") {
+        localStorage.setItem("userId", data.user.id);
+        localStorage.setItem("email", data.user.email);
+        localStorage.setItem("name", data.user.name);
+        localStorage.setItem("accessToken", data.accessToken);
+      }
 
-      if (typeof window !== 'undefined') 
-      {
-
-          localStorage.setItem("userId",data.user.id);
-          localStorage.setItem("email",data.user.email);
-          localStorage.setItem("name",data.user.name);
-
-      }   
-      
       const { accessToken, refreshToken } = data;
-      
+
       setTokens(data);
-      
     }
 
     if (error) {
-      console.error('Error during API call:', error);
+      console.error("Error during API call:", error);
     }
   }, [data, error]);
 

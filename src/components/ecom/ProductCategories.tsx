@@ -32,8 +32,6 @@ const ProductCategories = () => {
   const next = useRef<HTMLButtonElement | null>(null);
   const previous = useRef<HTMLButtonElement | null>(null);
 
-  console.log(data);
-
   return (
     <Container>
       <div className=" space-y-4 my-12">
