@@ -250,8 +250,8 @@ const CouponControlBar = ({
               )}
 
               <FormInput
-                label="Discount"
-                id="Discount"
+                label="Expired Date"
+                id="expiredDate"
                 type="date"
                 {...register("expiredDate")}
               />

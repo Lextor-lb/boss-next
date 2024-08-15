@@ -71,9 +71,7 @@ const TodayReport = () => {
         ) : (
           <>
             {data.data.length < 1 ? (
-              <p className=" text-center">
-                Nothing sold out today! Fighting Bro
-              </p>
+              <p className=" text-center">Nothing sold out today!</p>
             ) : (
               <div className=" space-y-4">
                 <div className=" min-h-[720px]">

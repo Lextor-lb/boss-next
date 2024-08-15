@@ -89,6 +89,7 @@ const AddCustomer = () => {
     data,
     isMutating,
     trigger: add,
+    error,
   } = useSWRMutation(`${Backend_URL}/customers`, postFetcher);
 
   const onSubmit = async (value: any) => {
@@ -113,9 +114,9 @@ const AddCustomer = () => {
               <CardDescription className=" text-sm">
                 Add customer Information here.
               </CardDescription>
-              {/* {addIsError && (
-              <p className=" text-red-500 text-sm">{addError.data.error}</p>
-            )} */}
+              {error && (
+                <p className=" text-red-500 text-sm">{error.message}</p>
+              )}
             </CardHeader>
             <CardContent className="space-y-1">
               <div className=" grid grid-cols-2 gap-3">

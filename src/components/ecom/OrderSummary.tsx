@@ -30,6 +30,7 @@ const OrderSummary = ({
     setCouponDiscount,
     error,
     setError,
+    totalCost,
   } = useAppProvider();
 
   const getData = (url: string) => getFetchForEcom(url);
@@ -67,14 +68,6 @@ const OrderSummary = ({
     }
   };
 
-  const subtotal = cartItems
-    .reduce((pv: number, cv: any) => pv + cv.priceAfterDiscount, 0)
-    .toFixed(0);
-
-  const estimatedTotal = validCoupon
-    ? (subtotal * (1 - couponDiscount / 100)).toFixed(0)
-    : subtotal;
-
   return (
     <div className="lg:border-2 lg:border-input lg:p-5 lg:bg-secondary">
       <p className="text-lg font-semibold mb-6">Order Summary</p>
@@ -103,7 +96,7 @@ const OrderSummary = ({
         <hr className="border-1.5" />
         <div className="flex justify-between">
           <p>Subtotal</p>
-          <p>{new Intl.NumberFormat("ja-JP").format(estimatedTotal)}</p>
+          <p>{new Intl.NumberFormat("ja-JP").format(totalCost)}</p>
         </div>
         <div className="flex justify-between">
           <p>Delivery</p>
@@ -132,7 +125,7 @@ const OrderSummary = ({
         <hr className="border-1.5" />
         <div className="flex justify-between">
           <p>Estimated Total</p>
-          <p>{new Intl.NumberFormat("ja-JP").format(estimatedTotal)}</p>
+          <p>{new Intl.NumberFormat("ja-JP").format(totalCost)}</p>
         </div>
         <Button
           disabled={disabled}

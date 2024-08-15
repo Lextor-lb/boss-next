@@ -69,7 +69,7 @@ const SizingReport = () => {
   };
 
   const [fetchURL, setFetchURL] = useState(
-    `${Backend_URL}/sizing-report?search=${value}`
+    `${Backend_URL}/sizing-report?search=${value}&page=${currentPage}`
   );
 
   const changeQuery = (value: string) => {

@@ -63,7 +63,7 @@ const SliderPage = () => {
       }
     };
 
-  console.log(images);
+  console.log(data);
 
   return (
     <Container>

@@ -178,8 +178,8 @@ const SaleForm: React.FC = () => {
   }, [productData, productLoading, productError, barcodeRef]);
 
   return (
-    <Container>
-      <div className=" relative w-full">
+    <Container className=" h-screen">
+      <div className=" relative w-full h-[95%]">
         <NavHeader parentPage="Sale" path="Sale" />
         <div className="space-y-4">
           <div className="space-y-1.5">
@@ -212,7 +212,9 @@ const SaleForm: React.FC = () => {
                   <div className="space-y-1.5 basis-2/12">
                     <div className=" flex gap-3 justify-between">
                       <Label>Select customers</Label>
-                      <div className=" text-end">{customerPromotion} %</div>
+                      <div className=" text-end text-sm">
+                        {customerPromotion} %
+                      </div>
                     </div>
 
                     <Popover open={open} onOpenChange={setOpen}>
@@ -266,6 +268,7 @@ const SaleForm: React.FC = () => {
                                         },
                                       });
                                       setCustomer(`${e}`);
+                                      setOpen(false);
                                     }}
                                   >
                                     <Check
@@ -368,18 +371,18 @@ const SaleForm: React.FC = () => {
             )}
           </div>
           <SaleTable data={data} setData={setData} />
-          <div className=" absolute bottom-0 w-full">
-            <SaleInfoBox
-              setPaymentInfo={setPaymentInfo}
-              loyaltyDiscount={customerPromotion}
-              overallDiscount={paymentInfo.overallDiscount}
-              data={data}
-              setData={setData}
-              paymentInfo={paymentInfo}
-              customerInfoData={customerInfoData}
-              setCustomerPromotion={setCustomerPromotion}
-            />
-          </div>
+        </div>
+        <div className=" absolute bottom-0 w-full">
+          <SaleInfoBox
+            setPaymentInfo={setPaymentInfo}
+            loyaltyDiscount={customerPromotion}
+            overallDiscount={paymentInfo.overallDiscount}
+            data={data}
+            setData={setData}
+            paymentInfo={paymentInfo}
+            customerInfoData={customerInfoData}
+            setCustomerPromotion={setCustomerPromotion}
+          />
         </div>
       </div>
     </Container>

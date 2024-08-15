@@ -49,7 +49,7 @@ export default function Home() {
   return (
     <main className=" min-h-screen w-screen overflow-x-hidden bg-secondary">
       <AppLayout>
-        <Banner />
+        {/* <Banner /> */}
         {error ? (
           <ErrorComponent refetch={() => {}} />
         ) : (

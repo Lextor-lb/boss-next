@@ -41,8 +41,8 @@ const ProductCard = ({
 
   const addToWishList = () => {
     if (isClient) {
-      if (localStorage.getItem("auth")) {
-        console.log("add here");
+      if (localStorage.getItem("userId")) {
+        console.log("id par", localStorage.getItem("userId"));
       } else {
         setSwalProps({
           ...swalProps,

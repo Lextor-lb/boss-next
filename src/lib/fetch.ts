@@ -142,8 +142,6 @@ export const deleteFetch = async (
       body: JSON.stringify(body), // Directly stringify the provided body
     };
 
-    console.log(body);
-
     const response = await fetch(url, options);
     const data = await response.json();
 
@@ -274,6 +272,7 @@ export const patchFetch = async (
     // throw new Error(error.message || "An error occurred");
   }
 };
+
 export const editProductFetch = async (
   url: string,
   body: FormData,
