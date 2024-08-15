@@ -27,7 +27,7 @@ type OrderData = {
   subTotal: number;
   total: number;
   orderRecords: OrderRecord[];
-  couponDiscount?: number; // Optional property
+  couponDiscount?: number;
 };
 
 const Checkout = () => {
@@ -44,6 +44,7 @@ const Checkout = () => {
   useEffect(() => {
     if (isClient) setUserId(localStorage.getItem("userId"));
   }, [isClient]);
+
   const router = useRouter();
 
   const getData = async (url: string) => {
@@ -69,35 +70,6 @@ const Checkout = () => {
       }
 
       return data;
-    } catch (error: any) {
-      console.error("Fetch API Error:", error.message);
-      throw new Error(error.message || "An error occurred");
-    }
-  };
-
-  const patchUser = async (url: string, { arg }: any) => {
-    try {
-      const token = isClient && localStorage.getItem("accessToken");
-      if (!token) {
-        throw new Error("No access token found");
-      }
-
-      const options: RequestInit = {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "multipart/form-data",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(arg),
-      };
-      const response = await fetch(url, options);
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "An error occurred");
-      }
-      return response;
     } catch (error: any) {
       console.error("Fetch API Error:", error.message);
       throw new Error(error.message || "An error occurred");
@@ -144,6 +116,35 @@ const Checkout = () => {
     getData
   );
 
+  const patchUser = async (url: string, { arg }: any) => {
+    try {
+      const token = isClient && localStorage.getItem("accessToken");
+      if (!token) {
+        throw new Error("No access token found");
+      }
+
+      const options: RequestInit = {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "multipart/form-data",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(arg),
+      };
+      const response = await fetch(url, options);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "An error occurred");
+      }
+      return response;
+    } catch (error: any) {
+      console.error("Fetch API Error:", error.message);
+      throw new Error(error.message || "An error occurred");
+    }
+  };
+
   const {
     data: editUserData,
     error: editUserError,
@@ -163,7 +164,7 @@ const Checkout = () => {
     addressDetail: z
       .string()
       .min(1, { message: "This field cannot be empty!" }),
-    email: z.string().email({ message: "Invalid email format!" }).nullable(),
+    email: z.string().email({ message: "Invalid email format!" }),
   });
 
   type FormData = z.infer<typeof schema>;
@@ -179,12 +180,12 @@ const Checkout = () => {
     defaultValues: {
       name: "",
       phone: "",
+      email: "",
       city: "",
       township: "",
       street: "",
       company: "",
       addressDetail: "",
-      email: null,
     },
   });
 
@@ -253,7 +254,7 @@ const Checkout = () => {
               Delivery address
             </div>
             <div className=" px-4 lg:grid-cols-2 gap-3 lg:gap-7 grid grid-cols-1">
-              <div className=" space-y-0.5">
+              <div className=" space-y-1.5">
                 <FormInput
                   label="City"
                   type="text"
@@ -265,7 +266,7 @@ const Checkout = () => {
                 )}
               </div>
 
-              <div className=" space-y-0.5">
+              <div className=" space-y-1.5">
                 <FormInput
                   label="Township"
                   {...register("township")}
@@ -278,7 +279,7 @@ const Checkout = () => {
                   </p>
                 )}
               </div>
-              <div className=" space-y-0.5">
+              <div className=" space-y-1.5">
                 <FormInput
                   {...register("street")}
                   label="Street"
@@ -291,7 +292,7 @@ const Checkout = () => {
                   </p>
                 )}
               </div>
-              <div className=" space-y-0.5">
+              <div className=" space-y-1.5">
                 <FormInput
                   label="Company(optional)"
                   type="text"
@@ -320,7 +321,7 @@ const Checkout = () => {
               Personal Information
             </div>
             <div className=" px-4 lg:grid-cols-2 gap-3 lg:gap-7 grid grid-cols-1">
-              <div className=" space-y-0.5">
+              <div className=" space-y-1.5">
                 <FormInput
                   label="Name"
                   {...register("name")}
@@ -331,7 +332,7 @@ const Checkout = () => {
                   <p className="text-red-500 text-xs">{errors.name?.message}</p>
                 )}
               </div>
-              <div className=" space-y-0.5">
+              <div className=" space-y-1.5">
                 <FormInput
                   label="Phone"
                   {...register("phone")}
@@ -344,7 +345,7 @@ const Checkout = () => {
                   </p>
                 )}
               </div>
-              <div className=" space-y-0.5">
+              <div className=" space-y-1.5">
                 <FormInput
                   label="Email"
                   {...register("email")}

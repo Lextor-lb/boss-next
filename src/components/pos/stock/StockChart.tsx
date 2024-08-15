@@ -80,7 +80,7 @@ const StockChart: React.FC<DoughnutChartProps> = ({ data, labels }) => {
     };
   }, [data, labels]);
 
-  return <canvas ref={chartRef} width={350} height={350} />;
+  return <canvas ref={chartRef} width={250} height={250} />;
 };
 
 export default StockChart;

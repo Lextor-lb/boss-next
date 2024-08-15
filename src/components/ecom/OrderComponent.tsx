@@ -8,7 +8,7 @@ const OrderComponent = ({ data }: any) => {
       <div className="mx-auto h-full overflow-x-hidden w-full lg:w-[90%]">
         <div className=" bg-secondary space-y-4 p-3 lg:p-5 lg:w-[60%] border border-input">
           <p className=" lg:text-base text-xs font-medium">
-            Your Order {data?.orderCode} Has Been Processed!
+            Your Order {data?.orderCode} Has Been Packed!
           </p>
           <div className=" flex items-center gap-3">
             <div className=" flex flex-col justify-center items-center text-center gap-1.5 ">

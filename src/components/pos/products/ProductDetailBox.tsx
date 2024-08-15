@@ -16,6 +16,7 @@ const ProductDetailBox = ({
   handleClose,
   isLoading,
 }: ProductDetailBoxTypes) => {
+  console.log(data);
   return (
     <>
       {isLoading ? (

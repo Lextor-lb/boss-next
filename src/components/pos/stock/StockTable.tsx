@@ -107,7 +107,9 @@ const StockTable = ({ data }: any) => {
                     </div>
                   </div>
                 </TableCell>
-                <TableCell className=" text-end">{salePrice}</TableCell>
+                <TableCell className=" text-end">
+                  {new Intl.NumberFormat("ja-JP").format(salePrice)}
+                </TableCell>
                 <TableCell className=" text-end">{totalStock}</TableCell>
                 <TableCell className=" text-end">
                   <Badge

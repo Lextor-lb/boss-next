@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import useSWR from "swr";
 import StockReportChart from "@/components/pos/stock/StockReportChart";
 import StockTable from "@/components/pos/stock/StockTable";
+import { PaginationComponent } from "@/components/pos/inventory";
 
 const StockPage = () => {
   const router = useRouter();
@@ -51,7 +52,7 @@ const StockPage = () => {
   };
 
   const { data, error, isLoading, mutate, isValidating } = useSWR(
-    `${Backend_URL}/stock-reports`,
+    `${Backend_URL}/stock-reports?page=${currentPage}`,
     getStockReport,
     {
       revalidateIfStale: true,
@@ -110,6 +111,8 @@ const StockPage = () => {
     console.log("object");
   }, [editId, singleData]);
 
+  console.log(data);
+
   return (
     <Container>
       <div className=" space-y-4">
@@ -118,6 +121,14 @@ const StockPage = () => {
           <>
             <StockReportChart isLoading={isLoading} data={data} />
             <StockTable data={data.products} />
+            <PaginationComponent
+              goToFirstPage={goToFirstPage}
+              currentPage={currentPage}
+              decrementPage={decrementPage}
+              incrementPage={incrementPage}
+              goToLastPage={goToLastPage}
+              lastPage={data?.totalPages}
+            />
           </>
         )}
       </div>

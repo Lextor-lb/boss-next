@@ -12,8 +12,6 @@ import { Button } from "../../ui/button";
 import { CalendarDays, Clock1, Edit2, MinusCircle } from "lucide-react";
 import ConfirmBox from "@/components/ConfirmBox";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Backend_URL, getFetch } from "@/lib/fetch";
-import useSWR from "swr";
 import Image from "next/image";
 
 type ProductTableType = {

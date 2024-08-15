@@ -90,8 +90,13 @@ const ProductVariableTable = ({
                   <TableCell className=" text-start">
                     {step !== 5 && (
                       <>
-                        {statusStock && (
+                        {statusStock == "SOLDOUT" && (
                           <Badge variant={"destructive"}>Sold Out</Badge>
+                        )}
+                        {statusStock == "ORDERED" && (
+                          <Badge className=" pointer-events-none text-black bg-yellow-400 ">
+                            Ordered
+                          </Badge>
                         )}
                       </>
                     )}
