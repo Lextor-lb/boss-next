@@ -1,7 +1,11 @@
-import React from "react";
+import React from 'react'
 
-const ProfilePage = () => {
-  return;
-};
+const ProfilePageEcom = () => {
+  return (
+    <div>
+      
+    </div>
+  )
+}
 
-export default ProfilePage;
+export default ProfilePageEcom

@@ -1,5 +1,6 @@
 "use client";
 
+import { useAppProvider } from "@/app/Provider/AppProvider";
 import FormInput from "@/components/FormInput.components";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -8,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Backend_URL } from "@/lib/fetch";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus } from "lucide-react";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import SweetAlert2 from "react-sweetalert2";
@@ -20,6 +22,13 @@ const UserAddressPage = () => {
   const [userId, setUserId] = useState<string | null>(null);
 
   const [open, setOpen] = useState(false);
+
+  const { handleLogin } = useAppProvider();
+  const router = useRouter();
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const getData = async (url: string) => {
     try {
@@ -49,6 +58,7 @@ const UserAddressPage = () => {
       throw new Error(error.message || "An error occurred");
     }
   };
+
   useEffect(() => {
     setIsClient(true);
   }, []);
@@ -139,10 +149,26 @@ const UserAddressPage = () => {
   //   }
   // }, [data]);
 
+  const [swalProps2, setSwalProps2] = useState({
+    show: false,
+    showConfirmButton: false,
+  });
+
   const [swalProps, setSwalProps] = useState({
     show: false,
     showConfirmButton: false,
   });
+
+  useEffect(() => {
+    if (isClient) {
+      if (!localStorage.getItem("accessToken")) {
+        setSwalProps({
+          show: true,
+          showConfirmButton: false,
+        });
+      }
+    }
+  }, [isClient]);
 
   const onSubmit = async (values: any) => {
     const res = await editUser(values);
@@ -283,6 +309,55 @@ const UserAddressPage = () => {
 
       {isClient && (
         <SweetAlert2
+          didClose={() => {
+            router.push("/");
+          }}
+          {...swalProps}
+        >
+          <div className=" pointer-events-none space-y-3 text-center">
+            <p className=" pointer-events-none font-medium">
+              Proceed To Checkout
+            </p>
+            <p className=" pointer-events-none text-black/50 text-sm">
+              Please Login To Continue.
+            </p>
+            <div className="  pointer-events-none flex gap-3 justify-center items-center">
+              <Button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSwalProps({
+                    ...swalProps,
+                    show: false,
+                  });
+                  router.push("/");
+                }}
+                size={"sm"}
+                className="  pointer-events-auto"
+                variant={"outline"}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={(e) => {
+                  handleLogin();
+                  e.stopPropagation();
+                  setSwalProps({
+                    ...swalProps,
+                    show: false,
+                  });
+                }}
+                size={"sm"}
+                className="  pointer-events-auto"
+              >
+                Sign In
+              </Button>
+            </div>
+          </div>
+        </SweetAlert2>
+      )}
+
+      {isClient && (
+        <SweetAlert2
           timer={1500}
           position="bottom-end"
           icon="success"
@@ -291,10 +366,10 @@ const UserAddressPage = () => {
             popup: "colored-toast",
           }}
           toast={true}
-          {...swalProps}
+          {...swalProps2}
           didClose={() =>
-            setSwalProps({
-              ...swalProps,
+            setSwalProps2({
+              ...swalProps2,
               show: false,
             })
           }

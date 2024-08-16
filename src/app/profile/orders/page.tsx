@@ -1,9 +1,13 @@
 "use client";
 
+import { useAppProvider } from "@/app/Provider/AppProvider";
 import { Container } from "@/components/ecom";
 import OrderComponent from "@/components/ecom/OrderComponent";
+import { Button } from "@/components/ui/button";
 import { Backend_URL } from "@/lib/fetch";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import SweetAlert2 from "react-sweetalert2";
 import useSWR from "swr";
 
 const UserOrdersPage = () => {
@@ -13,6 +17,29 @@ const UserOrdersPage = () => {
   useEffect(() => {
     setIsClient(true);
   }, []);
+
+  const { handleLogin } = useAppProvider();
+  const router = useRouter();
+
+  const [swalProps, setSwalProps] = useState({
+    show: false,
+    showConfirmButton: false,
+  });
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    if (isClient) {
+      if (!localStorage.getItem("accessToken")) {
+        setSwalProps({
+          show: true,
+          showConfirmButton: false,
+        });
+      }
+    }
+  }, [isClient]);
 
   const getData = async (url: string) => {
     try {
@@ -50,7 +77,6 @@ const UserOrdersPage = () => {
       refreshInterval: 50000,
     }
   );
-  console.log(data);
 
   return (
     <>
@@ -60,6 +86,54 @@ const UserOrdersPage = () => {
             <OrderComponent key={index} data={data} />
           ))}
         </div>
+      )}
+      {isClient && (
+        <SweetAlert2
+          didClose={() => {
+            router.push("/");
+          }}
+          {...swalProps}
+        >
+          <div className=" pointer-events-none space-y-3 text-center">
+            <p className=" pointer-events-none font-medium">
+              Proceed To Checkout
+            </p>
+            <p className=" pointer-events-none text-black/50 text-sm">
+              Please Login To Continue.
+            </p>
+            <div className="  pointer-events-none flex gap-3 justify-center items-center">
+              <Button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSwalProps({
+                    ...swalProps,
+                    show: false,
+                  });
+                  router.push("/");
+                }}
+                size={"sm"}
+                className="  pointer-events-auto"
+                variant={"outline"}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={(e) => {
+                  handleLogin();
+                  e.stopPropagation();
+                  setSwalProps({
+                    ...swalProps,
+                    show: false,
+                  });
+                }}
+                size={"sm"}
+                className="  pointer-events-auto"
+              >
+                Sign In
+              </Button>
+            </div>
+          </div>
+        </SweetAlert2>
       )}
     </>
   );

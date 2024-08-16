@@ -1,9 +1,11 @@
 "use client";
 
+import { useAppProvider } from "@/app/Provider/AppProvider";
 import FormInput from "@/components/FormInput.components";
 import { Button } from "@/components/ui/button";
 import { Backend_URL } from "@/lib/fetch";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import SweetAlert2 from "react-sweetalert2";
@@ -43,7 +45,7 @@ const UserInfoPage = () => {
       throw new Error(error.message || "An error occurred");
     }
   };
-  
+
   useEffect(() => {
     setIsClient(true);
   }, []);
@@ -132,6 +134,28 @@ const UserInfoPage = () => {
     showConfirmButton: false,
   });
 
+  const { handleLogin } = useAppProvider();
+  const router = useRouter();
+
+  const [swalProps2, setSwalProps2] = useState({
+    show: false,
+    showConfirmButton: false,
+  });
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    if (isClient) {
+      if (!localStorage.getItem("accessToken")) {
+        setSwalProps2({
+          show: true,
+          showConfirmButton: false,
+        });
+      }
+    }
+  }, [isClient]);
   const onSubmit = async (values: any) => {
     const res = await editUser(values);
     if (res?.ok) {
@@ -143,75 +167,127 @@ const UserInfoPage = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <div className=" space-y-4 w-[90%]">
-        <div className=" bg-secondary border border-input px-3 font-medium lg:text-lg py-2">
-          Personal Information
+    <>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className=" space-y-4 w-[90%]">
+          <div className=" bg-secondary border border-input px-3 font-medium lg:text-lg py-2">
+            Personal Information
+          </div>
+          {editUserError && (
+            <p className=" text-sm text-red-500">{editUserError.message}</p>
+          )}
+          <div className=" px-4 lg:grid-cols-2 gap-3 lg:gap-7  grid grid-cols-1">
+            <div className=" space-y-0.5">
+              <FormInput
+                label="Name"
+                {...register("name")}
+                type="text"
+                id={"name"}
+              />
+              {errors.name && (
+                <p className="text-red-500 text-xs">{errors.name?.message}</p>
+              )}
+            </div>
+            <div className=" space-y-0.5">
+              <FormInput
+                label="Phone"
+                {...register("phone")}
+                type="text"
+                id={"phone"}
+              />
+              {errors.phone && (
+                <p className="text-red-500 text-xs">{errors.phone?.message}</p>
+              )}
+            </div>
+            <div className=" space-y-0.5">
+              <FormInput
+                label="Email"
+                {...register("email")}
+                type="email"
+                id={"email"}
+              />
+              {errors.email && (
+                <p className="text-red-500 text-xs">{errors.email?.message}</p>
+              )}
+            </div>
+            <div className=" col-span-full flex justify-end">
+              <Button>Save</Button>
+            </div>
+          </div>
         </div>
-        {editUserError && (
-          <p className=" text-sm text-red-500">{editUserError.message}</p>
+        {isClient && (
+          <SweetAlert2
+            timer={1500}
+            position="bottom-end"
+            icon="success"
+            iconColor="black"
+            customClass={{
+              popup: "colored-toast",
+            }}
+            toast={true}
+            {...swalProps}
+            didClose={() =>
+              setSwalProps({
+                ...swalProps,
+                show: false,
+              })
+            }
+          >
+            <p>Your Information is updated!</p>
+          </SweetAlert2>
         )}
-        <div className=" px-4 lg:grid-cols-2 gap-3 lg:gap-7  grid grid-cols-1">
-          <div className=" space-y-0.5">
-            <FormInput
-              label="Name"
-              {...register("name")}
-              type="text"
-              id={"name"}
-            />
-            {errors.name && (
-              <p className="text-red-500 text-xs">{errors.name?.message}</p>
-            )}
-          </div>
-          <div className=" space-y-0.5">
-            <FormInput
-              label="Phone"
-              {...register("phone")}
-              type="text"
-              id={"phone"}
-            />
-            {errors.phone && (
-              <p className="text-red-500 text-xs">{errors.phone?.message}</p>
-            )}
-          </div>
-          <div className=" space-y-0.5">
-            <FormInput
-              label="Email"
-              {...register("email")}
-              type="email"
-              id={"email"}
-            />
-            {errors.email && (
-              <p className="text-red-500 text-xs">{errors.email?.message}</p>
-            )}
-          </div>
-          <div className=" col-span-full flex justify-end">
-            <Button>Save</Button>
-          </div>
-        </div>
-      </div>
-      {isClient && (
-        <SweetAlert2
-          timer={1500}
-          position="bottom-end"
-          icon="success"
-          iconColor="black"
-          customClass={{
-            popup: "colored-toast",
-          }}
-          toast={true}
-          {...swalProps}
-          didClose={() =>
-            setSwalProps({
-              ...swalProps,
-              show: false,
-            })
-          }
-        >
-          <p>Your Information is updated!</p>
-        </SweetAlert2>
-      )}
-    </form>
+      </form>
+      <>
+        {isClient && (
+          <SweetAlert2
+            didClose={() => {
+              router.push("/");
+            }}
+            {...swalProps2}
+          >
+            <div className=" pointer-events-none space-y-3 text-center">
+              <p className=" pointer-events-none font-medium">
+                Proceed To Checkout
+              </p>
+              <p className=" pointer-events-none text-black/50 text-sm">
+                Please Login To Continue.
+              </p>
+              <div className="  pointer-events-none flex gap-3 justify-center items-center">
+                <Button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSwalProps2({
+                      ...swalProps,
+                      show: false,
+                    });
+                    router.push("/");
+                  }}
+                  size={"sm"}
+                  className="  pointer-events-auto"
+                  variant={"outline"}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={(e) => {
+                    handleLogin();
+                    e.stopPropagation();
+                    setSwalProps({
+                      ...swalProps,
+                      show: false,
+                    });
+                  }}
+                  size={"sm"}
+                  className="  pointer-events-auto"
+                >
+                  Sign In
+                </Button>
+              </div>
+            </div>
+          </SweetAlert2>
+        )}
+      </>
+    </>
   );
 };
 

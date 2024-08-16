@@ -1,15 +1,18 @@
 "use client";
 import { Container } from "@/components/ecom";
 import AppLayout from "@/components/ecom/AppLayout";
+import { Button } from "@/components/ui/button";
 
 import { usePathname, useRouter } from "next/navigation";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import SweetAlert2 from "react-sweetalert2";
+import { useAppProvider } from "../Provider/AppProvider";
 
 const Layout = ({ children }: any) => {
   const pathName = usePathname();
-  console.log(pathName);
-
+  const { handleLogin } = useAppProvider();
   const router = useRouter();
+
   return (
     <AppLayout>
       <Container>
