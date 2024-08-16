@@ -80,12 +80,11 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
 
   const handleLogin = async () => {
     try {
-      // const result = await signInWithPopup(auth, provider);
-      // const idToken = await result.user.getIdToken(true);
+      const result = await signInWithPopup(auth, provider);
+      const idToken = await result.user.getIdToken(true);
 
       setIdToken(
-        "eyJhbGciOiJSUzI1NiIsImtpZCI6ImNlMzcxNzMwZWY4NmViYTI5YTUyMTJkOWI5NmYzNjc1NTA0ZjYyYmMiLCJ0eXAiOiJKV1QifQ.eyJuYW1lIjoiS2FyWWFuIEt5YXciLCJwaWN0dXJlIjoiaHR0cHM6Ly9saDMuZ29vZ2xldXNlcmNvbnRlbnQuY29tL2EvQUNnOG9jTEFhS1dqZE5uSmhFOERXcHhoLTNvOXpzZ1JYRjMtZlJ3UlYxWkt6U2VWZjRZSk1RPXM5Ni1jIiwiaXNzIjoiaHR0cHM6Ly9zZWN1cmV0b2tlbi5nb29nbGUuY29tL2Jvc3MtYXV0aDEyMzQ1Njc4OSIsImF1ZCI6ImJvc3MtYXV0aDEyMzQ1Njc4OSIsImF1dGhfdGltZSI6MTcyMzgyNDE1MywidXNlcl9pZCI6InhuSTVvMXh1R3hYWE9oblRTdEFJa1djaXZhZTIiLCJzdWIiOiJ4bkk1bzF4dUd4WFhPaG5UU3RBSWtXY2l2YWUyIiwiaWF0IjoxNzIzODI0MTUzLCJleHAiOjE3MjM4Mjc3NTMsImVtYWlsIjoia2FyeWFua3lhdzAyQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJmaXJlYmFzZSI6eyJpZGVudGl0aWVzIjp7Imdvb2dsZS5jb20iOlsiMTAyNzE3MzEzMjAxNjM2ODAwNjE0Il0sImVtYWlsIjpbImthcnlhbmt5YXcwMkBnbWFpbC5jb20iXX0sInNpZ25faW5fcHJvdmlkZXIiOiJnb29nbGUuY29tIn19.c4RsNzvAtuxyUR3sy3DidlP9P6FoKnI7jDFGXxTwyTaiydVrxRxMCudSeiWxk-1njTP0YDIhn1nQxK8rkFTQjK3BJajZYbQbIhv6m4sOAHHGRbDTfidqEKA4teqfbmZD2KC6BkcT8cIsi7DIhVsU-KcgBVUdJB4WQ7AhOtPwv9JVlgRfnaimtuwg1wYh6lswnSnUXnNYvsNpC13zlnzZl-OYs5ABosPU0nx1wkMAiFeRBgYqarODgUKsAZgTV65MLVkRcmfYa1qP-e0vS8cwvCAbzCFImzZY-AV0h418kK6VEQbIs1OUktyq8m5QZo4NXR4XvraqYv6WHs05WDi02Q"
-      );
+        idToken);
     } catch (error) {
       console.error("Error during login:", error);
     }
