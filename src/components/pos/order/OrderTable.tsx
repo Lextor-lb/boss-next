@@ -149,7 +149,7 @@ const OrderTable = ({ data, refetch }: any) => {
                             buttonSize="sm"
                             buttonVariant={"secondary"}
                             confirmTitle={"Are you sure?"}
-                            confirmDescription={"This action can't be undone!"}
+                            confirmDescription={"This action cannot be undone!"}
                             confirmButtonText={"Yes, cancel this order."}
                             run={async () => {
                               await setId(id);
@@ -202,9 +202,9 @@ const OrderTable = ({ data, refetch }: any) => {
                             <SheetHeader>
                               <SheetTitle>Control Order</SheetTitle>
                               <SheetDescription>
-                                Make order stage here. Click save when you're
-                                done.
-                              </SheetDescription>
+                                Make order stage here. Click save when you&#39;re done.
+                            </SheetDescription>
+
                             </SheetHeader>
                             <div className=" py-3 mb-6 space-y-1.5">
                               <Label>Stage</Label>
