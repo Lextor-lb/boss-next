@@ -16,14 +16,14 @@ const Layout = ({ children }: any) => {
         <p className=" pt-4 text-sm lg:text-sm pb-12 font-normal">
           Profile | My account
         </p>
-        <div className=" grid grid-cols-12">
-          <div className=" col-span-2">
-            <div className=" flex flex-col gap-1.5 space-y-1.5">
+        <div className=" grid grid-cols-12 gap-8">
+          <div className=" col-span-full lg:col-span-2">
+            <div className=" flex lg:flex-col items-center lg:justify-normal lg:items-start gap-1.5">
               <span
                 onClick={() => router.push("/profile/information")}
                 className={` ${
                   pathName.includes("information") && "font-semibold"
-                } cursor-pointer w-40 uppercase`}
+                } cursor-pointer lg:text-base text-xs lg:w-40 uppercase`}
               >
                 Personal info
               </span>
@@ -31,7 +31,7 @@ const Layout = ({ children }: any) => {
                 onClick={() => router.push("/profile/orders")}
                 className={` ${
                   pathName.includes("orders") && "font-semibold"
-                } cursor-pointer w-40 uppercase`}
+                } cursor-pointer lg:text-base text-xs lg:w-40 uppercase`}
               >
                 orders
               </span>
@@ -39,13 +39,13 @@ const Layout = ({ children }: any) => {
                 onClick={() => router.push("/profile/address")}
                 className={` ${
                   pathName.includes("address") && "font-semibold"
-                } cursor-pointer w-40 uppercase`}
+                } cursor-pointer lg:text-base text-xs lg:w-40 uppercase`}
               >
                 address
               </span>
             </div>
           </div>
-          <div className=" col-span-10">{children}</div>
+          <div className=" col-span-full lg:col-span-10">{children}</div>
         </div>
       </Container>
     </AppLayout>

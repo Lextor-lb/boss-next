@@ -44,7 +44,9 @@ const TodayReportTable = ({ data }: any) => {
             <TableCell className="">{data.time}</TableCell>
             <TableCell className=" text-end">{data.payment}</TableCell>
             <TableCell className=" text-end">{data.qty}</TableCell>
-            <TableCell className=" text-end">{data.total}</TableCell>
+            <TableCell className=" text-end">
+              {new Intl.NumberFormat("ja-JP").format(data.total)}
+            </TableCell>
             <TableCell className=" flex justify-end">
               <Button variant={"ghost"}>
                 <ArrowRightCircle />

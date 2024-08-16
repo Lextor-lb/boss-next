@@ -23,15 +23,9 @@ const CRM = () => {
   };
 
   const { data, isLoading, error } = useSWR(
-    `${Backend_URL}/customers`,
+    `${Backend_URL}/customers/all`,
     getData
   );
-
-  const {
-    data: analysisData,
-    isLoading: analysisLoading,
-    error: analysisError,
-  } = useSWR(`${Backend_URL}/customers/analysis`, getData);
 
   // for pagination
   const incrementPage = () => {
@@ -55,45 +49,51 @@ const CRM = () => {
   const router = useRouter();
 
   console.log(data);
+
   return (
     <Container>
+      <></>
       <div className=" space-y-4">
         <NavHeader
           parentPage="Customer List"
           path="Customer"
           currentPage="Customer List"
         />
-        <CustomerAnalysisBox />
-        <div className=" space-y-2">
-          <p className=" text-xl font-semibold">Customer Info</p>
-          <div className=" flex justify-between items-center">
-            <Input placeholder="Search...." />
-            <Button onClick={() => router.push("/pos/app/add-customer")}>
-              <PlusCircle /> <span className="ms-1">Add Customer</span>
-            </Button>
-          </div>
-          {error ? (
-            <ErrorComponent refetch={() => {}} />
-          ) : (
-            <>
-              {isLoading ? (
-                <TableSkeletonLoader />
+        {!isLoading && (
+          <div className=" space-y-4">
+            <CustomerAnalysisBox data={data?.analysis} />
+            <div className=" space-y-2">
+              <p className=" text-xl font-semibold">Customer Info</p>
+              <div className=" flex justify-between items-center">
+                <Input placeholder="Search...." />
+                <Button onClick={() => router.push("/pos/app/add-customer")}>
+                  <PlusCircle /> <span className="ms-1">Add Customer</span>
+                </Button>
+              </div>
+              {error ? (
+                <ErrorComponent refetch={() => {}} />
               ) : (
-                <div className=" space-y-3">
-                  <CustomerTable data={data?.data} />
-                  <PaginationComponent
-                    goToFirstPage={goToFirstPage}
-                    currentPage={currentPage}
-                    decrementPage={decrementPage}
-                    incrementPage={incrementPage}
-                    goToLastPage={goToLastPage}
-                    lastPage={data?.totalPages}
-                  />
-                </div>
+                <>
+                  {isLoading ? (
+                    <TableSkeletonLoader />
+                  ) : (
+                    <div className=" space-y-3">
+                      <CustomerTable data={data?.data} />
+                      <PaginationComponent
+                        goToFirstPage={goToFirstPage}
+                        currentPage={currentPage}
+                        decrementPage={decrementPage}
+                        incrementPage={incrementPage}
+                        goToLastPage={goToLastPage}
+                        lastPage={data?.totalPages}
+                      />
+                    </div>
+                  )}
+                </>
               )}
-            </>
-          )}
-        </div>
+            </div>
+          </div>
+        )}
       </div>
     </Container>
   );

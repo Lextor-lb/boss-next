@@ -24,8 +24,7 @@ const HotDealAlert = ({ data, isLoading }: any) => {
     <div className=" space-y-4 mb-12">
       <div className=" flex justify-between items-center">
         <Heading header="Hot Deal Alert" desc="Check this out!" />
-
-        <div className=" hidden  lg:flex gap-2">
+        <div className=" hidden lg:flex gap-2">
           <Button
             onClick={() => previous.current && previous.current.click()}
             size={"sm"}
@@ -59,7 +58,14 @@ const HotDealAlert = ({ data, isLoading }: any) => {
               ) : (
                 data.data.map(
                   (
-                    { name, medias, productBrand, id, salePrice }: any,
+                    {
+                      name,
+                      medias,
+                      productBrand,
+                      id,
+                      salePrice,
+                      productCode,
+                    }: any,
                     index: number
                   ) => (
                     <CarouselItem
@@ -68,6 +74,7 @@ const HotDealAlert = ({ data, isLoading }: any) => {
                     >
                       <ProductCard
                         id={id}
+                        productCode={productCode}
                         name={name}
                         productBrand={productBrand}
                         salePrice={salePrice}

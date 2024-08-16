@@ -43,6 +43,7 @@ const UserInfoPage = () => {
       throw new Error(error.message || "An error occurred");
     }
   };
+  
   useEffect(() => {
     setIsClient(true);
   }, []);
@@ -106,6 +107,7 @@ const UserInfoPage = () => {
     handleSubmit,
     formState: { errors },
     reset,
+    getValues,
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -184,7 +186,7 @@ const UserInfoPage = () => {
             )}
           </div>
           <div className=" col-span-full flex justify-end">
-            <Button>Save my info</Button>
+            <Button>Save</Button>
           </div>
         </div>
       </div>

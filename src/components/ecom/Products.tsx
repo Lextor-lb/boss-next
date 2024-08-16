@@ -40,6 +40,7 @@ const Products = ({
   isLoading: boolean;
 }) => {
   const router = useRouter();
+  console.log(data);
   return (
     <div className=" space-y-3">
       <>

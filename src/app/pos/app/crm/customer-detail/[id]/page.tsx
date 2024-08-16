@@ -97,7 +97,7 @@ const CustomerDetailPage = ({ params }: { params: { id: string } }) => {
                 <p className=" text-gray-500 text-sm"> {data?.totalPrice}</p>
               </div>
               <p className="text-sm  font-light">
-                {data?.vouchers.length} (vouchers)
+                {data?.totalVouchers} (vouchers)
               </p>
             </div>
             <div className=" grid pb-2 grid-cols-2">
@@ -122,7 +122,7 @@ const CustomerDetailPage = ({ params }: { params: { id: string } }) => {
         {isLoading ? (
           <TableSkeletonLoader />
         ) : (
-          <TodayReportTable data={data.vouchers} />
+          <TodayReportTable data={data.vouchersSummary} />
         )}
       </div>
     </Container>

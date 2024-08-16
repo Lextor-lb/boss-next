@@ -26,6 +26,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Backend_URL, getFetch, postFetch, postMediaFetch } from "@/lib/fetch";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import useSWR from "swr";
@@ -39,7 +40,7 @@ const AddCustomer = () => {
     phoneNumber: z.string().min(1, { message: "This field cannot be empty!" }),
     ageRange: z.string().min(1, { message: "This field cannot be empty!" }),
     specialId: z.string().min(1, { message: "This field cannot be empty!" }),
-    dob: z
+    dateOfBirth: z
       .string()
       .min(1, { message: "This field cannot be empty!" })
       .optional()
@@ -68,7 +69,7 @@ const AddCustomer = () => {
       address: "",
       remark: "",
       email: null,
-      dob: "",
+      dateOfBirth: "",
     },
   });
 
@@ -85,6 +86,8 @@ const AddCustomer = () => {
     return postFetch(url, arg);
   };
 
+  const router = useRouter();
+
   const {
     data,
     isMutating,
@@ -92,11 +95,21 @@ const AddCustomer = () => {
     error,
   } = useSWRMutation(`${Backend_URL}/customers`, postFetcher);
 
+  const dateConverter = (date: any) => {
+    const [year, month, day] = date.split("-");
+    const formattedDate = `${day}-${month}-${year}`;
+    return formattedDate;
+  };
+
   const onSubmit = async (value: any) => {
     value.specialId = parseInt(value.specialId);
+    value.dateOfBirth = value.dateOfBirth;
     console.log(value);
     const res = await add(value);
     console.log(res);
+    if (res) {
+      router.push("/pos/app/crm");
+    }
   };
 
   return (
@@ -182,10 +195,10 @@ const AddCustomer = () => {
                 {/* age */}
                 <div className=" flex flex-col gap-1.5 col-span-full">
                   <Label htmlFor="username">Age</Label>
-                  <Input type="date" {...register("dob")} />
-                  {errors.dob && (
+                  <Input type="date" {...register("dateOfBirth")} />
+                  {errors.dateOfBirth && (
                     <p className="text-sm mt-1.5 text-red-500">
-                      {errors.dob.message}
+                      {errors.dateOfBirth.message}
                     </p>
                   )}
                 </div>

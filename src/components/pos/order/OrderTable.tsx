@@ -136,9 +136,9 @@ const OrderTable = ({ data, refetch }: any) => {
                         <div className=" flex items-center gap-1.5">
                           <Button
                             onClick={async (e) => {
+                              e.stopPropagation();
                               await setId(id);
                               processOrder("CONFIRM");
-                              e.stopPropagation();
                             }}
                             size={"sm"}
                           >

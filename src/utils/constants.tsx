@@ -120,6 +120,7 @@ export const sidebarMenuItems: menuItems = [
     path: "/pos/app/products",
     icon: <PackageCheck size={20} strokeWidth={1.5} />,
   },
+
   {
     id: 17,
     pageName: "Brand",
@@ -127,6 +128,7 @@ export const sidebarMenuItems: menuItems = [
     path: "/pos/app/product-brands",
     icon: <BadgeCheck size={20} strokeWidth={1.5} />,
   },
+
   {
     id: 18,
     pageName: "Type",
@@ -134,6 +136,7 @@ export const sidebarMenuItems: menuItems = [
     path: "/pos/app/product-types",
     icon: <Shirt size={20} strokeWidth={1.5} />,
   },
+
   {
     id: 19,
     group: "inventory",
@@ -141,6 +144,7 @@ export const sidebarMenuItems: menuItems = [
     path: "/pos/app/product-categories",
     icon: <FlipHorizontal2 size={20} strokeWidth={1.5} />,
   },
+
   {
     id: 20,
     group: "inventory",
@@ -148,6 +152,7 @@ export const sidebarMenuItems: menuItems = [
     path: "/pos/app/product-fittings",
     icon: <Ruler size={20} strokeWidth={1.5} />,
   },
+
   {
     id: 21,
     group: "inventory",
@@ -156,13 +161,13 @@ export const sidebarMenuItems: menuItems = [
     icon: <RulerSquareIcon strokeWidth={1.5} className=" ms-1" />,
   },
 
-  {
-    id: 23,
-    group: "profile",
-    pageName: "profile",
-    path: "/pos/app/profile",
-    icon: <Users2 size={20} strokeWidth={1.5} />,
-  },
+  // {
+  //   id: 23,
+  //   group: "profile",
+  //   pageName: "profile",
+  //   path: "/pos/app/profile",
+  //   icon: <Users2 size={20} strokeWidth={1.5} />,
+  // },
 
   {
     id: 24,
@@ -186,13 +191,15 @@ export const sidebarMenuItems: menuItems = [
     path: "/pos/app/order",
     icon: <FolderOpen size={20} strokeWidth={1.5} />,
   },
-  {
-    id: 27,
-    group: "Ecommerce",
-    pageName: "Slider",
-    path: "/pos/app/slider",
-    icon: <SlidersIcon size={20} strokeWidth={1.5} />,
-  },
+
+  // {
+  //   id: 27,
+  //   group: "Ecommerce",
+  //   pageName: "Slider",
+  //   path: "/pos/app/slider",
+  //   icon: <SlidersIcon size={20} strokeWidth={1.5} />,
+  // },
+
   {
     id: 28,
     group: "Ecommerce",
@@ -200,6 +207,7 @@ export const sidebarMenuItems: menuItems = [
     path: "/pos/app/category-name",
     icon: <Hash size={20} strokeWidth={1.5} />,
   },
+
   {
     id: 29,
     group: "Ecommerce",

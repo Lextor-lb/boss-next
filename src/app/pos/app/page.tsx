@@ -1,5 +1,12 @@
 "use client";
 
-export default function DashboardPage() {
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+
+export default function DashboardAppPage() {
+  const router = useRouter();
+  useEffect(() => {
+    router.push("/pos/app/sale");
+  }, []);
   return;
 }

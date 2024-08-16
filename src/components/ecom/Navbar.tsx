@@ -19,7 +19,7 @@ const Navbar = () => {
   useEffect(() => {
     const handler = setTimeout(() => {
       setSearchInputValue(debouncedValue);
-    }, 300); // delay in milliseconds
+    }, 1300); // delay in milliseconds
 
     return () => {
       clearTimeout(handler);
@@ -131,13 +131,13 @@ const Navbar = () => {
               </ControlSheet>
             </div>
             <div className="hidden lg:block">
-              <ControlSheet
+              {/* <ControlSheet
                 buttonName={<Heart />}
                 title="Wish List"
                 desc="Your wishlist is here"
               >
                 Wish list
-              </ControlSheet>
+              </ControlSheet> */}
             </div>
 
             <ControlSheet

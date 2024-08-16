@@ -6,18 +6,13 @@ import { UsersRound } from "lucide-react";
 // Register chart elements
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const CustomerAnalysisBox = () => {
-  //   const analysis_data = data.analysis_data;
-
+const CustomerAnalysisBox = ({ data }: any) => {
   // Define chart data
   const chartData = {
     datasets: [
       {
         label: "Gender %",
-        data: [
-          "analysis_data.female_percentage",
-          "analysis_data.male_percentage",
-        ],
+        data: [data.genderPercents.MALE, data.genderPercents.FEMALE],
         backgroundColor: ["rgb(255, 99, 132)", "rgb(54, 162, 235)"],
         hoverOffset: 4,
       },
@@ -30,9 +25,7 @@ const CustomerAnalysisBox = () => {
         <div className="gap-3 items-baseline flex h-full justify-center flex-col">
           <UsersRound size={32} />
           <div className="space-y-0.5">
-            <p className="text-2xl font-medium">
-              {/* {analysis_data.total_customers} */}
-            </p>
+            <p className="text-2xl font-medium">{data.totalCustomers}</p>
             <p className="text-base font-normal">Total Customers</p>
           </div>
         </div>
@@ -49,12 +42,12 @@ const CustomerAnalysisBox = () => {
               </p>
               <div className="w-1/2 h-2 bg-secondary relative">
                 <div
-                  //   style={{ width: `${analysis_data.young_percentage}%` }}
+                  style={{ width: `${data.agePercents.young}%` }}
                   className="h-2 bg-yellow-300 absolute"
                 ></div>
               </div>
               <p className="text-sm text-primary/60 font-light">
-                {/* {analysis_data.young_percentage}% */}
+                {data.agePercents.young}%
               </p>
             </div>
             <div className="flex justify-between items-center">
@@ -63,12 +56,12 @@ const CustomerAnalysisBox = () => {
               </p>
               <div className="w-1/2 h-2 bg-secondary relative">
                 <div
-                  //   style={{ width: `${analysis_data.middle_percentage}%` }}
+                  style={{ width: `${data.agePercents.MIDDLE}%` }}
                   className="w-[75%] h-2 bg-purple-500 absolute"
                 ></div>
               </div>
               <p className="text-sm text-primary/60 font-light">
-                {/* {analysis_data.middle_percentage}% */}
+                {data.agePercents.MIDDLE}%
               </p>
             </div>
             <div className="flex justify-between items-center">
@@ -77,12 +70,12 @@ const CustomerAnalysisBox = () => {
               </p>
               <div className="w-1/2 h-2 bg-secondary relative">
                 <div
-                  //   style={{ width: `${analysis_data.old_percentage}%` }}
+                  style={{ width: `${data.agePercents.OLD}%` }}
                   className={`h-2 bg-blue-300 absolute`}
                 ></div>
               </div>
               <p className="text-sm text-primary/60 font-light">
-                {/* {analysis_data.old_percentage}% */}
+                {data.agePercents.OLD}%
               </p>
             </div>
           </div>
@@ -100,8 +93,7 @@ const CustomerAnalysisBox = () => {
                   <p className="text-xs">Male</p>
                 </div>
                 <div className="flex items-center gap-8">
-                  <p className="text-xs">100</p>
-                  {/* <p className="text-xs">{analysis_data.male_percentage}%</p> */}
+                  <p className="text-xs">{data.genderPercents.MALE}%</p>
                 </div>
               </div>
             </div>
@@ -113,8 +105,7 @@ const CustomerAnalysisBox = () => {
                   <p className="text-xs">Female</p>
                 </div>
                 <div className="flex items-center gap-8">
-                  <p className="text-xs">100</p>
-                  {/* <p className="text-xs">{analysis_data.female_percentage}%</p> */}
+                  <p className="text-xs">{data.genderPercents.FEMALE}%</p>
                 </div>
               </div>
             </div>

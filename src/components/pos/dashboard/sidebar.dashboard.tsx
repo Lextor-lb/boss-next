@@ -68,11 +68,11 @@ export default function Sidebar() {
       name: "Ecommerce",
       routes: EcommerceRoutes,
     },
-    {
-      id: 6,
-      name: "User Profile",
-      routes: profileRoutes,
-    },
+    // {
+    //   id: 6,
+    //   name: "User Profile",
+    //   routes: profileRoutes,
+    // },
   ];
 
   return (

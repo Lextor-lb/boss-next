@@ -42,7 +42,12 @@ const Checkout = () => {
   }, []);
 
   useEffect(() => {
-    if (isClient) setUserId(localStorage.getItem("userId"));
+    if (isClient) {
+      setUserId(localStorage.getItem("userId"));
+      if (!localStorage.getItem("accessToken")) {
+        router.push("/shopping-bag");
+      }
+    }
   }, [isClient]);
 
   const router = useRouter();
@@ -234,7 +239,7 @@ const Checkout = () => {
       console.log(orderRes);
       if (orderRes.status) {
         setCartItems([]);
-        router.push(`/order/${2}`);
+        router.push(`/order/${orderRes.data.id}`);
       }
     }
   };

@@ -97,6 +97,7 @@ const EditCustomer = ({ params }: { params: { id: string } }) => {
         specialId: `${customerData.special.id}`,
         address: customerData.address,
         remark: customerData.remark || "",
+        dob: customerData.fixDateOfBirth || "",
       });
     }
   }, [customerData, reset]);
@@ -107,6 +108,12 @@ const EditCustomer = ({ params }: { params: { id: string } }) => {
 
   const router = useRouter();
 
+  const dateConverter = (date: any) => {
+    const [year, month, day] = date.split("-");
+    const formattedDate = `${day}-${month}-${year}`;
+    return formattedDate;
+  };
+
   const {
     data: addData,
     isMutating,
@@ -116,7 +123,21 @@ const EditCustomer = ({ params }: { params: { id: string } }) => {
 
   const onSubmit = async (value: any) => {
     value.specialId = parseInt(value.specialId);
-    const res = await edit(value);
+    const data: any = {
+      name: value.name,
+      email: value.email,
+      gender: value.gender,
+      ageRange: value.ageRange,
+      specialId: parseInt(value.specialId),
+      address: value.address,
+      remark: value.remark,
+      fixDateOfBirth: dateConverter(value.dob),
+    };
+    if (value.phoneNumber !== customerData.phoneNumber) {
+      data.phoneNumber = value.phoneNumber;
+    }
+
+    const res = await edit(data);
     if (res?.status) {
       router.push("/pos/app/crm");
     }

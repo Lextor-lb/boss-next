@@ -1,8 +1,7 @@
 "use client";
 import Container from "@/components/Container.components";
 import NavHeader from "@/components/pos/NavHeader";
-import { Label } from "@/components/ui/label";
-import { Backend_URL, getFetch } from "@/lib/fetch";
+import { Backend_URL, getFetch, putFetch } from "@/lib/fetch";
 import React, { useState } from "react";
 import useSWR from "swr";
 import {
@@ -22,6 +21,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import Image from "next/image";
+import useSWRMutation from "swr/mutation";
 
 const OrderDetailAdminPage = ({ params }: any) => {
   const [status, setStatus] = useState<string>("");
@@ -36,7 +37,43 @@ const OrderDetailAdminPage = ({ params }: any) => {
     getData
   );
 
-  console.log(data);
+  const putFetcher = (url: string, { arg }: { arg: any }) => {
+    return putFetch(url, arg);
+  };
+
+  const { data: processData, trigger: process } = useSWRMutation(
+    `${Backend_URL}/orders/${params.id}`,
+    putFetcher
+  );
+
+  const generateLongNumber = (length: number) => {
+    let number = "";
+    for (let i = 0; i < length; i++) {
+      number += Math.floor(Math.random() * 10);
+    }
+    return parseInt(number);
+  };
+
+  const processOrder = async (e: any, type: any) => {
+    e.preventDefault();
+    console.log("here", type);
+
+    const processData: any = {
+      orderStatus: type,
+    };
+
+    if (type == "CONFIRM") {
+      processData.voucherCode = `${generateLongNumber(7)}`;
+    }
+
+    const res = await process(processData);
+
+    console.log(res);
+    if (res?.status) {
+      setStatus("");
+      setOpen(false);
+    }
+  };
 
   return (
     <Container>
@@ -46,7 +83,7 @@ const OrderDetailAdminPage = ({ params }: any) => {
           path="E-commerce"
           currentPage="Order Detail"
         />
-        {!isLoading && (
+        {!isLoading && data && (
           <div className=" space-y-4">
             <div className=" p-5 bg-white border border-input  rounded-md">
               <div className=" grid grid-cols-3">
@@ -60,39 +97,88 @@ const OrderDetailAdminPage = ({ params }: any) => {
                   <div className=" space-y-1.5">
                     <p className=" opacity-70 font-light text-sm">Ordered At</p>
                     <p>
-                      {data?.date} {data?.time}
+                      {data?.date}, {data?.time}
                     </p>
                   </div>
+
                   <div className=" space-y-1.5">
-                    <div className=" w-2/3 flex justify-between items-center">
-                      <p className=" opacity-70 font-light text-sm">
-                        Order Status
-                      </p>
-                      <Button
-                        onClick={() => setOpen(!open)}
-                        size={"sm"}
-                        variant={"outline"}
-                      >
-                        {open ? "Cancel" : "Edit"}
-                      </Button>
-                    </div>
-                    {!open && <p>{data?.orderStatus}</p>}
-                    {open && (
-                      <div className=" space-y-1.5">
-                        <Select
-                          value={status}
-                          onValueChange={(e) => setStatus(e)}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select Stage" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="DELIVERY">Delivery</SelectItem>
-                            <SelectItem value="COMPLETE">Completed</SelectItem>
-                          </SelectContent>
-                        </Select>
+                    <p className=" opacity-70 font-light text-sm">Total Cost</p>
+                    <p>{data?.total}</p>
+                  </div>
+
+                  <div className=" space-y-1.5">
+                    <form onSubmit={(e) => processOrder(e, status)}>
+                      <div className=" w-2/3 space-y-2">
+                        <div className=" flex items-center justify-between">
+                          <p className=" opacity-70 font-light text-sm">
+                            Order Status
+                          </p>
+                          <div className=" flex gap-1.5">
+                            <Button
+                              onClick={() => setOpen(!open)}
+                              disabled={
+                                data?.orderStatus == "CANCEL" ||
+                                data?.orderStatus == "COMPLETE"
+                              }
+                              size={"sm"}
+                              type="button"
+                              variant={"outline"}
+                            >
+                              {open ? "Cancel" : "Edit"}
+                            </Button>
+                            {open && (
+                              <Button disabled={status == ""} size={"sm"}>
+                                Save
+                              </Button>
+                            )}
+                          </div>
+                        </div>
+                        {!open && <p>{data?.orderStatus}</p>}
+                        {open && (
+                          <div className=" space-y-1.5">
+                            <Select
+                              value={status}
+                              onValueChange={(e) => setStatus(e)}
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select Stage" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem
+                                  value="CANCEL"
+                                  disabled={
+                                    data?.orderStatus === "CONFIRM" ||
+                                    data?.orderStatus === "DELIVERY" ||
+                                    data?.orderStatus === "COMPLETE"
+                                  }
+                                >
+                                  Cancel
+                                </SelectItem>
+                                <SelectItem
+                                  value="CONFIRM"
+                                  disabled={
+                                    data?.orderStatus === "COMPLETE" ||
+                                    data?.orderStatus === "DELIVERY"
+                                  }
+                                >
+                                  Confirm
+                                </SelectItem>
+
+                                <SelectItem
+                                  value="DELIVERY"
+                                  disabled={data?.orderStatus === "COMPLETE"}
+                                >
+                                  Delivery
+                                </SelectItem>
+                                <SelectItem value="COMPLETE">
+                                  Completed
+                                </SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        )}
                       </div>
-                    )}
+                    </form>
                   </div>
                 </div>
                 <div className=" ps-3 col-span-2 grid grid-cols-2 gap-3 ">
@@ -106,7 +192,6 @@ const OrderDetailAdminPage = ({ params }: any) => {
                     <p className=" opacity-70 font-light text-sm">
                       Email Address
                     </p>
-
                     <p className="">{data?.ecommerceUser.email}</p>
                   </div>
                   <div className=" space-y-1.5">
@@ -160,6 +245,7 @@ const OrderDetailAdminPage = ({ params }: any) => {
                           sizingName,
                           categoryName,
                           fittingName,
+                          image,
                         }: any,
                         index: number
                       ) => (
@@ -169,8 +255,17 @@ const OrderDetailAdminPage = ({ params }: any) => {
                         >
                           <TableCell>{index + 1}</TableCell>
                           <TableCell>
-                            <div className="">
-                              <div className="flex gap-1 items-start justify-center flex-col">
+                            <div className=" grid grid-cols-12">
+                              <div className=" col-span-1">
+                                <Image
+                                  className="object-cover w-9 h-9 rounded-md"
+                                  src={image?.url}
+                                  alt=""
+                                  width={200}
+                                  height={200}
+                                />
+                              </div>
+                              <div className="flex col-span-11 gap-1 items-start justify-center flex-col">
                                 <p className="capitalize font-medium">
                                   {productName}
                                 </p>

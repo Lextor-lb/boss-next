@@ -56,12 +56,29 @@ const ConfirmBox = ({
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>{confirmTitle}</AlertDialogTitle>
+          <AlertDialogTitle
+            onClick={(event) => {
+              event.stopPropagation();
+            }}
+          >
+            {confirmTitle}
+          </AlertDialogTitle>
           <AlertDialogDescription>{confirmDescription}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={() => run()}>
+          <AlertDialogCancel
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
+            Cancel
+          </AlertDialogCancel>
+          <AlertDialogAction
+            onClick={(e) => {
+              run();
+              e.stopPropagation();
+            }}
+          >
             {confirmButtonText}
           </AlertDialogAction>
         </AlertDialogFooter>

@@ -166,18 +166,22 @@ const ProductTable = ({
                       </div>
                     </TableCell>
                     <TableCell className=" text-end">{stock}</TableCell>
-                    <TableCell className=" text-end">{salePrice}</TableCell>
-                    <TableCell className=" text-end">{benefit}</TableCell>
+                    <TableCell className=" text-end">
+                      {new Intl.NumberFormat("ja-JP").format(salePrice)}
+                    </TableCell>
+                    <TableCell className=" text-end">
+                      {new Intl.NumberFormat("ja-JP").format(benefit)}
+                    </TableCell>
 
                     <TableCell className=" flex justify-end  h-full items-center">
                       <div className=" space-y-1">
                         <div className=" flex items-center gap-1">
-                          <CalendarDays />
-                          <p className=" text-sm">{date}</p>
+                          <CalendarDays width={12} height={12} />
+                          <p className=" text-xs">{date}</p>
                         </div>
                         <div className="flex  ">
                           <div className=" bg-muted flex rounded items-center p-0.5 ps-0.5 px-1 text-xs gap-1">
-                            <Clock1 width={18} height={18} />
+                            <Clock1 width={12} height={12} />
                             <p className=" text-xs">{time}</p>
                           </div>
                         </div>

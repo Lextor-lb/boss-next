@@ -129,7 +129,7 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
     error: dealError,
   } = useSWR(
     productData
-      ? `${Backend_URL}/ecommerce-Products/riddle/${productData.gender.toLowerCase()}`
+      ? `${Backend_URL}/ecommerce-Products/riddle/${productData.productCategory.id}`
       : null,
     getData
   );

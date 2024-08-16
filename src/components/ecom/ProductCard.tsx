@@ -67,7 +67,7 @@ const ProductCard = ({
           alt=""
         />
         <div className=" absolute  top-3 right-3">
-          <Button
+          {/* <Button
             onClick={(e) => {
               e.stopPropagation();
               addToWishList();
@@ -77,7 +77,7 @@ const ProductCard = ({
             size={"sm"}
           >
             <Heart size={18} color="#333" />
-          </Button>
+          </Button> */}
         </div>
         <div className=" absolute left-3 bottom-3">
           <Badge
