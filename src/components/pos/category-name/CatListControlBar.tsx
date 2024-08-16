@@ -66,12 +66,14 @@ const CatListControlBar = ({
   const [open, setOpen] = useState(false);
   const validImageTypes = ["image/jpeg", "image/png", "image/jpg"];
 
-  const schema = z.object({
-    name: z.string().min(1, { message: "This field cannot be empty!" }),
-    productCategoryId: z
+  const schema =  z.object({
+    name:  typeof window !== "undefined"
+    ? z.string().min(1, { message: "This field cannot be empty!" }) : z.any(),
+    
+    productCategoryId:  typeof window !== "undefined" ? z
       .string()
-      .min(1, { message: "This field cannot be empty!" }),
-    image: z
+      .min(1, { message: "This field cannot be empty!" }) : z.any(),
+    image: typeof window !== "undefined" ? z
       .array(
         z.object({
           file: z
@@ -83,7 +85,7 @@ const CatListControlBar = ({
       )
       .min(0, { message: "At least one image is required" })
       .max(1, { message: "Only one image is required" })
-      .optional(),
+      .optional() : z.any(),
   });
 
   type FormData = z.infer<typeof schema>;
@@ -223,7 +225,7 @@ const CatListControlBar = ({
                 />
               )}
               {errors.image && (
-                <p className="text-sm text-red-500">{errors.image.message}</p>
+                <p className="text-sm text-red-500">{errors.image.message as never}</p>
               )}
               <FormInput
                 label="Name"
@@ -232,7 +234,7 @@ const CatListControlBar = ({
                 {...register("name")}
               />
               {errors.name && (
-                <p className="text-sm text-red-500">{errors.name.message}</p>
+                <p className="text-sm text-red-500">{errors.name.message as never}</p>
               )}
               <div className="space-y-1.5">
                 <Label>Category</Label>
@@ -253,7 +255,7 @@ const CatListControlBar = ({
                 </Select>
                 {errors.productCategoryId && (
                   <p className="text-sm text-red-500">
-                    {errors.productCategoryId.message}
+                    {errors.productCategoryId.message as never}
                   </p>
                 )}
               </div>
