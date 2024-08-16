@@ -90,7 +90,7 @@ const OrderTable = ({ data, refetch }: any) => {
             <TableHead>Date</TableHead>
             <TableHead>Customers</TableHead>
             <TableHead>Total</TableHead>
-            <TableHead className=" text-end">Status</TableHead>
+            <TableHead className="">Status</TableHead>
             <TableHead></TableHead>
           </TableRow>
         </TableHeader>
@@ -131,7 +131,7 @@ const OrderTable = ({ data, refetch }: any) => {
                     <TableCell>
                       {new Intl.NumberFormat("ja-JP").format(total)}
                     </TableCell>
-                    <TableCell className=" flex justify-end items-center h-full mt-2">
+                    <TableCell className=" flex justify-start items-center h-full mt-2">
                       {orderStatus == "ORDERED" ? (
                         <div className=" flex items-center gap-1.5">
                           <Button
@@ -202,9 +202,9 @@ const OrderTable = ({ data, refetch }: any) => {
                             <SheetHeader>
                               <SheetTitle>Control Order</SheetTitle>
                               <SheetDescription>
-                                Make order stage here. Click save when you&#39;re done.
-                            </SheetDescription>
-
+                                Make order stage here. Click save when
+                                you&#39;re done.
+                              </SheetDescription>
                             </SheetHeader>
                             <div className=" py-3 mb-6 space-y-1.5">
                               <Label>Stage</Label>

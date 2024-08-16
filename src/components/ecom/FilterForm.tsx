@@ -31,7 +31,7 @@ const FilterForm = ({ closeRef }: any) => {
       setType(filters.type || []);
       setRange(filters.range || [0, 0]);
       setBrandName(filters.brandName || []);
-      setOpen(filters.open || [1, 2, 3, 4]);
+      setOpen(filters.open || [1, 3]);
     }
   }, [isClient]);
 
@@ -135,7 +135,7 @@ const FilterForm = ({ closeRef }: any) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form className=" h-[90%] overflow-auto" onSubmit={handleSubmit}>
       <div className="space-y-2.5">
         <div className="space-y-1.5">
           <div

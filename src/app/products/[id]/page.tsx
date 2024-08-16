@@ -178,7 +178,7 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
               <div className=" h-3 w-24 bg-neutral-500 animate-pulse"></div>
 
               <div>
-                <p className="text-neutral-500 mb-2 text-xs lg:text-sm uppercase">
+                <p className="text-neutral-500 mb-2 text-xs lg:text-base uppercase">
                   available colors
                 </p>
                 <div className=" flex gap-3">
@@ -189,7 +189,7 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
                 </div>
               </div>
               <div className="space-y-3">
-                <p className="text-neutral-500 mb-2 text-xs lg:text-sm uppercase">
+                <p className="text-neutral-500 mb-2 text-xs lg:text-base uppercase">
                   Select Size
                 </p>
                 <div className=" flex gap-3">
@@ -200,7 +200,7 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
                 </div>
               </div>
               <div>
-                <p className="text-neutral-500 mb-2 text-xs lg:text-sm uppercase">
+                <p className="text-neutral-500 mb-2 text-xs lg:text-base uppercase">
                   Quantity
                 </p>
                 <div className=" flex gap-3">
@@ -248,7 +248,7 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
           <div>
             <div className="grid lg:grid-cols-5 gap-5 h-auto">
               <div className="overflow-auto w-full lg:col-span-2">
-                <div className=" flex gap-3 lg:flex-col w-full lg:h-[700px] overflow-auto  h-[400px]">
+                <div className=" flex gap-3 lg:flex-col w-full lg:h-[700px] overflow-auto  h-[300px]">
                   {imageToShow.length < 1 ? (
                     <>
                       {productData.mediaUrls.map(({ url }: any, index: any) => (
@@ -291,7 +291,7 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
                   </p>
                 </div>
                 {(productData?.discountPrice as number) > 0 ? (
-                  <div className=" space-y-1.5 text-sm lg:text-base ">
+                  <div className=" space-y-1.5 text-base lg:text-base ">
                     <Badge className=" text-black bg-neutral-300">
                       {productData.discountPrice}%
                     </Badge>
@@ -303,7 +303,7 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
                         )}{" "}
                         MMK
                       </p>
-                      <p className=" text-sm !mt-0 lg:text-base">
+                      <p className=" text-base !mt-0 lg:text-base">
                         {new Intl.NumberFormat("ja-JP").format(
                           productData.salePrice *
                             (1 - (productData.discountPrice as number) / 100)
@@ -313,7 +313,7 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
                     </div>
                   </div>
                 ) : (
-                  <p className=" text-sm">
+                  <p className=" text-base">
                     {new Intl.NumberFormat("ja-JP").format(
                       productData.salePrice
                     )}{" "}
@@ -322,7 +322,7 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
                 )}
                 <Badge>{productData.productFitting}</Badge>
                 <div>
-                  <p className="text-neutral-500 mb-2 text-xs lg:text-sm uppercase">
+                  <p className="text-neutral-500 mb-2 text-xs lg:text-base uppercase">
                     available colors
                   </p>
                   <div className="flex gap-3">
@@ -361,7 +361,7 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
                           >
                             <div
                               style={{ backgroundImage: `url(${mediaUrl})` }}
-                              className="lg:w-7 lg:h-7 h-4 bg-red-900 w-4 rounded-full bg-cover bg-center"
+                              className="lg:w-7 lg:h-7 h-6 bg-red-900 w-6 rounded-full bg-cover bg-center"
                             ></div>
                           </div>
                         )
@@ -369,7 +369,7 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
                   </div>
                 </div>
                 <div className="space-y-3">
-                  <p className="text-neutral-500 mb-2 text-xs lg:text-sm uppercase">
+                  <p className="text-neutral-500 mb-2 text-xs lg:text-base uppercase">
                     Select Size
                   </p>
                   <ToggleGroup
@@ -395,7 +395,7 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
                   </ToggleGroup>
                 </div>
                 <div>
-                  <p className="text-neutral-500 mb-2 text-xs lg:text-sm uppercase">
+                  <p className="text-neutral-500 mb-2 text-xs lg:text-base uppercase">
                     Quantity
                   </p>
                   <div className=" rounded-md border w-[130px] flex items-center">
@@ -433,10 +433,10 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
                     </Button>
                   </div>
                   {onlyLeft && (
-                    <p className=" my-2 text-sm text-red-500">{onlyLeft}.</p>
+                    <p className=" my-2 text-base text-red-500">{onlyLeft}.</p>
                   )}
                 </div>
-                <div className=" pt-2 flex gap-2">
+                <div className=" pt-2 gap-2">
                   <Button
                     onClick={addToCart()}
                     disabled={isLoading}
@@ -450,13 +450,13 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
                       <span className=" me-1">Add to Cart</span>
                     )}
                   </Button>
-                  <Button
+                  {/* <Button
                     onClick={() => addToWishList()}
                     size={"sm"}
                     variant={"outline"}
                   >
                     <Heart />
-                  </Button>
+                  </Button> */}
                 </div>
               </div>
             </div>
@@ -467,7 +467,7 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
             <SweetAlert2 {...swalProps}>
               <div className=" pointer-events-none space-y-3 text-center">
                 <p className=" pointer-events-none font-medium">Wishlist</p>
-                <p className=" pointer-events-none text-black/50 text-sm">
+                <p className=" pointer-events-none text-black/50 text-base">
                   Your wishlist is currently empty. Sign in or create an account
                   to save your wishlist across all your devices.
                 </p>

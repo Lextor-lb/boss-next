@@ -84,9 +84,11 @@ const ShoppingBag = () => {
                   {Array(7)
                     .fill(null)
                     .map((_, index) => (
-                      <TableCell className="pointer-events-none" key={index}>
-                        <p className="py-3"></p>
-                      </TableCell>
+                      <>
+                        <TableCell className="pointer-events-none" key={index}>
+                          <p className="py-3"></p>
+                        </TableCell>
+                      </>
                     ))}
                 </TableRow>
               ) : (
@@ -148,7 +150,7 @@ const ShoppingBag = () => {
                             priceAfterDiscount
                           )}
                         </TableCell>
-                        <TableCell className="  text-end ms-4">
+                        <TableCell className=" text-end ms-4">
                           <Button
                             onClick={remove(selectedProduct.id)}
                             variant="ghost"
