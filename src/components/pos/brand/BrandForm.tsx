@@ -22,8 +22,9 @@ type FormProps = {
   setBrandImageToShow: any;
 };
 
-const validImageTypes = ["image/jpeg", "image/png", "image/jpg"];
-const MAX_FILE_SIZE = 100000;
+const validImageTypes = ["image/jpeg", "image/png", "image/jpg", "image/webp"];
+
+const MAX_FILE_SIZE = 1000000000;
 
 const BrandForm: React.FC<FormProps> = ({
   closeRef,

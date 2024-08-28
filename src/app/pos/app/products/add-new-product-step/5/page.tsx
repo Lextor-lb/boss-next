@@ -41,7 +41,7 @@ type ProductVariant = {
   sizeName: string;
 };
 
-const validImageTypes = ["image/jpeg", "image/png", "image/jpg"];
+const validImageTypes = ["image/jpeg", "image/png", "image/jpg", "image/webp"];
 
 const AddProductPageFive = () => {
   const [readyToProceed, setReadyToProceed] = useState(false);

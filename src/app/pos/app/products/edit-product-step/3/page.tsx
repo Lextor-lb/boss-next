@@ -46,7 +46,12 @@ const EditProductPageThree = () => {
     setImages(validFiles);
   };
 
-  const validImageTypes = ["image/jpeg", "image/png", "image/jpg"];
+  const validImageTypes = [
+    "image/jpeg",
+    "image/png",
+    "image/jpg",
+    "image/webp",
+  ];
 
   const schema = z.object({
     images:

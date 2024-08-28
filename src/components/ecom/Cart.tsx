@@ -11,7 +11,7 @@ const Cart = ({ closeRef }: any) => {
 
   const router = useRouter();
   return (
-    <div className=" space-y-3 bg-white pt-4 z-50 overflow-scroll h-[90%] relative">
+    <div className=" space-y-3 bg-white pt-4 z-50 overflow-auto h-[90%] relative">
       {cartItems.length == 0 ? (
         <p>Your Cart is empty!</p>
       ) : (

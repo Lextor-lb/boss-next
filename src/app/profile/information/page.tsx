@@ -102,6 +102,7 @@ const UserInfoPage = () => {
     phone: z.string().min(1, { message: "This field cannot be empty!" }),
     email: z.string().email({ message: "Invalid email format!" }),
   });
+
   type FormData = z.infer<typeof schema>;
 
   const {
@@ -156,6 +157,7 @@ const UserInfoPage = () => {
       }
     }
   }, [isClient]);
+
   const onSubmit = async (values: any) => {
     const res = await editUser(values);
     if (res?.ok) {
@@ -215,7 +217,7 @@ const UserInfoPage = () => {
             </div>
           </div>
         </div>
-        {isClient && (
+        {isClient && localStorage.getItem("accessToken") && (
           <SweetAlert2
             timer={1500}
             position="bottom-end"
@@ -243,27 +245,28 @@ const UserInfoPage = () => {
             didClose={() => {
               router.push("/");
             }}
+            customClass={{
+              popup: " w-auto",
+            }}
             {...swalProps2}
           >
             <div className=" pointer-events-none space-y-3 text-center">
               <p className=" pointer-events-none font-medium">
-                Proceed To Checkout
-              </p>
-              <p className=" pointer-events-none text-black/50 text-sm">
                 Please Login To Continue.
               </p>
+
               <div className="  pointer-events-none flex gap-3 justify-center items-center">
                 <Button
                   onClick={(e) => {
                     e.stopPropagation();
                     setSwalProps2({
-                      ...swalProps,
+                      ...swalProps2,
                       show: false,
                     });
                     router.push("/");
                   }}
                   size={"sm"}
-                  className="  pointer-events-auto"
+                  className=" pointer-events-auto"
                   variant={"outline"}
                 >
                   Cancel
@@ -272,13 +275,13 @@ const UserInfoPage = () => {
                   onClick={(e) => {
                     handleLogin();
                     e.stopPropagation();
-                    setSwalProps({
-                      ...swalProps,
+                    setSwalProps2({
+                      ...swalProps2,
                       show: false,
                     });
                   }}
                   size={"sm"}
-                  className="  pointer-events-auto"
+                  className=" pointer-events-auto"
                 >
                   Sign In
                 </Button>

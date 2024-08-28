@@ -64,28 +64,40 @@ const CatListControlBar = ({
   setCatId: any;
 }) => {
   const [open, setOpen] = useState(false);
-  const validImageTypes = ["image/jpeg", "image/png", "image/jpg"];
 
-  const schema =  z.object({
-    name:  typeof window !== "undefined"
-    ? z.string().min(1, { message: "This field cannot be empty!" }) : z.any(),
-    
-    productCategoryId:  typeof window !== "undefined" ? z
-      .string()
-      .min(1, { message: "This field cannot be empty!" }) : z.any(),
-    image: typeof window !== "undefined" ? z
-      .array(
-        z.object({
-          file: z
-            .instanceof(File)
-            .refine((file) => validImageTypes.includes(file.type), {
-              message: "Invalid file type",
-            }),
-        })
-      )
-      .min(0, { message: "At least one image is required" })
-      .max(1, { message: "Only one image is required" })
-      .optional() : z.any(),
+  const validImageTypes = [
+    "image/jpeg",
+    "image/png",
+    "image/jpg",
+    "image/webp",
+  ];
+
+  const schema = z.object({
+    name:
+      typeof window !== "undefined"
+        ? z.string().min(1, { message: "This field cannot be empty!" })
+        : z.any(),
+
+    productCategoryId:
+      typeof window !== "undefined"
+        ? z.string().min(1, { message: "This field cannot be empty!" })
+        : z.any(),
+    image:
+      typeof window !== "undefined"
+        ? z
+            .array(
+              z.object({
+                file: z
+                  .instanceof(File)
+                  .refine((file) => validImageTypes.includes(file.type), {
+                    message: "Invalid file type",
+                  }),
+              })
+            )
+            .min(0, { message: "At least one image is required" })
+            .max(1, { message: "Only one image is required" })
+            .optional()
+        : z.any(),
   });
 
   type FormData = z.infer<typeof schema>;
@@ -225,7 +237,9 @@ const CatListControlBar = ({
                 />
               )}
               {errors.image && (
-                <p className="text-sm text-red-500">{errors.image.message as never}</p>
+                <p className="text-sm text-red-500">
+                  {errors.image.message as never}
+                </p>
               )}
               <FormInput
                 label="Name"
@@ -234,7 +248,9 @@ const CatListControlBar = ({
                 {...register("name")}
               />
               {errors.name && (
-                <p className="text-sm text-red-500">{errors.name.message as never}</p>
+                <p className="text-sm text-red-500">
+                  {errors.name.message as never}
+                </p>
               )}
               <div className="space-y-1.5">
                 <Label>Category</Label>

@@ -55,12 +55,14 @@ export default function Home() {
         ) : (
           <>
             <Container>
-              <div className="space-y-4 lg:pt-24 pt-12">
-                <BreadCrumbComponent path="Home" currentPage="Best Sellers" />
-                <Heading
-                  header="Best selling products for you"
-                  desc="the latest and greatest products that every man needs to enhance his lifestyle"
-                />
+              <div className=" flex flex-col gap-[40px] lg:pt-24 pt-12">
+                <div className=" flex flex-col gap-[15px]">
+                  <BreadCrumbComponent path="Home" currentPage="Best Sellers" />
+                  <Heading
+                    header="Best selling products for you"
+                    desc="the latest and greatest products that every man needs to enhance his lifestyle"
+                  />
+                </div>
                 <div className=" pt-8 space-y-4 ">
                   <Products isLoading={isLoading} data={data?.data} />
                 </div>

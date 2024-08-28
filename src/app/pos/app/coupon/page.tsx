@@ -62,7 +62,7 @@ const OrderPage = () => {
   };
 
   const { data, error, isLoading, mutate, isValidating } = useSWR(
-    `${Backend_URL}/coupon`,
+    `${Backend_URL}/coupon?search=${searchInputValue}`,
     getData,
     {
       revalidateIfStale: true,
@@ -135,6 +135,8 @@ const OrderPage = () => {
       id: "",
     });
   };
+
+  console.log(data);
 
   return (
     <Container>

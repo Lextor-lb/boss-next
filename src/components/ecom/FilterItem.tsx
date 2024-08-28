@@ -17,9 +17,14 @@ const FilterItem = ({
   };
 
   return (
-    <div className="bg-secondary flex gap-2 rounded items-center p-2">
-      <Checkbox checked={isChecked} onCheckedChange={handleChange} />
-      <span className="text-sm font-medium">{name}</span>
+    <div className="flex items-center select-none space-x-2 bg-secondary p-3">
+      <Checkbox checked={isChecked} id={name} onCheckedChange={handleChange} />
+      <label
+        htmlFor={name}
+        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+      >
+        {name}
+      </label>
     </div>
   );
 };

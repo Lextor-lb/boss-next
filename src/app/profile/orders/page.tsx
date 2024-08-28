@@ -30,6 +30,8 @@ const UserOrdersPage = () => {
     setIsClient(true);
   }, []);
 
+  const [token, setToken] = useState<string | null>("");
+
   useEffect(() => {
     if (isClient) {
       if (!localStorage.getItem("accessToken")) {
@@ -37,13 +39,14 @@ const UserOrdersPage = () => {
           show: true,
           showConfirmButton: false,
         });
+      } else {
+        setToken(localStorage.getItem("accessToken"));
       }
     }
   }, [isClient]);
 
   const getData = async (url: string) => {
     try {
-      const token = isClient && localStorage.getItem("accessToken");
       if (!token) {
         throw new Error("No access token found");
       }
@@ -74,7 +77,7 @@ const UserOrdersPage = () => {
     `${Backend_URL}/orders/ecommerce`,
     getData,
     {
-      refreshInterval: 50000,
+      errorRetryInterval: 500,
     }
   );
 
@@ -93,14 +96,15 @@ const UserOrdersPage = () => {
             router.push("/");
           }}
           {...swalProps}
+          customClass={{
+            popup: " w-auto",
+          }}
         >
           <div className=" pointer-events-none space-y-3 text-center">
             <p className=" pointer-events-none font-medium">
-              Proceed To Checkout
-            </p>
-            <p className=" pointer-events-none text-black/50 text-sm">
               Please Login To Continue.
             </p>
+
             <div className="  pointer-events-none flex gap-3 justify-center items-center">
               <Button
                 onClick={(e) => {

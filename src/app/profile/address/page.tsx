@@ -312,15 +312,16 @@ const UserAddressPage = () => {
           didClose={() => {
             router.push("/");
           }}
+          customClass={{
+            popup: " w-auto",
+          }}
           {...swalProps}
         >
           <div className=" pointer-events-none space-y-3 text-center">
             <p className=" pointer-events-none font-medium">
-              Proceed To Checkout
-            </p>
-            <p className=" pointer-events-none text-black/50 text-sm">
               Please Login To Continue.
             </p>
+
             <div className="  pointer-events-none flex gap-3 justify-center items-center">
               <Button
                 onClick={(e) => {

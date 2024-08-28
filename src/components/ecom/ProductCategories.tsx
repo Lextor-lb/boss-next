@@ -34,7 +34,7 @@ const ProductCategories = () => {
 
   return (
     <Container>
-      <div className=" space-y-4 my-12">
+      <div className=" flex flex-col gap-[40px] my-24 ">
         <div className=" flex justify-between items-center">
           <Heading
             header="shop by categories"
@@ -56,7 +56,7 @@ const ProductCategories = () => {
             </Button>
           </div>
         </div>
-        <div className="">
+        <div className=" ">
           <div className="flex justify-center object-contain items-center">
             <Carousel
               plugins={[
@@ -68,7 +68,7 @@ const ProductCategories = () => {
             >
               <CarouselContent>
                 {error || isLoading || data?.length == 0 ? (
-                  <CarouselItem className=" h-[500px] bg-neutral-700">
+                  <CarouselItem className=" h-[500px]  bg-neutral-700">
                     <div className=" py-12"></div>
                   </CarouselItem>
                 ) : (
@@ -83,16 +83,16 @@ const ProductCategories = () => {
                             }`
                           )
                         }
-                        className=" basis-2/3 lg:basis-1/3"
+                        className="cursor-pointer basis-2/3 lg:basis-1/3"
                       >
                         <Image
                           src={media.url}
-                          className=" w-full object-cover h-[500px] "
+                          className="object-cover h-[600px] w-full mx-auto"
                           alt=""
                           width={300}
                           height={600}
                         />
-                        <div className="  p-3 text-sm lg:text-base ">
+                        <div className=" font-bold p-3 text-base lg:text-base ">
                           {name}
                         </div>
                       </CarouselItem>

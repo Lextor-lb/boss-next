@@ -38,7 +38,10 @@ const Voucher = ({
   customerInfoData,
 }: any) => {
   return (
-    <div className="space-y-8 p-6 bg-white">
+    <div
+      style={{ marginTop: "2in", marginBottom: "1in" }}
+      className="space-y-8 p-6 bg-white"
+    >
       <p className="text-xl mb-3 text-primary text-center font-medium">
         Receipt Voucher
       </p>
@@ -59,7 +62,7 @@ const Voucher = ({
               className={` text-sm ${
                 customerInfoData.name !== ""
                   ? " w-[150px] text-center"
-                  : " w-[100px] text-center"
+                  : " w-[100px] text-start"
               } text-black`}
             >
               Date
@@ -166,6 +169,7 @@ const Voucher = ({
           title={"Subtotal"}
           amount={new Intl.NumberFormat("ja-JP").format(subTotal)}
         />
+
         {tax && <Info title={"Tax"} amount="5" />}
         <>
           {loyaltyDiscount > 0 && (

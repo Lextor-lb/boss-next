@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Check, Plus, PlusCircle } from "lucide-react";
+import { Camera, Check, Plus, PlusCircle } from "lucide-react";
 import { CaretSortIcon } from "@radix-ui/react-icons";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -51,11 +51,13 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import useSWRMutation from "swr/mutation";
 import { PaginationComponent } from "@/components/pos/inventory";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
 
 const StockControlPage = () => {
   const router = useRouter();
 
   const [sheetOpen, setSheetOpen] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const [searchInputValue, setSearchInputValue] = useState<string>("");
   const [singleId, setSingleId] = useState<number | undefined>();
@@ -114,13 +116,19 @@ const StockControlPage = () => {
   });
 
   const closeRef = useRef<HTMLButtonElement | null>(null);
+  const [image, setImage] = useState<File | undefined | string>(undefined);
 
   const { data: sizeData } = useSWR(
     `${Backend_URL}/product-sizings/all`,
     getData
   );
 
-  const validImageTypes = ["image/jpeg", "image/png", "image/jpg"];
+  const validImageTypes = [
+    "image/jpeg",
+    "image/png",
+    "image/jpg",
+    "image/webp",
+  ];
 
   const schema = z.object({
     image:
@@ -170,6 +178,7 @@ const StockControlPage = () => {
       productSizingId: parseInt(""),
     },
   });
+
   const postFetcher = async (url: string, { arg }: { arg: any }) => {
     return postMediaFetch(url, arg);
   };
@@ -190,7 +199,6 @@ const StockControlPage = () => {
     formData.append("productId", `${editId.id}`);
 
     const res = await add(formData);
-    console.log(res);
     if (res.status) {
       closeRef.current && closeRef.current.click();
       reset({
@@ -201,10 +209,11 @@ const StockControlPage = () => {
         productSizingId: parseInt(""),
       });
       mutate(`${Backend_URL}/stock-reports?page=${currentPage}`);
+      setImage("");
+      setSize("");
     }
   };
 
-  console.log(data);
   return (
     <Container>
       <div className=" space-y-4">
@@ -295,7 +304,7 @@ const StockControlPage = () => {
                             </div>
                           </TableCell>
                           <TableCell className=" text-end">
-                            {salePrice}
+                            {new Intl.NumberFormat("ja-JP").format(salePrice)}
                           </TableCell>
                           <TableCell className=" text-end">
                             {totalStock}
@@ -322,31 +331,69 @@ const StockControlPage = () => {
                                   <Plus /> <p className=" ms-1">Add Stock</p>
                                 </Button>
                               </SheetTrigger>
-                              <SheetContent>
+                              <SheetContent side={"bottom"}>
                                 <SheetHeader>
                                   <SheetTitle>Add Stock</SheetTitle>
                                   <SheetDescription>
-                                    Make new product here. Click save when you
-                                    are done.
+                                    Add Stock here. Click add when you are done.
                                   </SheetDescription>
                                 </SheetHeader>
+                                <hr className=" mt-3" />
                                 <form
+                                  className=" p-5 my-3 rounded"
                                   onSubmit={handleSubmit(onSubmit)}
-                                  className=" space-y-4"
                                 >
-                                  <input
-                                    type="file"
-                                    id="image"
-                                    name={name}
-                                    onChange={(e) => {
-                                      if (e.target.files) {
-                                        const file = e.target.files[0];
-                                        setValue("image", file);
-                                      }
-                                    }}
-                                  />
-                                  <div className=" space-y-3">
+                                  <div
+                                    className="flex justify-around"
+                                    style={{ alignItems: "flex-end" }}
+                                  >
+                                    <div className="block border rounded-full">
+                                      <div
+                                        onClick={() =>
+                                          inputRef.current?.click()
+                                        }
+                                        className="flex justify-center items-center cursor-pointer h-10 w-10 bg-white rounded-full"
+                                      >
+                                        {image ? (
+                                          typeof image === "string" ? (
+                                            <Avatar>
+                                              <AvatarImage
+                                                className="object-cover"
+                                                src={image as string}
+                                              />
+                                            </Avatar>
+                                          ) : (
+                                            <Avatar>
+                                              <AvatarImage
+                                                className="object-cover"
+                                                src={URL.createObjectURL(
+                                                  image as File
+                                                )}
+                                              />
+                                            </Avatar>
+                                          )
+                                        ) : (
+                                          <Camera />
+                                        )}
+                                      </div>
+                                      <div className="hidden">
+                                        <input
+                                          type="file"
+                                          id="image"
+                                          ref={inputRef}
+                                          name={name}
+                                          onChange={(e) => {
+                                            if (e.target.files) {
+                                              const file = e.target.files[0];
+                                              setValue("image", file);
+                                              setImage(file);
+                                            }
+                                          }}
+                                        />
+                                      </div>
+                                    </div>
                                     <FormInput
+                                      className="  "
                                       label="Shop Code"
                                       id="shopCode"
                                       type="text"
@@ -354,14 +401,16 @@ const StockControlPage = () => {
                                     />
 
                                     <FormInput
+                                      className=" "
                                       label="Color Code"
                                       id="color_code"
                                       type="text"
                                       {...register("colorCode")}
                                     />
 
-                                    <div className=" flex flex-col gap-1.5">
+                                    <div className="space-y-1.5 flex flex-col ">
                                       <Label>Select Size</Label>
+
                                       <Popover
                                         open={open}
                                         onOpenChange={setOpen}
@@ -371,14 +420,18 @@ const StockControlPage = () => {
                                             variant="outline"
                                             role="combobox"
                                             aria-expanded={open}
-                                            className="justify-between !rounded-md"
+                                            className="w-[200px] justify-between !rounded-md"
                                           >
                                             {size ? size : "Sizes"}
                                             <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                           </Button>
                                         </PopoverTrigger>
-                                        <PopoverContent className="p-0">
-                                          <Command>
+                                        <PopoverContent className="w-[200px] p-0">
+                                          <Command
+                                            defaultValue={`${getValues(
+                                              "productSizingId"
+                                            )}`}
+                                          >
                                             <CommandInput
                                               placeholder="Search Size..."
                                               className="h-9"
@@ -427,33 +480,24 @@ const StockControlPage = () => {
                                     </div>
 
                                     <FormInput
-                                      className="basis-3/12"
+                                      className=" "
                                       label="Barcode"
                                       id="barcode"
                                       {...register("barcode")}
                                       type="text"
                                     />
-                                  </div>
-                                  <div className="flex justify-between">
-                                    <Button
-                                      ref={closeRef}
-                                      type="button"
-                                      onClick={() =>
-                                        closeRef.current &&
-                                        closeRef.current.click()
-                                      }
-                                      variant="link"
-                                    >
-                                      Cancel
+
+                                    <Button>
+                                      <span className=" me-2">Add</span>{" "}
+                                      <Plus />
                                     </Button>
-                                    <Button size="sm">Save changes</Button>
                                   </div>
-                                  {addError && (
-                                    <p className=" text-red-500 text-sm">
-                                      {addError.message}
-                                    </p>
-                                  )}
                                 </form>
+                                {addError && (
+                                  <p className=" text-red-500 text-sm">
+                                    {addError.message}
+                                  </p>
+                                )}
                                 <SheetFooter
                                   className={
                                     "flex !justify-between items-center"

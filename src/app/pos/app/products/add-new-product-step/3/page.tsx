@@ -25,8 +25,12 @@ const AddProductPageThree = () => {
     setImages(validFiles);
   };
 
-  const validImageTypes = ["image/jpeg", "image/png", "image/jpg"];
-  const MAX_FILE_SIZE = 20000000;
+  const validImageTypes = [
+    "image/jpeg",
+    "image/png",
+    "image/jpg",
+    "image/webp",
+  ];
 
   const schema = z.object({
     image:
@@ -38,9 +42,6 @@ const AddProductPageThree = () => {
                   .instanceof(File)
                   .refine((file) => validImageTypes.includes(file.type), {
                     message: "Invalid file type",
-                  })
-                  .refine((file) => file.size <= MAX_FILE_SIZE, {
-                    message: "File size too large",
                   }),
               })
             )

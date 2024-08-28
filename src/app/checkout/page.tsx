@@ -44,9 +44,9 @@ const Checkout = () => {
   useEffect(() => {
     if (isClient) {
       setUserId(localStorage.getItem("userId"));
-      if (!localStorage.getItem("accessToken")) {
-        router.push("/shopping-bag");
-      }
+      // if (!localStorage.getItem("accessToken")) {
+      //   router.push("/shopping-bag");
+      // }
     }
   }, [isClient]);
 
@@ -246,8 +246,14 @@ const Checkout = () => {
 
   return (
     <Container className=" space-y-3 pt-4">
-      <p className=" text-sm lg:text-sm pb-3 font-normal">
-        Shopping Bag | Checkout
+      <p className=" text-sm my-[15px]">
+        <span
+          className=" cursor-pointer"
+          onClick={() => router.push("/shopping-bag")}
+        >
+          Shopping Bag
+        </span>{" "}
+        | Checkout
       </p>
       <div className=" grid grid-cols-12 gap-4">
         <div className=" col-span-full space-y-3 lg:col-span-9">

@@ -78,12 +78,21 @@ const OrderSummary = ({
             <p>0</p>
           </div>
         ) : (
-          cartItems?.map(({ name, priceAfterDiscount }: any, index: number) => (
-            <div key={index} className="flex justify-between">
-              <p>{name}</p>
-              <p>{new Intl.NumberFormat("ja-JP").format(priceAfterDiscount)}</p>
-            </div>
-          ))
+          cartItems?.map(
+            (
+              { name, priceAfterDiscount, selectedProduct }: any,
+              index: number
+            ) => (
+              <div key={index} className="flex justify-between">
+                <p>
+                  {name} ({selectedProduct.productSizing})
+                </p>
+                <p>
+                  {new Intl.NumberFormat("ja-JP").format(priceAfterDiscount)}
+                </p>
+              </div>
+            )
+          )
         )}
         <div className="flex justify-between">
           <p>Coupon Applied</p>
@@ -130,7 +139,7 @@ const OrderSummary = ({
         <Button
           disabled={disabled}
           onClick={() => run()}
-          className="w-full text-[15px] uppercase"
+          className="w-full lg:text-[16px] uppercase"
         >
           {buttonName}
         </Button>

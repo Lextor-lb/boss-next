@@ -177,6 +177,8 @@ const SaleForm: React.FC = () => {
     }
   }, [productData, productLoading, productError, barcodeRef]);
 
+  console.log(customerData);
+
   return (
     <Container className=" h-screen">
       <div className=" relative w-full h-[95%]">

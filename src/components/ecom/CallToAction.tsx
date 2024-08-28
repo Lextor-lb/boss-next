@@ -14,7 +14,7 @@ const CallToAction = () => {
           <span>Discover our latest arrivals and</span>
           <span>exclusive offers just for you.</span>
         </p>
-        <Button size={"sm"} onClick={() => router.push("/")}>
+        <Button size={"default"} onClick={() => router.push("/")}>
           <span className=" me-2">Shop Now</span> <ArrowRight />
         </Button>
       </div>

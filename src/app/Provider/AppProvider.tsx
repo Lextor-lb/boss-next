@@ -21,7 +21,6 @@ const fetcher = async (url: string, idToken: string) => {
     throw new Error("Failed to authenticate");
   }
 
-  console.log(response);
   return response.json();
 };
 
@@ -63,6 +62,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   }, [isClient]);
 
   // Update localStorage whenever cartItems change
+
   useEffect(() => {
     if (isClient) {
       localStorage.setItem("cartItems", JSON.stringify(cartItems));
@@ -72,8 +72,8 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const totalCost =
     cartItems.reduce((pv: number, cv: any) => {
       const finalPrice = cv.discountPrice
-        ? cv.salePrice * (1 - cv.discountPrice / 100)
-        : cv.salePrice;
+        ? cv.quantity * cv.salePrice * (1 - cv.discountPrice / 100)
+        : cv.quantity * cv.salePrice;
       return pv + finalPrice;
     }, 0) *
     (1 - couponDiscount / 100);
@@ -83,8 +83,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
       const result = await signInWithPopup(auth, provider);
       const idToken = await result.user.getIdToken(true);
 
-      setIdToken(
-        idToken);
+      setIdToken(idToken);
     } catch (error) {
       console.error("Error during login:", error);
     }
@@ -95,7 +94,6 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     if (data) {
       console.log("API response:", data);
-
       if (typeof window !== "undefined") {
         localStorage.setItem("userId", data.user.id);
         localStorage.setItem("email", data.user.email);

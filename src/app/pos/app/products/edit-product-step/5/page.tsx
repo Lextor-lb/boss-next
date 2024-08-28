@@ -50,7 +50,7 @@ type ProductVariant = {
   sizeName: string;
 };
 
-const validImageTypes = ["image/jpeg", "image/png", "image/jpg"];
+const validImageTypes = ["image/jpeg", "image/png", "image/jpg", "image/webp"];
 
 const EditProductPageFive = () => {
   const {

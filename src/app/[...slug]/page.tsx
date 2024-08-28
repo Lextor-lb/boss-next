@@ -45,16 +45,18 @@ const GeneralizedPage = ({ params }: { params: any }) => {
   return (
     <div className=" py-8 space-y-12">
       <Container>
-        <BreadCrumbComponent
-          path="Home"
-          currentPage={params.slug[0] == "new-in" ? "New In" : params.slug[0]}
-        />
-        <Heading
-          header={`New products for ${
-            params.slug[0] == "new-in" ? "you" : params.slug[0]
-          }`}
-          desc={`the latest and greatest products ${params.slug[0]} to enhance his lifestyle`}
-        />
+        <div className=" flex flex-col gap-[15px]">
+          <BreadCrumbComponent
+            path="Home"
+            currentPage={params.slug[0] == "new-in" ? "New In" : params.slug[0]}
+          />
+          <Heading
+            header={`New products for ${
+              params.slug[0] == "new-in" ? "you" : params.slug[0]
+            }`}
+            desc={`the latest and greatest products ${params.slug[0]} to enhance his lifestyle`}
+          />
+        </div>
       </Container>
       <div className=" py-3 border">
         <Container>

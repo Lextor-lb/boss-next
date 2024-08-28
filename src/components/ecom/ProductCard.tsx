@@ -61,9 +61,9 @@ const ProductCard = ({
       <div className=" relative">
         <Image
           src={medias[0]?.url}
-          width={600}
-          height={600}
-          className=" lg:h-[500px] h-[300px] object-cover !w-full "
+          width={500}
+          height={500}
+          className=" h-[500px] lg:h-[600px] object-cover "
           alt=""
         />
         <div className=" absolute  top-3 right-3">
@@ -88,29 +88,28 @@ const ProductCard = ({
           </Badge>
         </div>
       </div>
-      <div className=" space-y-4 p-3">
+      <div className=" flex flex-col gap-[10px] p-[15px]">
         <div className=" space-y-1.5">
-          <p className=" text- font-medium">
+          <p className=" text-[16px] font-normal">
             {name} {productCode}
           </p>
         </div>
         {(discountPrice as number) > 0 ? (
-          <div className=" space-y-0.5 text-sm">
-            <Badge className=" text-black bg-neutral-300">
-              {discountPrice}%
-            </Badge>
-
-            <div className="lg:flex gap-2 items-center">
+          <div className=" space-y-[5px] text-[18px]">
+            <div className="lg:flex gap-2 text-[18px] items-center">
               <p className=" line-through">
                 {new Intl.NumberFormat("ja-JP").format(salePrice)} MMK
               </p>
               <p className="">
                 {new Intl.NumberFormat("ja-JP").format(
                   salePrice * (1 - (discountPrice as number) / 100)
-                )}{" "}
+                )}
                 MMK
               </p>
             </div>
+            <Badge className=" text-black/70 bg-neutral-300">
+              {discountPrice}% OFF
+            </Badge>
           </div>
         ) : (
           <p className=" text-sm">

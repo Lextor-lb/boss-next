@@ -8,7 +8,8 @@ import { useAppProvider } from "@/app/Provider/AppProvider";
 
 const Footer = () => {
   const router = useRouter();
-  const { searchInputValue, setSearchInputValue } = useAppProvider();
+  const { searchInputValue, setSearchInputValue, handleLogin } =
+    useAppProvider();
   return (
     <div className=" text-secondary/80 bg-primary">
       <Container>
@@ -29,7 +30,7 @@ const Footer = () => {
               <li>contact us</li>
               <li>about us</li>
               <li>FAQ</li>
-              <li>Login</li>
+              <li onClick={() => handleLogin()}>Login</li>
             </ul>
           </div>
           <div className=" space-y-3">

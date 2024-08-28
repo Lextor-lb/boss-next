@@ -195,9 +195,10 @@ const FilterForm = ({ closeRef }: any) => {
                   ({ id, name }: { id: number; name: string }) => (
                     <div
                       key={id}
-                      className="bg-secondary flex gap-2 rounded items-center p-2"
+                      className="flex items-center select-none space-x-2 bg-secondary p-3"
                     >
                       <Checkbox
+                        id={name}
                         checked={brands.includes(id)}
                         onCheckedChange={() => {
                           handleBrandChange(id);
@@ -208,7 +209,12 @@ const FilterForm = ({ closeRef }: any) => {
                           );
                         }}
                       />
-                      <span className="text-sm font-medium">{name}</span>
+                      <label
+                        htmlFor={name}
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                      >
+                        {name}
+                      </label>
                     </div>
                   )
                 )}
@@ -246,7 +252,7 @@ const FilterForm = ({ closeRef }: any) => {
             </div>
           )}
         </div>
-        <div className="space-y-1.5">
+        <div className="space-y-1.5 ">
           <div
             onClick={() => {
               if (open.includes(4)) {
@@ -276,7 +282,7 @@ const FilterForm = ({ closeRef }: any) => {
                   placeholder="Max"
                 />
               </div>
-              <div className="pt-1.5">
+              <div className="pt-1.5 mx-2">
                 <Slider
                   minStepsBetweenThumbs={1}
                   max={5000000}
