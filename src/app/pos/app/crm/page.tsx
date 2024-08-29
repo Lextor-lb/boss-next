@@ -48,8 +48,6 @@ const CRM = () => {
 
   const router = useRouter();
 
-  console.log(data);
-
   return (
     <Container>
       <></>

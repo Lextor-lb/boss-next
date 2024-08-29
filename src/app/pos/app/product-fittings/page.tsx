@@ -171,7 +171,7 @@ export default function ProductFittingsPage() {
           searchInputValue={searchInputValue}
           setSearchInputValue={setSearchInputValue}
           refetch={refetch}
-          sizeData={isSizeLoading ? [] : sizeData.data}
+          sizeData={isSizeLoading ? [] : sizeData?.data}
           productSizingIds={productSizingIds}
           setProductSizingIds={setProductSizingIds}
         />

@@ -70,7 +70,7 @@ const TodayReport = () => {
           <TableSkeletonLoader />
         ) : (
           <>
-            {data.data.length < 1 ? (
+            {data?.data?.length < 1 ? (
               <p className=" text-center">Nothing sold out today!</p>
             ) : (
               <div className=" space-y-4">

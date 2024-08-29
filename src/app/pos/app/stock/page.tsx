@@ -111,8 +111,6 @@ const StockPage = () => {
     console.log("object");
   }, [editId, singleData]);
 
-  console.log(data);
-
   return (
     <Container>
       <div className=" space-y-4">
@@ -120,7 +118,7 @@ const StockPage = () => {
         {!isLoading && (
           <>
             <StockReportChart isLoading={isLoading} data={data} />
-            <StockTable data={data.products} />
+            <StockTable data={data?.products} />
             <PaginationComponent
               goToFirstPage={goToFirstPage}
               currentPage={currentPage}

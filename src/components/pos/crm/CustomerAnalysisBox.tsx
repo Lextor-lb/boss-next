@@ -12,7 +12,7 @@ const CustomerAnalysisBox = ({ data }: any) => {
     datasets: [
       {
         label: "Gender %",
-        data: [data.genderPercents.MALE, data.genderPercents.FEMALE],
+        data: [data?.genderPercents?.MALE, data?.genderPercents?.FEMALE],
         backgroundColor: ["rgb(255, 99, 132)", "rgb(54, 162, 235)"],
         hoverOffset: 4,
       },
@@ -25,7 +25,7 @@ const CustomerAnalysisBox = ({ data }: any) => {
         <div className="gap-3 items-baseline flex h-full justify-center flex-col">
           <UsersRound size={32} />
           <div className="space-y-0.5">
-            <p className="text-2xl font-medium">{data.totalCustomers}</p>
+            <p className="text-2xl font-medium">{data?.totalCustomers}</p>
             <p className="text-base font-normal">Total Customers</p>
           </div>
         </div>
@@ -42,12 +42,12 @@ const CustomerAnalysisBox = ({ data }: any) => {
               </p>
               <div className="w-1/2 h-2 bg-secondary relative">
                 <div
-                  style={{ width: `${data.agePercents.young}%` }}
+                  style={{ width: `${data?.agePercents?.young}%` }}
                   className="h-2 bg-yellow-300 absolute"
                 ></div>
               </div>
               <p className="text-sm text-primary/60 font-light">
-                {data.agePercents.young}%
+                {data?.agePercents?.young}%
               </p>
             </div>
             <div className="flex justify-between items-center">
@@ -56,12 +56,12 @@ const CustomerAnalysisBox = ({ data }: any) => {
               </p>
               <div className="w-1/2 h-2 bg-secondary relative">
                 <div
-                  style={{ width: `${data.agePercents.MIDDLE}%` }}
+                  style={{ width: `${data?.agePercents?.MIDDLE}%` }}
                   className="w-[75%] h-2 bg-purple-500 absolute"
                 ></div>
               </div>
               <p className="text-sm text-primary/60 font-light">
-                {data.agePercents.MIDDLE}%
+                {data?.agePercents?.MIDDLE}%
               </p>
             </div>
             <div className="flex justify-between items-center">
@@ -70,12 +70,12 @@ const CustomerAnalysisBox = ({ data }: any) => {
               </p>
               <div className="w-1/2 h-2 bg-secondary relative">
                 <div
-                  style={{ width: `${data.agePercents.OLD}%` }}
+                  style={{ width: `${data?.agePercents?.OLD}%` }}
                   className={`h-2 bg-blue-300 absolute`}
                 ></div>
               </div>
               <p className="text-sm text-primary/60 font-light">
-                {data.agePercents.OLD}%
+                {data?.agePercents?.OLD}%
               </p>
             </div>
           </div>
@@ -93,7 +93,7 @@ const CustomerAnalysisBox = ({ data }: any) => {
                   <p className="text-xs">Male</p>
                 </div>
                 <div className="flex items-center gap-8">
-                  <p className="text-xs">{data.genderPercents.MALE}%</p>
+                  <p className="text-xs">{data?.genderPercents?.MALE}%</p>
                 </div>
               </div>
             </div>
@@ -105,7 +105,7 @@ const CustomerAnalysisBox = ({ data }: any) => {
                   <p className="text-xs">Female</p>
                 </div>
                 <div className="flex items-center gap-8">
-                  <p className="text-xs">{data.genderPercents.FEMALE}%</p>
+                  <p className="text-xs">{data?.genderPercents?.FEMALE}%</p>
                 </div>
               </div>
             </div>

@@ -80,21 +80,20 @@ const SaleTable: React.FC<SaleTableProps> = ({ data, setData }) => {
       <Table>
         <TableHeader className="hover:bg-white">
           <TableRow className="hover:bg-white bg-white">
-            <TableHead className="flex items-center gap-3">
-              <span>No</span>
-            </TableHead>
+            <TableHead>No</TableHead>
             <TableHead>Product</TableHead>
             <TableHead className="text-end">Price</TableHead>
             <TableHead className="text-end">Quantity</TableHead>
+            <TableHead className="text-end">Discount %</TableHead>
             <TableHead className="text-end">Discount</TableHead>
             <TableHead className="w-[200px] text-end">Cost</TableHead>
-            <TableHead className="text-end"></TableHead>
+            <TableHead className=""></TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {data.length < 1 ? (
             <TableRow className="pointer-events-none bg-white">
-              {Array(7)
+              {Array(8)
                 .fill(null)
                 .map((_, index) => (
                   <TableCell className="pointer-events-none" key={index}>
@@ -120,7 +119,7 @@ const SaleTable: React.FC<SaleTableProps> = ({ data, setData }) => {
                 ) => (
                   <TableRow key={index} className=" bg-white hover:bg-white/35">
                     <TableCell>
-                      <div className="flex items-center gap-3">
+                      <div className="flex justify-center items-center gap-3">
                         <Checkbox />
                         <span>{index + 1}</span>
                       </div>
@@ -156,6 +155,7 @@ const SaleTable: React.FC<SaleTableProps> = ({ data, setData }) => {
                         <p>{quantity}</p>
                       </div>
                     </TableCell>
+
                     <TableCell className="text-end">
                       <div className="flex justify-end">
                         <Input
@@ -167,6 +167,19 @@ const SaleTable: React.FC<SaleTableProps> = ({ data, setData }) => {
                         />
                       </div>
                     </TableCell>
+
+                    <TableCell className="text-end">
+                      <div className="flex justify-end">
+                        <Input
+                          value={discount}
+                          onChange={(e) => discountChange(id, e.target.value)}
+                          min={0}
+                          type="number"
+                          className="text-end h-8"
+                        />
+                      </div>
+                    </TableCell>
+
                     <TableCell className="text-end">
                       <div className="flex justify-end">
                         {isNaN(cost) ? (
@@ -176,6 +189,7 @@ const SaleTable: React.FC<SaleTableProps> = ({ data, setData }) => {
                         )}
                       </div>
                     </TableCell>
+
                     <TableCell className="text-end">
                       <Button onClick={remove(id)} variant="ghost" size="sm">
                         <MinusCircle />

@@ -245,7 +245,7 @@ const StockControlPage = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {data.products &&
+                  {data?.products &&
                     data?.products.map(
                       (
                         {

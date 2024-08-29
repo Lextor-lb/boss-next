@@ -190,7 +190,7 @@ export default function ProductCategoriesPage() {
           setSearchInputValue={setSearchInputValue}
           refetch={refetch}
           fittingData={isFittingLoading ? [] : fittingData?.data}
-          typesData={isTypesLoading ? [] : typesData.data}
+          typesData={isTypesLoading ? [] : typesData?.data}
           productFittingIds={productFittingIds}
           setProductFittingIds={setProductFittingIds}
           productTypeId={productTypeId}

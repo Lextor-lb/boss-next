@@ -28,7 +28,7 @@ const StockReportChart = ({
               <div className=" space-y-3">
                 <div className=" space-y-0.5">
                   <p className=" font-medium text-end text-xl">
-                    {new Intl.NumberFormat("ja-JP").format(data.totalProducts)}
+                    {new Intl.NumberFormat("ja-JP").format(data?.totalProducts)}
                   </p>
                   <p className=" font-light text-end">Total Products</p>
                 </div>
@@ -38,7 +38,7 @@ const StockReportChart = ({
               <CoinsIcon size={40} />
               <div>
                 <p className=" font-medium text-end text-xl">
-                  {data.totalBrands}
+                  {data?.totalBrands}
                 </p>
                 <p className=" font-light">Total Brands</p>
               </div>
@@ -47,7 +47,7 @@ const StockReportChart = ({
               <div className=" space-y-0.5">
                 <p className=" font-medium text-end text-xl">
                   {new Intl.NumberFormat("ja-JP").format(
-                    data.totalProductPrice
+                    data?.totalProductPrice
                   )}
                 </p>
                 <p className=" font-light text-end">Total Product Price</p>
@@ -57,17 +57,17 @@ const StockReportChart = ({
               <div className=" flex items-center justify-between gap-3">
                 <div className="h-2.5 w-full basis-2/3 rounded  relative">
                   <div
-                    style={{ width: `${data.inStockPercentage}%` }}
+                    style={{ width: `${data?.inStockPercentage}%` }}
                     className={`h-2.5  z-50 absolute left-0 rounded-s bg-green-400`}
                   ></div>
                   <div
-                    style={{ width: `${data.lowStockPercentage}%` }}
-                    className={`h-2.5 right-0 w-[${data.lowStockPercentage}%] z-50 rounded-e absolute  bg-blue-400`}
+                    style={{ width: `${data?.lowStockPercentage}%` }}
+                    className={`h-2.5 right-0 w-[${data?.lowStockPercentage}%] z-50 rounded-e absolute  bg-blue-400`}
                   ></div>
                 </div>
                 <div>
                   <p className=" font-medium text-xl text-end">
-                    {data.totalProducts}
+                    {data?.totalProducts}
                   </p>
                   <p className=" font-light">Products</p>
                 </div>
@@ -78,8 +78,8 @@ const StockReportChart = ({
                   <p className=" font-medium text-sm">Instock</p>
                 </div>
                 <div className=" flex gap-4">
-                  <p className=" font-medium">{data.inStock}</p>
-                  <p className=" font-medium">{data.inStockPercentage}%</p>
+                  <p className=" font-medium">{data?.inStock}</p>
+                  <p className=" font-medium">{data?.inStockPercentage}%</p>
                 </div>
               </div>
               <hr />
@@ -89,8 +89,8 @@ const StockReportChart = ({
                   <p className=" font-medium text-sm">Low Stock</p>
                 </div>
                 <div className=" flex gap-4">
-                  <p className=" font-medium">{data.lowStock}</p>
-                  <p className=" font-medium">{data.lowStockPercentage}%</p>
+                  <p className=" font-medium">{data?.lowStock}</p>
+                  <p className=" font-medium">{data?.lowStockPercentage}%</p>
                 </div>
               </div>
               <hr />
@@ -100,8 +100,8 @@ const StockReportChart = ({
                   <p className=" font-medium text-sm">Out of stock</p>
                 </div>
                 <div className=" flex gap-4">
-                  <p className=" font-medium">{data.outOfStock}</p>
-                  <p className=" font-medium">{data.outOfStockPercentage}%</p>
+                  <p className=" font-medium">{data?.outOfStock}</p>
+                  <p className=" font-medium">{data?.outOfStockPercentage}%</p>
                 </div>
               </div>
               <hr />
@@ -127,7 +127,7 @@ const StockReportChart = ({
                         </div>
                         <p className=" font-medium">{quantity}</p>
                       </div>
-                      {index !== data.bestSellerBrands.length - 1 && (
+                      {index !== data?.bestSellerBrands.length - 1 && (
                         <hr className=" my-2 " />
                       )}
                     </React.Fragment>

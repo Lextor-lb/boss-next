@@ -80,13 +80,12 @@ const SaleReportChartComponent = ({ chartData }: any) => {
   const router = useRouter();
   useEffect(() => {
     if (chartData) {
-      console.log("here");
       setFinalData({
-        labels: chartData.map((data: any) => data.period),
+        labels: chartData?.map((data: any) => data?.period),
         datasets: [
           {
             label: "Sale Report",
-            data: chartData.map((data: any) => data.totalAmount),
+            data: chartData.map((data: any) => data?.totalAmount),
             backgroundColor: ["#00DA30"],
             borderColor: "#00DA30",
             borderWidth: 1.03,

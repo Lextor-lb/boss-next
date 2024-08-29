@@ -76,7 +76,6 @@ const SaleReport = ({ params }: { params: { date: string } }) => {
     setCurrentPage(data?.totalPages);
   };
 
-  console.log(data);
   return (
     <Container>
       <div className=" space-y-4">
@@ -89,16 +88,16 @@ const SaleReport = ({ params }: { params: { date: string } }) => {
           <p>Loading....</p>
         ) : (
           <div className=" space-y-4">
-            {data.chartData.length < 1 ? (
+            {data?.chartData?.length < 1 ? (
               <p>No Data Yet</p>
             ) : (
               <SaleReportChartComponent chartData={data?.chartData} />
             )}
             <div className=" space-y-2">
               <p className=" text-xl font-semibold">Overview Sale</p>
-              {data.data.length > 0 && (
+              {data?.data?.length > 0 && (
                 <>
-                  <TodayReportTable data={data.data} />
+                  <TodayReportTable data={data?.data} />
                   <PaginationComponent
                     goToFirstPage={goToFirstPage}
                     currentPage={currentPage}

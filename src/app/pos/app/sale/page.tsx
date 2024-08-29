@@ -35,6 +35,7 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { cn } from "@/lib/utils";
+import { Textarea } from "@/components/ui/textarea";
 
 interface Customer {
   id: string;
@@ -183,117 +184,118 @@ const SaleForm: React.FC = () => {
     <Container className=" h-screen">
       <div className=" relative w-full h-[95%]">
         <NavHeader parentPage="Sale" path="Sale" />
-        <div className="space-y-4">
-          <div className="space-y-1.5">
-            <div
-              style={{ alignItems: "flex-end" }}
-              className="flex justify-end items-center"
-            >
-              <form onSubmit={submitBarcode}>
-                <div
-                  style={{ alignItems: "flex-end" }}
-                  className="flex items-center justify-end gap-3"
-                >
-                  {/* tax */}
-                  <div className=" flex flex-col gap-3">
-                    <Label htmlFor="tax">Tax</Label>
-                    <Switch
-                      id="tax"
-                      checked={paymentInfo.tax}
-                      onCheckedChange={() =>
-                        setPaymentInfo({
-                          ...paymentInfo,
-                          tax: !paymentInfo.tax,
-                        })
-                      }
-                    />
-                  </div>
+        <div className=" grid grid-cols-12 mt-4 gap-5">
+          <div className=" col-span-9 space-y-3">
+            <p className=" text-2xl font-bold">Receipt Voucher List</p>
+            <SaleTable data={data} setData={setData} />
+          </div>
 
-                  {/* customer */}
+          <div className="space-y-3 col-span-3">
+            <p className=" text-2xl font-bold">Information</p>
 
-                  <div className="space-y-1.5 basis-2/12">
-                    <div className=" flex gap-3 justify-between">
-                      <Label>Select customers</Label>
-                      <div className=" text-end text-sm">
-                        {customerPromotion} %
-                      </div>
+            <form onSubmit={submitBarcode}>
+              <div className=" flex flex-col gap-3">
+                {/* tax */}
+                <div className=" flex justify-center gap-3">
+                  <Label htmlFor="tax">Tax</Label>
+                  <Switch
+                    id="tax"
+                    checked={paymentInfo.tax}
+                    onCheckedChange={() =>
+                      setPaymentInfo({
+                        ...paymentInfo,
+                        tax: !paymentInfo.tax,
+                      })
+                    }
+                  />
+                </div>
+
+                {/* customer */}
+                <div className="space-y-1.5">
+                  <div className=" flex gap-3 justify-between">
+                    <Label>Select customers</Label>
+                    <div className=" text-end text-sm">
+                      {customerPromotion} %
                     </div>
-
-                    <Popover open={open} onOpenChange={setOpen}>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          role="combobox"
-                          aria-expanded={open}
-                          className="w-[300px] text-sm justify-between !rounded-md"
-                        >
-                          {customers ? customers : "Customers"}
-                          <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-[300px] p-0">
-                        <Command>
-                          <CommandInput
-                            placeholder="Search customers..."
-                            className="h-9"
-                          />
-                          <CommandEmpty>No customers found!</CommandEmpty>
-                          <CommandGroup>
-                            <CommandList>
-                              {customerData?.data.map(
-                                ({ id, name, phoneNumber }: any) => (
-                                  <CommandItem
-                                    className={cn(
-                                      customers === name ? "bg-accent" : ""
-                                    )}
-                                    key={id}
-                                    value={name}
-                                    onSelect={(e) => {
-                                      setCustomerPromotion(
-                                        customerData?.data.find(
-                                          (el) => el.id == id
-                                        )?.special.promotionRate
-                                      );
-                                      setCustomerData({
-                                        name: customerData?.data.find(
-                                          (el) => el.id == id
-                                        )?.name,
-                                        phone: customerData?.data.find(
-                                          (el) => el.id == id
-                                        )?.phoneNumber,
-                                      });
-                                      setPaymentInfo({
-                                        ...paymentInfo,
-                                        customer: {
-                                          customerId: id,
-                                          amount: 0,
-                                        },
-                                      });
-                                      setCustomer(`${e}`);
-                                      setOpen(false);
-                                    }}
-                                  >
-                                    <Check
-                                      className={cn(
-                                        "mr-2 h-4 w-4",
-                                        customers === name
-                                          ? "opacity-100"
-                                          : "opacity-0"
-                                      )}
-                                    />
-                                    {name} {phoneNumber}
-                                  </CommandItem>
-                                )
-                              )}
-                            </CommandList>
-                          </CommandGroup>
-                        </Command>
-                      </PopoverContent>
-                    </Popover>
                   </div>
 
+                  <Popover open={open} onOpenChange={setOpen}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        aria-expanded={open}
+                        className="w-full text-sm justify-between !rounded-md"
+                      >
+                        {customers ? customers : "Customers"}
+                        <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-full p-0">
+                      <Command>
+                        <CommandInput
+                          placeholder="Search customers..."
+                          className="h-9"
+                        />
+                        <CommandEmpty>No customers found!</CommandEmpty>
+                        <CommandGroup>
+                          <CommandList>
+                            {customerData?.data.map(
+                              ({ id, name, phoneNumber }: any) => (
+                                <CommandItem
+                                  className={cn(
+                                    customers === name ? "bg-accent" : ""
+                                  )}
+                                  key={id}
+                                  value={name}
+                                  onSelect={(e) => {
+                                    setCustomerPromotion(
+                                      customerData?.data.find(
+                                        (el) => el.id == id
+                                      )?.special.promotionRate
+                                    );
+                                    setCustomerData({
+                                      name: customerData?.data.find(
+                                        (el) => el.id == id
+                                      )?.name,
+                                      phone: customerData?.data.find(
+                                        (el) => el.id == id
+                                      )?.phoneNumber,
+                                    });
+                                    setPaymentInfo({
+                                      ...paymentInfo,
+                                      customer: {
+                                        customerId: id,
+                                        amount: 0,
+                                      },
+                                    });
+                                    setCustomer(`${e}`);
+                                    setOpen(false);
+                                  }}
+                                >
+                                  <Check
+                                    className={cn(
+                                      "mr-2 h-4 w-4",
+                                      customers === name
+                                        ? "opacity-100"
+                                        : "opacity-0"
+                                    )}
+                                  />
+                                  {name} {phoneNumber}
+                                </CommandItem>
+                              )
+                            )}
+                          </CommandList>
+                        </CommandGroup>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
                   {/* type */}
-                  <div className="basis-1/12">
+                  <div className=" flex flex-col gap-1.5">
+                    <Label>Type</Label>
                     <Select
                       defaultValue={paymentInfo.type}
                       onValueChange={(e) =>
@@ -313,7 +315,8 @@ const SaleForm: React.FC = () => {
                     </Select>
                   </div>
 
-                  <div className="basis-1/12">
+                  <div className=" flex flex-col gap-1.5">
+                    <Label>Payment Method</Label>
                     <Select
                       defaultValue={paymentInfo.payment_method}
                       onValueChange={(e) =>
@@ -333,46 +336,67 @@ const SaleForm: React.FC = () => {
                       </SelectContent>
                     </Select>
                   </div>
-
-                  <div className="basis-1/12 space-y-1">
-                    <Label htmlFor="discount">Discount</Label>
-                    <Input
-                      id="discount"
-                      type="number"
-                      className="h-9 text-end w-[80px] "
-                      value={paymentInfo.overallDiscount}
-                      onChange={(e) =>
-                        setPaymentInfo({
-                          ...paymentInfo,
-                          overallDiscount: parseFloat(e.target.value),
-                        })
-                      }
-                    />
-                  </div>
-                  <div className=" flex flex-col gap-1.5">
-                    <Label htmlFor="barcode">Barcode</Label>
-                    <Input
-                      ref={barcodeRef}
-                      id="barcode"
-                      className="h-9 w-[100px]"
-                    />
-                  </div>
-                  <Button disabled={productLoading} type="submit" size="sm">
-                    {productLoading ? "Loading" : <Plus />}
-                  </Button>
                 </div>
-              </form>
-            </div>
+
+                {/* discount % */}
+                <div className=" flex flex-col gap-1.5">
+                  <Label htmlFor="discount">Discount %</Label>
+                  <Input
+                    id="discount"
+                    type="number"
+                    className="h-9 "
+                    value={paymentInfo.overallDiscount}
+                    onChange={(e) =>
+                      setPaymentInfo({
+                        ...paymentInfo,
+                        overallDiscount: parseFloat(e.target.value),
+                      })
+                    }
+                  />
+                </div>
+
+                <div className=" flex flex-col gap-1.5">
+                  <Label htmlFor="discountValue">Discount %</Label>
+                  <Input
+                    id="discountValue"
+                    type="number"
+                    className="h-9 "
+                    value={paymentInfo.overallDiscount}
+                    onChange={(e) =>
+                      setPaymentInfo({
+                        ...paymentInfo,
+                        overallDiscount: parseFloat(e.target.value),
+                      })
+                    }
+                  />
+                </div>
+
+                <div className=" flex flex-col gap-1.5">
+                  <Label htmlFor="barcode">Barcode</Label>
+                  <Input ref={barcodeRef} id="barcode" className="h-9" />
+                </div>
+
+                <div className=" flex flex-col gap-1.5">
+                  <Label htmlFor="remark">Remark</Label>
+                  <Textarea className=" bg-white" id="remark" />
+                </div>
+
+                <Button disabled={productLoading} type="submit" size="sm">
+                  {productLoading ? "Loading" : <Plus />}
+                </Button>
+              </div>
+            </form>
+
             {productError && (
               <p className="text-red-500">{productError.message}</p>
             )}
+
             {customerError && (
               <p className="text-red-500">
                 Customer Data has {customerError.message}
               </p>
             )}
           </div>
-          <SaleTable data={data} setData={setData} />
         </div>
         <div className=" absolute bottom-0 w-full">
           <SaleInfoBox
