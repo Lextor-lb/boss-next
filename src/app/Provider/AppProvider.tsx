@@ -26,7 +26,7 @@ const fetcher = async (url: string, idToken: string) => {
 
 const useAuthLogin = (idToken: string | null) => {
   const { data, error } = useSWR(
-    idToken ? ["https://amt.santar.store/auth/EcommerceLogin", idToken] : null,
+    idToken ? ["https://backend.boss-nation.com/auth/EcommerceLogin", idToken] : null,
     ([url, token]) => fetcher(url, token)
   );
 
