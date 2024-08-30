@@ -292,8 +292,8 @@ const SaleForm: React.FC = () => {
                   </Popover>
                 </div>
 
+                {/* type */}
                 <div className="grid grid-cols-2 gap-3">
-                  {/* type */}
                   <div className=" flex flex-col gap-1.5">
                     <Label>Type</Label>
                     <Select
@@ -340,7 +340,7 @@ const SaleForm: React.FC = () => {
 
                 {/* discount % */}
                 <div className=" flex flex-col gap-1.5">
-                  <Label htmlFor="discount">Discount %</Label>
+                  <Label htmlFor="discount">Disc %</Label>
                   <Input
                     id="discount"
                     type="number"
@@ -356,7 +356,7 @@ const SaleForm: React.FC = () => {
                 </div>
 
                 <div className=" flex flex-col gap-1.5">
-                  <Label htmlFor="discountValue">Discount %</Label>
+                  <Label htmlFor="discountValue">Disc (Amount)</Label>
                   <Input
                     id="discountValue"
                     type="number"
@@ -382,7 +382,13 @@ const SaleForm: React.FC = () => {
                 </div>
 
                 <Button disabled={productLoading} type="submit" size="sm">
-                  {productLoading ? "Loading" : <Plus />}
+                  {productLoading ? (
+                    "Loading"
+                  ) : (
+                    <>
+                      <span className=" me-1"> Add Product</span> <Plus />
+                    </>
+                  )}
                 </Button>
               </div>
             </form>

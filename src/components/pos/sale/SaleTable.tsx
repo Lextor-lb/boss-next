@@ -84,9 +84,9 @@ const SaleTable: React.FC<SaleTableProps> = ({ data, setData }) => {
             <TableHead>Product</TableHead>
             <TableHead className="text-end">Price</TableHead>
             <TableHead className="text-end">Quantity</TableHead>
-            <TableHead className="text-end">Discount %</TableHead>
-            <TableHead className="text-end">Discount</TableHead>
-            <TableHead className="w-[200px] text-end">Cost</TableHead>
+            <TableHead className="text-end">Disc %</TableHead>
+            <TableHead className="text-end">Disc</TableHead>
+            <TableHead className="w-[100px] text-end">Cost</TableHead>
             <TableHead className=""></TableHead>
           </TableRow>
         </TableHeader>
@@ -147,7 +147,7 @@ const SaleTable: React.FC<SaleTableProps> = ({ data, setData }) => {
                         onChange={(e) => priceChange(id, e.target.value)}
                         min={1}
                         type="number"
-                        className="text-end  h-8"
+                        className="text-end w-[90%] h-8"
                       />
                     </TableCell>
                     <TableCell className="text-end">
@@ -163,7 +163,7 @@ const SaleTable: React.FC<SaleTableProps> = ({ data, setData }) => {
                           onChange={(e) => discountChange(id, e.target.value)}
                           min={0}
                           type="number"
-                          className="text-end w-[50%] h-8"
+                          className="text-end w-[70%] h-8"
                         />
                       </div>
                     </TableCell>
@@ -175,7 +175,7 @@ const SaleTable: React.FC<SaleTableProps> = ({ data, setData }) => {
                           onChange={(e) => discountChange(id, e.target.value)}
                           min={0}
                           type="number"
-                          className="text-end h-8"
+                          className="text-end w-[70%] h-8"
                         />
                       </div>
                     </TableCell>
