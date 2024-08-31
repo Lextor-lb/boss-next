@@ -71,12 +71,7 @@ const StockTable = ({ data }: any) => {
                 className=" bg-white cursor-pointer hover:bg-white/50"
                 key={id}
               >
-                <TableCell>
-                  <div className="flex items-center gap-3">
-                    <Checkbox id={id} value={id} />
-                    <span>{index + 1}</span>
-                  </div>
-                </TableCell>
+                <TableCell>{index + 1}</TableCell>
                 <TableCell>
                   <div className=" flex items-center gap-3">
                     {/* <div className="w-9 h-9 rounded-md">
@@ -115,7 +110,7 @@ const StockTable = ({ data }: any) => {
                   <Badge
                     className={`${stockLevel == "LowStock" && "!bg-red-400"}
                     ${stockLevel == "InStock" && "!bg-green-400"}
-                    ${stockLevel == "SoldOut" && "!bg-white"}
+                    ${stockLevel == "SoldOut" && "!bg-black"}
                     `}
                   >
                     {stockLevel}

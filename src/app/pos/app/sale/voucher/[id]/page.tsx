@@ -33,7 +33,6 @@ const VoucherPage = ({ params }: { params: { id: string } }) => {
       if (printRef.current) {
         const printContents = printRef.current.innerHTML;
         const originalContents = document.body.innerHTML;
-
         document.body.innerHTML = `<div class="printable">${printContents}</div>`;
         window.print();
         document.body.innerHTML = originalContents;

@@ -75,6 +75,8 @@ const OrderDetailAdminPage = ({ params }: any) => {
     }
   };
 
+  console.log(data);
+
   return (
     <Container>
       <div className="space-y-4">
@@ -197,9 +199,10 @@ const OrderDetailAdminPage = ({ params }: any) => {
                   <div className=" space-y-1.5">
                     <p className=" opacity-70 font-light text-sm">Address</p>
                     <p>
-                      {data?.ecommerceUser.addressDetail},
-                      {data?.ecommerceUser.street},
-                      {data?.ecommerceUser.township},{data?.ecommerceUser.city}
+                      {data?.customerAddress.addressDetail},
+                      {data?.customerAddress.street},
+                      {data?.customerAddress.township},
+                      {data?.customerAddress.city}
                     </p>
                   </div>
                   <div className=" space-y-1.5">

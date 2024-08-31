@@ -17,13 +17,23 @@ import useSWR from "swr";
 
 const CRM = () => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [inputValue, setInputValue] = useState("");
 
   const getData = (url: string) => {
     return getFetch(url);
   };
 
   const { data, isLoading, error } = useSWR(
-    `${Backend_URL}/customers/all`,
+    `${Backend_URL}/customers`,
+    getData
+  );
+
+  const {
+    data: customerData,
+    isLoading: customerLoading,
+    error: customerError,
+  } = useSWR(
+    `${Backend_URL}/customers?page=${currentPage}&search=${inputValue}`,
     getData
   );
 
@@ -39,7 +49,7 @@ const CRM = () => {
   };
 
   const goToLastPage = () => {
-    setCurrentPage(data?.totalPages);
+    setCurrentPage(customerData?.totalPages);
   };
 
   const goToFirstPage = () => {
@@ -48,9 +58,10 @@ const CRM = () => {
 
   const router = useRouter();
 
+  console.log(data);
+
   return (
     <Container>
-      <></>
       <div className=" space-y-4">
         <NavHeader
           parentPage="Customer List"
@@ -63,7 +74,11 @@ const CRM = () => {
             <div className=" space-y-2">
               <p className=" text-xl font-semibold">Customer Info</p>
               <div className=" flex justify-between items-center">
-                <Input placeholder="Search...." />
+                <Input
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  placeholder="Search...."
+                />
                 <Button onClick={() => router.push("/pos/app/add-customer")}>
                   <PlusCircle /> <span className="ms-1">Add Customer</span>
                 </Button>
@@ -76,14 +91,14 @@ const CRM = () => {
                     <TableSkeletonLoader />
                   ) : (
                     <div className=" space-y-3">
-                      <CustomerTable data={data?.data} />
+                      <CustomerTable data={customerData?.data} />
                       <PaginationComponent
                         goToFirstPage={goToFirstPage}
                         currentPage={currentPage}
                         decrementPage={decrementPage}
                         incrementPage={incrementPage}
                         goToLastPage={goToLastPage}
-                        lastPage={data?.totalPages}
+                        lastPage={customerData?.totalPages}
                       />
                     </div>
                   )}

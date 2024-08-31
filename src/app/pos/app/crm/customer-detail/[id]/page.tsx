@@ -7,7 +7,7 @@ import TableSkeletonLoader from "@/components/TableSkeletonLoader";
 import { Badge } from "@/components/ui/badge";
 import { Backend_URL, getFetch } from "@/lib/fetch";
 import { HomeIcon } from "@radix-ui/react-icons";
-import { CoinsIcon, Home, Notebook, Phone } from "lucide-react";
+import { Calendar, CoinsIcon, Home, Notebook, Phone } from "lucide-react";
 import React from "react";
 import useSWR from "swr";
 
@@ -19,7 +19,9 @@ const CustomerDetailPage = ({ params }: { params: { id: string } }) => {
     `${Backend_URL}/customers/${params.id}`,
     getData
   );
+
   console.log(data);
+
   return (
     <Container>
       <NavHeader
@@ -93,11 +95,18 @@ const CustomerDetailPage = ({ params }: { params: { id: string } }) => {
             </div>
             <div className=" grid pb-2 grid-cols-2">
               <div className=" flex gap-3 items-center">
+                <Calendar />
+                <p className=" text-gray-500 text-sm">Date of Birth</p>
+              </div>
+              <p className=" text-sm font-light">{data?.fixDateOfBirth}</p>
+            </div>
+            <div className=" grid pb-2 grid-cols-2">
+              <div className=" flex gap-3 items-center">
                 <CoinsIcon />
                 <p className=" text-gray-500 text-sm"> {data?.totalPrice}</p>
               </div>
               <p className="text-sm  font-light">
-                {data?.totalVouchers} (vouchers)
+                {data?.totalVouchers || 0} (vouchers)
               </p>
             </div>
             <div className=" grid pb-2 grid-cols-2">
@@ -107,6 +116,7 @@ const CustomerDetailPage = ({ params }: { params: { id: string } }) => {
               </div>
               <p className=" text-sm font-light">{data?.address}</p>
             </div>
+
             <div className=" grid pb-2 grid-cols-2">
               <div className=" flex gap-3 items-center">
                 <Notebook />

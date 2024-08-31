@@ -23,7 +23,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Backend_URL, getFetch } from "@/lib/fetch";
 import { CaretSortIcon } from "@radix-ui/react-icons";
-import { Check, Plus } from "lucide-react";
+import { Check, Plus, PlusCircle } from "lucide-react";
 import React, { useEffect, useRef, useState, FormEvent } from "react";
 import useSWR from "swr";
 import {
@@ -36,6 +36,17 @@ import {
 } from "@/components/ui/command";
 import { cn } from "@/lib/utils";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import AddCustomerForm from "@/components/pos/crm/AddCustomerForm";
 
 interface Customer {
   id: string;
@@ -63,6 +74,7 @@ interface Product {
   productType: string;
   gender: string;
   productSizing: string;
+  discountPercent: number;
 }
 
 interface customerInfoData {
@@ -91,6 +103,7 @@ const SaleForm: React.FC = () => {
     type: "offline",
     payment_method: "cash",
     overallDiscount: 0,
+    overallDiscountPercent: 0,
     tax: false,
   });
 
@@ -108,7 +121,8 @@ const SaleForm: React.FC = () => {
     data: customerData,
     error: customerError,
     isLoading: customerLoading,
-  } = useSWR<{ data: Customer[] }>(`${Backend_URL}/customers/all`, getData);
+    mutate,
+  } = useSWR(`${Backend_URL}/customers/all`, getData);
 
   const {
     data: productData,
@@ -138,6 +152,8 @@ const SaleForm: React.FC = () => {
     }
   }, []);
 
+  console.log("from barcode", productData);
+
   useEffect(() => {
     if (productError) {
       if (barcodeRef.current) {
@@ -163,6 +179,7 @@ const SaleForm: React.FC = () => {
           discount: 0,
         };
         newData.cost = newData.quantity * newData.price;
+        newData.discountPercent = productData.discountPrice || 0;
 
         setData([...data, newData]);
         if (barcodeRef.current) {
@@ -178,7 +195,18 @@ const SaleForm: React.FC = () => {
     }
   }, [productData, productLoading, productError, barcodeRef]);
 
-  console.log(customerData);
+  const closeRef = useRef<HTMLButtonElement | null>(null);
+  const openRef = useRef<HTMLButtonElement | null>(null);
+
+  const refetch = async () => {
+    mutate();
+  };
+
+  const handleClose = () => {
+    closeRef.current && closeRef.current.click();
+    refetch();
+    setOpen(false);
+  };
 
   return (
     <Container className=" h-screen">
@@ -225,66 +253,126 @@ const SaleForm: React.FC = () => {
                         variant="outline"
                         role="combobox"
                         aria-expanded={open}
-                        className="w-full text-sm justify-between !rounded-md"
+                        className="w-full text-sm  justify-between !rounded-md"
                       >
                         {customers ? customers : "Customers"}
                         <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-full p-0">
-                      <Command>
+                      <Command className=" relative">
                         <CommandInput
                           placeholder="Search customers..."
                           className="h-9"
                         />
-                        <CommandEmpty>No customers found!</CommandEmpty>
+                        <CommandEmpty>
+                          No customers found!
+                          <Button
+                            onClick={() => openRef.current?.click()}
+                            variant={"ghost"}
+                            className=" flex gap-1 my-3 items-center w-full"
+                          >
+                            <PlusCircle /> <span>Add New Customer</span>
+                          </Button>
+                        </CommandEmpty>
                         <CommandGroup>
                           <CommandList>
-                            {customerData?.data.map(
-                              ({ id, name, phoneNumber }: any) => (
-                                <CommandItem
-                                  className={cn(
-                                    customers === name ? "bg-accent" : ""
-                                  )}
-                                  key={id}
-                                  value={name}
-                                  onSelect={(e) => {
-                                    setCustomerPromotion(
-                                      customerData?.data.find(
-                                        (el) => el.id == id
-                                      )?.special.promotionRate
-                                    );
-                                    setCustomerData({
-                                      name: customerData?.data.find(
-                                        (el) => el.id == id
-                                      )?.name,
-                                      phone: customerData?.data.find(
-                                        (el) => el.id == id
-                                      )?.phoneNumber,
-                                    });
-                                    setPaymentInfo({
-                                      ...paymentInfo,
-                                      customer: {
-                                        customerId: id,
-                                        amount: 0,
-                                      },
-                                    });
-                                    setCustomer(`${e}`);
-                                    setOpen(false);
-                                  }}
-                                >
-                                  <Check
+                            <Label className=" ps-8 !py-3 text-lg text-neutral-500">
+                              Customer List
+                            </Label>
+                            {!customerLoading &&
+                              customerData?.map(
+                                ({ id, name, phoneNumber }: any) => (
+                                  <CommandItem
                                     className={cn(
-                                      "mr-2 h-4 w-4",
-                                      customers === name
-                                        ? "opacity-100"
-                                        : "opacity-0"
+                                      customers === name ? "bg-accent" : ""
                                     )}
-                                  />
-                                  {name} {phoneNumber}
-                                </CommandItem>
-                              )
-                            )}
+                                    key={id}
+                                    value={name}
+                                    onSelect={(e) => {
+                                      setCustomerPromotion(
+                                        customerData?.find(
+                                          (el: any) => el.id == id
+                                        )?.special.promotionRate
+                                      );
+                                      setCustomerData({
+                                        name: customerData?.find(
+                                          (el: any) => el.id == id
+                                        )?.name,
+                                        phone: customerData?.find(
+                                          (el: any) => el.id == id
+                                        )?.phoneNumber,
+                                      });
+                                      setPaymentInfo({
+                                        ...paymentInfo,
+                                        customer: {
+                                          customerId: id,
+                                          amount: 0,
+                                        },
+                                      });
+                                      setCustomer(`${e}`);
+                                      setOpen(false);
+                                    }}
+                                  >
+                                    <Check
+                                      className={cn(
+                                        "mr-2 h-4 w-4",
+                                        customers === name
+                                          ? "opacity-100"
+                                          : "opacity-0"
+                                      )}
+                                    />
+                                    {name} {phoneNumber}
+                                  </CommandItem>
+                                )
+                              )}
+                            <div className=" my-[90px]"></div>
+                            <div className=" absolute bg-white w-full bottom-0">
+                              <Label className=" block py-1 ps-8 text-lg text-neutral-500">
+                                Add Customer
+                              </Label>
+                              <Button
+                                onClick={() => openRef.current?.click()}
+                                variant={"ghost"}
+                                className=" flex gap-1 items-center w-full"
+                              >
+                                <PlusCircle /> <span>Add New Customer</span>
+                              </Button>
+                            </div>
+                            <Sheet>
+                              <SheetTrigger className=" relative" asChild>
+                                <Button
+                                  ref={openRef}
+                                  variant={"ghost"}
+                                  className=" hidden gap-1 items-center w-full"
+                                >
+                                  <PlusCircle /> <span>Add New Customer</span>
+                                </Button>
+                              </SheetTrigger>
+                              <SheetContent className=" w-[90%] h-full overflow-auto lg:w-2/3 space-y-2">
+                                <SheetHeader>
+                                  <SheetTitle className=" text-start !pb-0">
+                                    Add New Customer
+                                  </SheetTitle>
+                                  <SheetDescription className="!mt-0 text-start">
+                                    Make new Customer here. Click save when
+                                    you're done.
+                                  </SheetDescription>
+                                </SheetHeader>
+                                <AddCustomerForm
+                                  handleClose={handleClose}
+                                  closeRef={closeRef}
+                                />
+                                <SheetFooter className=" hidden">
+                                  <SheetClose asChild>
+                                    <Button ref={closeRef} variant="link">
+                                      Cancel
+                                    </Button>
+                                  </SheetClose>
+                                  <Button>Save changes</Button>
+                                </SheetFooter>
+                              </SheetContent>
+                            </Sheet>
                           </CommandList>
                         </CommandGroup>
                       </Command>

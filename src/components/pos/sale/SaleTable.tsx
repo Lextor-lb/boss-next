@@ -27,6 +27,7 @@ interface Product {
   productType: string;
   gender: string;
   productSizing: string;
+  discountPercent: number;
 }
 
 interface SaleTableProps {
@@ -37,6 +38,7 @@ interface SaleTableProps {
 const SaleTable: React.FC<SaleTableProps> = ({ data, setData }) => {
   const priceChange = (id: number, price: string) => {
     const priceValue = parseFloat(price);
+
     setData(
       data.map((el) =>
         el.id === id
@@ -45,7 +47,9 @@ const SaleTable: React.FC<SaleTableProps> = ({ data, setData }) => {
               price: priceValue,
               cost:
                 el.discount > 0
-                  ? el.quantity * priceValue * (1 - el.discount / 100)
+                  ? el.quantity * priceValue - el.discount
+                  : el.discountPercent > 0
+                  ? el.quantity * priceValue * (1 - el.discountPercent / 100)
                   : el.quantity * priceValue,
             }
           : el
@@ -60,7 +64,27 @@ const SaleTable: React.FC<SaleTableProps> = ({ data, setData }) => {
         el.id === id
           ? {
               ...el,
+              discountPercent: 0,
               discount: discountValue,
+              cost:
+                discountValue > 0
+                  ? el.quantity * el.price - discountValue
+                  : el.quantity * el.price,
+            }
+          : el
+      )
+    );
+  };
+
+  const discountPercentChange = (id: number, discount: string) => {
+    const discountValue = parseFloat(discount);
+    setData(
+      data.map((el) =>
+        el.id === id
+          ? {
+              ...el,
+              discountPercent: discountValue,
+              discount: 0,
               cost:
                 discountValue > 0
                   ? el.quantity * el.price * (1 - discountValue / 100)
@@ -114,6 +138,7 @@ const SaleTable: React.FC<SaleTableProps> = ({ data, setData }) => {
                     cost,
                     gender,
                     productSizing,
+                    discountPercent,
                   },
                   index
                 ) => (
@@ -125,7 +150,7 @@ const SaleTable: React.FC<SaleTableProps> = ({ data, setData }) => {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <div className="">
+                      <div>
                         <div className="flex gap-1 items-start justify-center flex-col">
                           <p className="capitalize font-medium">
                             {productName}
@@ -159,8 +184,10 @@ const SaleTable: React.FC<SaleTableProps> = ({ data, setData }) => {
                     <TableCell className="text-end">
                       <div className="flex justify-end">
                         <Input
-                          value={discount}
-                          onChange={(e) => discountChange(id, e.target.value)}
+                          value={discountPercent}
+                          onChange={(e) => {
+                            discountPercentChange(id, e.target.value);
+                          }}
                           min={0}
                           type="number"
                           className="text-end w-[70%] h-8"
@@ -172,7 +199,9 @@ const SaleTable: React.FC<SaleTableProps> = ({ data, setData }) => {
                       <div className="flex justify-end">
                         <Input
                           value={discount}
-                          onChange={(e) => discountChange(id, e.target.value)}
+                          onChange={(e) => {
+                            discountChange(id, e.target.value);
+                          }}
                           min={0}
                           type="number"
                           className="text-end w-[70%] h-8"

@@ -1,10 +1,8 @@
 "use client";
 
 import Container from "@/components/Container.components";
-import FormInput from "@/components/FormInput.components";
 import NavHeader from "@/components/pos/NavHeader";
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
 import {
   Card,
   CardContent,
@@ -46,7 +44,7 @@ const AddCustomer = () => {
       .optional()
       .or(z.literal("")),
     address: z.string().optional(),
-    remark: z.string().min(1, { message: "This field cannot be empty!" }),
+    remark: z.string().optional(),
     email: z.string().email({ message: "Invalid email format!" }).nullable(),
   });
 
@@ -103,7 +101,6 @@ const AddCustomer = () => {
 
   const onSubmit = async (value: any) => {
     value.specialId = parseInt(value.specialId);
-    value.dateOfBirth = value.dateOfBirth;
     console.log(value);
     const res = await add(value);
     console.log(res);

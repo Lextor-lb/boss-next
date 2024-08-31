@@ -107,9 +107,8 @@ const Footer = () => {
         </div>
         <hr className=" border-3 border-secondary" />
         <p className=" text-xs font-medium text-center py-3">
-          Copyright © 2024 BossNation | All Rights Reserved |{" "}
-          <span className=" underline">Terms and Conditions</span> |{" "}
-          <span className=" underline">Privacy Policy</span>
+          Copyright © 2024 BossNation | All Rights Reserved 
+ 
         </p>
       </Container>
     </div>

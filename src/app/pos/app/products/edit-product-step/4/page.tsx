@@ -165,7 +165,7 @@ const EditProductPageFour = () => {
             type="number"
             min={0}
             id="discountPrice"
-            label="DiscountPrice"
+            label="Discount"
             {...register("discountPrice", { valueAsNumber: true })}
           />
           {errors.discountPrice && <p>{errors.discountPrice.message}</p>}

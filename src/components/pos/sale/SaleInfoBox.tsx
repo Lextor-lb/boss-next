@@ -21,6 +21,7 @@ interface Product {
   productType: string;
   gender: string;
   productSizing: string;
+  discountPercent: number;
 }
 
 interface Voucher {

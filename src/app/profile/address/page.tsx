@@ -20,15 +20,72 @@ import { z } from "zod";
 const UserAddressPage = () => {
   const [isClient, setIsClient] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
-
+  const [selectedAddress, setSelectedAddress] = useState<string>("");
   const [open, setOpen] = useState(false);
-
+  const [isEditing, setIsEditing] = useState(false);
   const { handleLogin } = useAppProvider();
   const router = useRouter();
 
   useEffect(() => {
     setIsClient(true);
   }, []);
+
+  const patchData = async (url: string, { arg }: any) => {
+    try {
+      const token = isClient && localStorage.getItem("accessToken");
+      if (!token) {
+        throw new Error("No access token found");
+      }
+
+      const options: RequestInit = {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "multipart/form-data",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(arg),
+      };
+      const response = await fetch(url, options);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "An error occurred");
+      }
+      return response;
+    } catch (error: any) {
+      console.error("Fetch API Error:", error.message);
+      throw new Error(error.message || "An error occurred");
+    }
+  };
+
+  const deleteData = async (url: string, { arg }: any) => {
+    try {
+      const token = isClient && localStorage.getItem("accessToken");
+      if (!token) {
+        throw new Error("No access token found");
+      }
+
+      const options: RequestInit = {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "multipart/form-data",
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      const response = await fetch(url, options);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "An error occurred");
+      }
+      return response;
+    } catch (error: any) {
+      console.error("Fetch API Error:", error.message);
+      throw new Error(error.message || "An error occurred");
+    }
+  };
 
   const getData = async (url: string) => {
     try {
@@ -59,20 +116,7 @@ const UserAddressPage = () => {
     }
   };
 
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  const { data, isLoading, error } = useSWR(
-    userId !== null ? `${Backend_URL}/ecommerce-users/${userId}` : null,
-    getData
-  );
-
-  useEffect(() => {
-    if (isClient) setUserId(localStorage.getItem("userId"));
-  }, [isClient]);
-
-  const patchUser = async (url: string, { arg }: any) => {
+  const postData = async (url: string, { arg }: { arg: any }) => {
     try {
       const token = isClient && localStorage.getItem("accessToken");
       if (!token) {
@@ -80,7 +124,7 @@ const UserAddressPage = () => {
       }
 
       const options: RequestInit = {
-        method: "PATCH",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
           Accept: "multipart/form-data",
@@ -94,20 +138,65 @@ const UserAddressPage = () => {
       if (!response.ok) {
         throw new Error(data.message || "An error occurred");
       }
-      return response;
+      return data;
     } catch (error: any) {
       console.error("Fetch API Error:", error.message);
       throw new Error(error.message || "An error occurred");
     }
   };
 
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    if (isClient) {
+      setUserId(localStorage.getItem("userId"));
+      if (!localStorage.getItem("accessToken")) {
+        router.push("/shopping-bag");
+      }
+    }
+  }, [isClient]);
+
   const {
-    data: editUserData,
-    error: editUserError,
-    trigger: editUser,
+    data: addressData,
+    isLoading: addressLoading,
+    mutate,
+  } = useSWR(userId !== null ? `${Backend_URL}/address` : null, getData);
+
+  useEffect(() => {
+    if (addressData) {
+      setSelectedAddress(`${addressData[0].id}`);
+    }
+  }, [addressData]);
+
+  const {
+    data: addAddressData,
+    error: addAddressError,
+    trigger: addAddress,
+    isMutating: addingAddress,
   } = useSWRMutation(
-    userId !== null ? `${Backend_URL}/ecommerce-users/${userId}` : null,
-    patchUser
+    selectedAddress !== "" ? `${Backend_URL}/address` : null,
+    postData
+  );
+
+  const {
+    data: editAddressData,
+    error: editAddressError,
+    trigger: editAddress,
+    isMutating: editingAddress,
+  } = useSWRMutation(
+    selectedAddress !== "" ? `${Backend_URL}/address/${selectedAddress}` : null,
+    patchData
+  );
+
+  const {
+    data: editAddressDeleteData,
+    error: editAddressDeleteError,
+    trigger: deleteAddress,
+  } = useSWRMutation(
+    selectedAddress !== "" ? `${Backend_URL}/address/${selectedAddress}` : null,
+    deleteData
   );
 
   const schema = z.object({
@@ -170,13 +259,26 @@ const UserAddressPage = () => {
     }
   }, [isClient]);
 
-  const onSubmit = async (values: any) => {
-    const res = await editUser(values);
-    if (res?.ok) {
-      setSwalProps({
-        ...swalProps,
-        show: true,
+  const handleEdit = (id: any) => {
+    setOpen(true);
+    setIsEditing(true);
+    const data = addressData?.find((el: any) => el.id == id);
+    if (data) {
+      reset({
+        city: data.city || "",
+        company: data.company || "",
+        addressDetail: data.addressDetail || "",
+        street: data.street || "",
+        township: data.township || "",
       });
+    }
+  };
+
+  const onSubmit = async (value: any) => {
+    const res = isEditing ? await editAddress(value) : await addAddress(value);
+    if (res) {
+      setIsEditing(false);
+      setOpen(false);
     }
   };
 
@@ -186,125 +288,179 @@ const UserAddressPage = () => {
         <div className=" bg-secondary border border-input px-3 font-medium lg:text-lg py-2">
           Delivery Address
         </div>
-        {(!error || !isLoading) && (
-          <RadioGroup className="  py-3 px-2">
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="address1" id="address1" />
-              <Label className=" font-normal w-full ps-2" htmlFor="address1">
-                <span className=" flex w-full justify-between">
-                  <span className=" space-y-2">
-                    <span className=" block">
-                      {data?.addressDetail}, {data?.street}, {data?.township},
-                      {data?.city}
-                    </span>
-                    <span>
-                      <span className=" font-medium">Contact</span> -{" "}
-                      {data?.phone}
-                    </span>
-                  </span>
-                  <span>
-                    <Button variant={"link"}>Edit</Button>
-                    <Button
-                      className=" hover:text-red-500 text-red-500"
-                      variant={"link"}
+        <div className=" space-y-3 px-4">
+          <RadioGroup
+            defaultValue={selectedAddress}
+            value={selectedAddress}
+            onValueChange={(e) => setSelectedAddress(e)}
+            className=" space-y-2"
+          >
+            {addressLoading ? (
+              <p>Loading...</p>
+            ) : (
+              <>
+                {addressData?.map(
+                  ({
+                    id,
+                    city,
+                    company,
+                    street,
+                    township,
+                    addressDetail,
+                  }: any) => (
+                    <div
+                      key={id}
+                      className="flex items-center justify-between space-x-2"
                     >
-                      Remove
-                    </Button>
-                  </span>
-                </span>
-              </Label>
-            </div>
-          </RadioGroup>
-        )}
-        <hr className=" w-[90%] mx-auto" />
+                      <div className=" flex items-center gap-2">
+                        <RadioGroupItem value={`${id}`} id={id} />
+                        <Label htmlFor={id}>
+                          {addressDetail}, {street} , {township} , {city},{" "}
+                          {company}
+                        </Label>
+                      </div>
+                      <div className=" flex items-center">
+                        <Button
+                          size={"sm"}
+                          disabled={editingAddress}
+                          onClick={() => {
+                            handleEdit(id);
+                            setSelectedAddress(`${id}`);
+                          }}
+                          variant={"ghost"}
+                        >
+                          Edit
+                        </Button>
+                        <p className=" text-neutral-400">|</p>
 
-        {!open && (
-          <Button variant={"ghost"} onClick={() => setOpen(true)}>
-            <Plus /> <span className=" ms-3">Add new address</span>
-          </Button>
-        )}
+                        <Button
+                          disabled={editingAddress}
+                          onClick={async () => {
+                            await setSelectedAddress(id);
+                            const res = await deleteAddress();
+                            if (res) mutate();
+                          }}
+                          size={"sm"}
+                          className=" text-red-500 hover:text-red-500"
+                          variant={"ghost"}
+                        >
+                          Remove
+                        </Button>
+                      </div>
+                    </div>
+                  )
+                )}
+              </>
+            )}
+          </RadioGroup>
+          {!open && (
+            <Button variant={"ghost"} onClick={() => setOpen(true)}>
+              <Plus /> <span className=" ms-3">Add new address</span>
+            </Button>
+          )}
+        </div>
       </div>
 
       {open && (
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <div className=" mt-4">
           <div className=" w-[90%] space-y-4">
-            <div className=" flex bg-secondary items-center justify-between border border-input px-3 font-medium lg:text-lg py-2">
-              <p> Add New Delivery address</p>
-              <Button
-                onClick={() => setOpen(false)}
-                type="button"
-                variant={"ghost"}
+            {open && (
+              <form
+                onSubmit={handleSubmit(onSubmit)}
+                className=" px-4 lg:grid-cols-2 gap-3 lg:gap-7 grid grid-cols-1"
               >
-                Cancel
-              </Button>
-            </div>
-            <div className=" px-4 lg:grid-cols-2 gap-3 lg:gap-7 grid grid-cols-1">
-              <div className=" space-y-1.5">
-                <FormInput
-                  label="City"
-                  type="text"
-                  {...register("city")}
-                  id={"City"}
-                />
-                {errors.city && (
-                  <p className="text-red-500 text-xs">{errors.city?.message}</p>
-                )}
-              </div>
+                <div className=" space-y-1.5">
+                  <FormInput
+                    label="City"
+                    type="text"
+                    {...register("city")}
+                    id={"City"}
+                  />
+                  {errors.city && (
+                    <p className="text-red-500 text-xs">
+                      {errors.city?.message}
+                    </p>
+                  )}
+                </div>
 
-              <div className=" space-y-1.5">
-                <FormInput
-                  label="Township"
-                  {...register("township")}
-                  type="text"
-                  id={"Township"}
-                />
-                {errors.township && (
-                  <p className="text-red-500 text-xs">
-                    {errors.township?.message}
-                  </p>
-                )}
-              </div>
-              <div className=" space-y-1.5">
-                <FormInput
-                  {...register("street")}
-                  label="Street"
-                  type="text"
-                  id={"Street"}
-                />
-                {errors.street && (
-                  <p className="text-red-500 text-xs">
-                    {errors.street?.message}
-                  </p>
-                )}
-              </div>
-              <div className=" space-y-1.5">
-                <FormInput
-                  label="Company(optional)"
-                  type="text"
-                  {...register("company")}
-                  id={"Company(optional)"}
-                />
-                {errors.company && (
-                  <p className="text-red-500 text-xs">
-                    {errors.company?.message}
-                  </p>
-                )}
-              </div>
-              <div className=" flex flex-col gap-1.5">
-                <Label htmlFor="address">Address Detail</Label>
-                <Textarea id="address" {...register("addressDetail")} />
-                {errors.addressDetail && (
-                  <p className="text-red-500 text-xs">
-                    {errors.addressDetail?.message}
-                  </p>
-                )}
-              </div>
-              <div className=" flex justify-end col-span-full">
-                <Button>Add New</Button>
-              </div>
-            </div>
+                <div className=" space-y-1.5">
+                  <FormInput
+                    label="Township"
+                    {...register("township")}
+                    type="text"
+                    id={"Township"}
+                  />
+                  {errors.township && (
+                    <p className="text-red-500 text-xs">
+                      {errors.township?.message}
+                    </p>
+                  )}
+                </div>
+                <div className=" space-y-1.5">
+                  <FormInput
+                    {...register("street")}
+                    label="Street"
+                    type="text"
+                    id={"Street"}
+                  />
+                  {errors.street && (
+                    <p className="text-red-500 text-xs">
+                      {errors.street?.message}
+                    </p>
+                  )}
+                </div>
+                <div className=" space-y-1.5">
+                  <FormInput
+                    label="Company(optional)"
+                    type="text"
+                    {...register("company")}
+                    id={"Company(optional)"}
+                  />
+                  {errors.company && (
+                    <p className="text-red-500 text-xs">
+                      {errors.company?.message}
+                    </p>
+                  )}
+                </div>
+                <div className=" flex flex-col gap-1.5">
+                  <Label htmlFor="address">Address Detail</Label>
+                  <Textarea id="address" {...register("addressDetail")} />
+                  {errors.addressDetail && (
+                    <p className="text-red-500 text-xs">
+                      {errors.addressDetail?.message}
+                    </p>
+                  )}
+                </div>
+                <div className=" flex col-span-full justify-end gap-3 items-center">
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      setOpen(false);
+                      setIsEditing(false);
+                      reset({
+                        city: "",
+                        company: "",
+                        addressDetail: "",
+                        street: "",
+                        township: "",
+                      });
+                    }}
+                    disabled={addingAddress || editingAddress}
+                    variant={"link"}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    disabled={addingAddress || editingAddress}
+                    variant={"default"}
+                  >
+                    Save
+                  </Button>
+                </div>
+              </form>
+            )}
           </div>
-        </form>
+        </div>
       )}
 
       {isClient && (

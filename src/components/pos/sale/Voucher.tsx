@@ -67,7 +67,13 @@ const Voucher = ({
             >
               Date
             </p>
-            <p className=" text-sm text-black">{date}</p>
+            <p
+              className={` text-sm text-black ${
+                customerInfoData.name == "" && "ms-5"
+              }`}
+            >
+              {date}
+            </p>
           </div>
 
           {customerInfoData.name !== "" && (
@@ -104,7 +110,8 @@ const Voucher = ({
             <TableHead>Product Name</TableHead>
             <TableHead className="text-end">Price</TableHead>
             <TableHead className="text-end">Qty</TableHead>
-            <TableHead className="text-end">Discount</TableHead>
+            <TableHead className="text-end">Disc %</TableHead>
+            <TableHead className="text-end">Disc</TableHead>
             <TableHead className="text-end">Cost</TableHead>
           </TableRow>
         </TableHeader>
@@ -116,6 +123,7 @@ const Voucher = ({
                 price,
                 quantity,
                 discount,
+                discountPercent,
                 id,
                 cost,
                 productCategory,
@@ -151,7 +159,10 @@ const Voucher = ({
                   {new Intl.NumberFormat("ja-JP").format(price || salePrice)}
                 </TableCell>
                 <TableCell className="text-end">1</TableCell>
-                <TableCell className="text-end">{discount}</TableCell>
+                <TableCell className="text-end">{discountPercent}</TableCell>
+                <TableCell className="text-end">
+                  {new Intl.NumberFormat("ja-JP").format(discount)}
+                </TableCell>
                 <TableCell className="text-end">
                   {cost ? (
                     <>{new Intl.NumberFormat("ja-JP").format(cost)}</>

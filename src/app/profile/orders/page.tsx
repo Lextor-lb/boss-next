@@ -74,12 +74,14 @@ const UserOrdersPage = () => {
   };
 
   const { data, isLoading } = useSWR(
-    `${Backend_URL}/orders/ecommerce`,
+    token !== "" ? `${Backend_URL}/orders/ecommerce` : null,
     getData,
     {
       errorRetryInterval: 500,
     }
   );
+
+  console.log(data);
 
   return (
     <>
@@ -105,7 +107,7 @@ const UserOrdersPage = () => {
               Please Login To Continue.
             </p>
 
-            <div className="  pointer-events-none flex gap-3 justify-center items-center">
+            <div className=" pointer-events-none flex gap-3 justify-center items-center">
               <Button
                 onClick={(e) => {
                   e.stopPropagation();

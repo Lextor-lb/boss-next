@@ -168,13 +168,14 @@ const OrderComponent = ({ data }: any) => {
               <div className=" flex gap-1 items-center">
                 <User2 />
                 <p className=" font-medium lg:text-base text-sm">
-                  {data?.ecommerceUser.name} .
+                  {data?.ecommerceUser?.name} .
                 </p>
-                <p className=" text-xs">{data?.ecommerceUser.phone}</p>
+                <p className=" text-xs">{data?.ecommerceUser?.phone}</p>
               </div>
               <p className=" ms-1 py-1 lg:text-sm text-xs">
-                {data?.ecommerceUser.addressDetail},{data?.ecommerceUser.street}
-                ,{data?.ecommerceUser.township},{data?.ecommerceUser.city}
+                {data?.customerAddress?.addressDetail},
+                {data?.customerAddress?.street},
+                {data?.customerAddress?.township},{data?.customerAddress?.city}
               </p>
             </div>
           </div>
