@@ -37,7 +37,7 @@ const OrderPage = () => {
   const goToFirstPage = () => {
     setCurrentPage(1);
   };
-
+  console.log(data);
   return (
     <Container>
       <div className="space-y-4">

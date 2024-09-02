@@ -33,7 +33,7 @@ const Navbar = () => {
   const { handleLogin } = useAppProvider();
 
   return (
-    <div>
+    <div className=" select-none">
       <div className=" w-full z-[50] h-[40px] flex justify-center items-center border-0 fixed bg-[#333333]">
         <div
           onClick={() => {
@@ -43,7 +43,7 @@ const Navbar = () => {
         >
           <span>
             <Gift />
-          </span>{" "}
+          </span>
           Sign up for exclusive offers!
         </div>
       </div>

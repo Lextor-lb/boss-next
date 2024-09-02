@@ -49,7 +49,7 @@ export default function Home() {
   return (
     <main className=" min-h-screen w-screen overflow-x-hidden bg-secondary">
       <AppLayout>
-        {/* <Banner /> */}
+        <Banner />
         {error ? (
           <ErrorComponent refetch={() => {}} />
         ) : (
@@ -74,8 +74,7 @@ export default function Home() {
                 variant={"outline"}
                 onClick={() => router.push("/new-in?page=1")}
               >
-                <Plus />{" "}
-                <span className=" capitalize !text-xs"> VIEW MORE</span>
+                <Plus /> <span className=" capitalize !text-xs">VIEW MORE</span>
               </Button>
             )}
 

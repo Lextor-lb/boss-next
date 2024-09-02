@@ -1,130 +1,250 @@
-// "use client";
+"use client";
 
-// import Container from "@/components/Container.components";
-// import NavHeader from "@/components/pos/NavHeader";
-// import { Button } from "@/components/ui/button";
-// import { Backend_URL, getFetch } from "@/lib/fetch";
-// import React, { useState } from "react";
-// import { FilePond, registerPlugin } from "react-filepond";
-// import useSWR from "swr";
-// import * as z from "zod";
-
-// // Register any necessary plugins for FilePond (if required)
-// import "filepond/dist/filepond.min.css";
-
-// // Define the Zod schema for validation
-// const imageSchema = z.object({
-//   desktop: z
-//     .instanceof(File)
-//     .refine((file) => file.size <= 5000000, "Max file size is 5MB"),
-//   mobile: z
-//     .instanceof(File)
-//     .refine((file) => file.size <= 5000000, "Max file size is 5MB"),
-// });
-
-// // Define a type for the image state keys
-// type Place = "place1" | "place2" | "place3" | "place4";
+import Container from "@/components/Container.components";
+import NavHeader from "@/components/pos/NavHeader";
+import SliderAddForm from "@/components/pos/slider/SliderAddForm";
+import { Button } from "@/components/ui/button";
+import {
+  Backend_URL,
+  deleteFetch,
+  deleteSingleFetch,
+  editProductFetch,
+  editSliderFetch,
+  getFetch,
+  postFetch,
+  postMediaFetch,
+} from "@/lib/fetch";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ImagePlus } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Form, useForm } from "react-hook-form";
+import useSWR, { mutate } from "swr";
+import useSWRMutation from "swr/mutation";
+import { z } from "zod";
 
 const SliderPage = () => {
-  // const getData = (url: string) => {
-  //   return getFetch(url);
-  // };
-  // const { data } = useSWR(`${Backend_URL}/slider/all`, getData);
+  const [images, setImages] = useState<any[]>([]);
+  const [deleteId, setDeleteId] = useState<number | null>(null);
+  const [editId, setEditId] = useState<number | null>(null);
 
-  // const [images, setImages] = useState<
-  //   Record<Place, { desktop: File | null; mobile: File | null }>
-  // >({
-  //   place1: { desktop: null, mobile: null },
-  //   place2: { desktop: null, mobile: null },
-  //   place3: { desktop: null, mobile: null },
-  //   place4: { desktop: null, mobile: null },
-  // });
+  const getData = (url: string) => {
+    return getFetch(url);
+  };
 
-  // const handleUpdateFiles =
-  //   (place: Place, type: "desktop" | "mobile") => (fileItems: any) => {
-  //     const file = fileItems[0]?.file || null;
-  //     setImages((prev) => ({
-  //       ...prev,
-  //       [place]: {
-  //         ...prev[place],
-  //         [type]: file,
-  //       },
-  //     }));
+  const deleteData = (url: string) => {
+    return deleteSingleFetch(url);
+  };
 
-  //     // Validate the file using Zod schema
-  //     const result = imageSchema.safeParse({
-  //       desktop: type === "desktop" ? file : images[place].desktop,
-  //       mobile: type === "mobile" ? file : images[place].mobile,
-  //     });
+  const postFetcher = (url: string, { arg }: { arg: any }) => {
+    return postMediaFetch(url, arg);
+  };
 
-  //     if (!result.success) {
-  //       console.error("Validation Error:", result.error);
-  //       // Handle validation errors (e.g., show a message to the user)
-  //     }
-  //   };
+  const editFetcher = (url: string, { arg }: { arg: any }) => {
+    return editSliderFetch(url, arg);
+  };
 
-  // console.log(data);
+  const { data, isLoading, mutate } = useSWR(
+    `${Backend_URL}/api/v1/sliders`,
+    getData
+  );
 
-  // return (
-  //   <Container>
-  //     <div className="space-y-4">
-  //       <NavHeader parentPage="Slider" path="Ecommerce" currentPage="Slider" />
-  //       <div className="flex justify-between">
-  //         <div className="space-y-0.5">
-  //           <p className="text-lg font-semibold">Upload Photo</p>
-  //           <p className="text-sm text-primary/60">
-  //             Banner photos for your ecommerce
-  //           </p>
-  //         </div>
-  //         <Button size={"sm"}>Upload</Button>
-  //       </div>
-  //       <hr className="my-3" />
-  //       <div className="grid grid-cols-2 gap-12">
-  //         {(["place1", "place2", "place3", "place4"] as Place[]).map(
-  //           (place) => (
-  //             <div key={place} className="space-y-2">
-  //               <p className="text-lg font-semibold">{`Place ${place.slice(
-  //                 -1
-  //               )}`}</p>
-  //               <div className="grid grid-cols-2 gap-12">
-  //                 <div className="space-y-1">
-  //                   <p className="text-sm text-primary/60">
-  //                     Add image for Desktop
-  //                   </p>
-  //                   <FilePond
-  //                     onupdatefiles={handleUpdateFiles(place, "desktop")}
-  //                   />
-  //                   {images[place].desktop && (
-  //                     <img
-  //                       src={URL.createObjectURL(images[place].desktop)}
-  //                       alt="Desktop Preview"
-  //                       className="mt-2 w-full h-32 object-cover"
-  //                     />
-  //                   )}
-  //                 </div>
-  //                 <div className="space-y-1">
-  //                   <p className="text-sm text-primary/60">
-  //                     Add image for Mobile
-  //                   </p>
-  //                   <FilePond
-  //                     onupdatefiles={handleUpdateFiles(place, "mobile")}
-  //                   />
-  //                   {images[place].mobile && (
-  //                     <img
-  //                       src={URL.createObjectURL(images[place].mobile)}
-  //                       alt="Mobile Preview"
-  //                       className="mt-2 w-full h-32 object-cover"
-  //                     />
-  //                   )}
-  //                 </div>
-  //               </div>
-  //             </div>
-  //           )
-  //         )}
-  //       </div>
-  //     </div>
-  //   </Container>
-  // );
+  const { data: dropData, trigger: drop } = useSWRMutation(
+    deleteId !== null ? `${Backend_URL}/api/v1/sliders/${deleteId}` : null,
+    deleteData
+  );
+
+  const { trigger: add, error: addError } = useSWRMutation(
+    `${Backend_URL}/api/v1/sliders`,
+    postFetcher
+  );
+
+  const { trigger: edit, error: editError } = useSWRMutation(
+    `${Backend_URL}/api/v1/sliders/${editId}`,
+    editFetcher
+  );
+
+  useEffect(() => {
+    if (data) {
+      setImages(data?.data.sort((a: any, b: any) => a.sorting - b.sorting));
+    }
+  }, [data]);
+
+  const addPhoto = async () => {
+    const data = images.filter((el) => el.toBeUploaded);
+    if (data.length > 0) {
+      const formData = new FormData();
+      data.map((el) => {
+        if (el.desktopImage) {
+          formData.append("desktopImage", el.desktopImage[0].file);
+        }
+        if (el.mobileImage) {
+          formData.append("mobileImage", el.mobileImage[0].file);
+        }
+        formData.append("sorting", el.sorting);
+      });
+
+      const res = await add(formData);
+      if (res) {
+        setImages([]);
+        mutate();
+      }
+    } else {
+      return;
+    }
+  };
+
+  const remove = async (id: any) => {
+    if (data?.data.some((el: any) => el.id == id)) {
+      await setDeleteId(id);
+      await drop();
+      mutate();
+    } else {
+      setImages(images.filter((el) => el.id !== id));
+    }
+  };
+
+  const editPhoto = async () => {
+    const data = images
+      .filter((el) => !el?.toBeUploaded)
+      .filter(
+        (el) =>
+          typeof el.desktopImage !== "string" ||
+          typeof el.mobileImage !== "string" ||
+          el?.sortingChanged
+      );
+
+    const dataWithoutSortingChanged = data.filter(
+      (el: any) => !el?.sortingChanged
+    );
+
+    const dataWithSortingChanged = data.filter((el: any) => el?.sortingChanged);
+
+    if (data.length > 0) {
+      const formData = new FormData();
+      if (dataWithoutSortingChanged.length > 0) {
+        await setEditId(data[0]?.id);
+        if (typeof dataWithoutSortingChanged[0].desktopImage !== "string") {
+          formData.append(
+            "desktopImage",
+            dataWithoutSortingChanged[0].desktopImage[0].file
+          );
+        }
+        if (typeof dataWithoutSortingChanged[0].mobileImage !== "string") {
+          formData.append(
+            "mobileImage",
+            dataWithoutSortingChanged[0].mobileImage[0].file
+          );
+        }
+        const res = await edit(formData);
+        if (res) {
+          setImages([]);
+          mutate();
+          setEditId(null);
+        }
+      }
+      if (dataWithSortingChanged.length > 0) {
+        console.log(
+          "here",
+          dataWithSortingChanged,
+          dataWithSortingChanged[0].sorting,
+          dataWithSortingChanged[1].sorting
+        );
+
+        await setEditId(dataWithSortingChanged[0]?.id);
+
+        const res = await edit(formData);
+
+        if (res) {
+          await setEditId(dataWithSortingChanged[1]?.id);
+
+          formData.append("sorting", dataWithSortingChanged[1].sorting);
+
+          const res2 = await edit(formData);
+
+          console.log(res2);
+          if (res2) {
+            setImages([]);
+            mutate();
+            setEditId(null);
+            return;
+          }
+        }
+      }
+    } else {
+      return;
+    }
+  };
+
+  return (
+    <Container>
+      <div className=" space-y-4">
+        <NavHeader parentPage="Slider" path="Ecommerce " currentPage="Slider" />
+        {addError && (
+          <p className=" text-red-500 text-sm">{addError?.message}</p>
+        )}
+        {editError && (
+          <p className=" text-red-500 text-sm">{editError?.message}</p>
+        )}
+        <div className=" flex justify-between border-b pb-3 items-center">
+          <div className=" space-y-0.5 ">
+            <p className=" text-xl font-bold">Upload Photo</p>
+            <p className=" text-sm font-semibold text-neutral-500">
+              Banner Photos for your Ecommerce
+            </p>
+          </div>
+          <Button
+            onClick={() => {
+              editPhoto();
+              addPhoto();
+            }}
+            className=""
+          >
+            Save
+          </Button>
+        </div>
+        <div className=" space-y-4">
+          {images?.length > 0 && (
+            <>
+              {images?.map(
+                (
+                  { sorting, id, desktopImage, mobileImage }: any,
+                  index: number
+                ) => (
+                  <SliderAddForm
+                    key={index}
+                    data={data}
+                    id={id}
+                    images={images}
+                    setImages={setImages}
+                    sorting={sorting}
+                    remove={remove}
+                    desktopImage={desktopImage}
+                    mobileImage={mobileImage}
+                  />
+                )
+              )}
+            </>
+          )}
+          <Button
+            onClick={() =>
+              setImages([
+                ...images,
+                {
+                  id: Date.now(),
+                  sorting: images[images.length - 1]?.sorting + 1 || 1,
+                  desktopImage: "",
+                  mobileImage: "",
+                  toBeUploaded: true,
+                },
+              ])
+            }
+          >
+            <ImagePlus /> <span className=" ms-1">Add New Photo</span>
+          </Button>
+        </div>
+      </div>
+    </Container>
+  );
 };
 
 export default SliderPage;

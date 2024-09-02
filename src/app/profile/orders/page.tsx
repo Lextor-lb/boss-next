@@ -73,7 +73,7 @@ const UserOrdersPage = () => {
     }
   };
 
-  const { data, isLoading } = useSWR(
+  const { data, isLoading, mutate } = useSWR(
     token !== "" ? `${Backend_URL}/orders/ecommerce` : null,
     getData,
     {
@@ -81,14 +81,12 @@ const UserOrdersPage = () => {
     }
   );
 
-  console.log(data);
-
   return (
     <>
       {!isLoading && (
         <div className=" space-y-6">
           {data?.map((data: any, index: any) => (
-            <OrderComponent key={index} data={data} />
+            <OrderComponent key={index} data={data} refetch={mutate} />
           ))}
         </div>
       )}

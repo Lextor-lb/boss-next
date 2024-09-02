@@ -23,10 +23,12 @@ import {
 } from "@/components/ui/table";
 import Image from "next/image";
 import useSWRMutation from "swr/mutation";
+import OrderCancelBox from "@/components/pos/order/OrderCancelBox";
 
 const OrderDetailAdminPage = ({ params }: any) => {
   const [status, setStatus] = useState<string>("");
   const [open, setOpen] = useState(false);
+  const [cancelReason, setCancelReason] = useState<string>("");
 
   const getData = (url: string) => {
     return getFetch(url);
@@ -56,7 +58,6 @@ const OrderDetailAdminPage = ({ params }: any) => {
 
   const processOrder = async (e: any, type: any) => {
     e.preventDefault();
-    console.log("here", type);
 
     const processData: any = {
       orderStatus: type,
@@ -68,7 +69,6 @@ const OrderDetailAdminPage = ({ params }: any) => {
 
     const res = await process(processData);
 
-    console.log(res);
     if (res?.status) {
       setStatus("");
       setOpen(false);
@@ -115,27 +115,69 @@ const OrderDetailAdminPage = ({ params }: any) => {
                           <p className=" opacity-70 font-light text-sm">
                             Order Status
                           </p>
-                          <div className=" flex gap-1.5">
-                            <Button
-                              onClick={() => setOpen(!open)}
-                              disabled={
-                                data?.orderStatus == "CANCEL" ||
-                                data?.orderStatus == "COMPLETE"
-                              }
-                              size={"sm"}
-                              type="button"
-                              variant={"outline"}
-                            >
-                              {open ? "Cancel" : "Edit"}
-                            </Button>
-                            {open && (
-                              <Button disabled={status == ""} size={"sm"}>
-                                Save
+                          {data?.orderStatus === "ORDERED" ? (
+                            <div className=" flex items-center gap-1.5">
+                              <Button
+                                onClick={async (e) => {
+                                  e.stopPropagation();
+                                  setStatus("CONFIRM");
+                                }}
+                                size={"sm"}
+                              >
+                                CONFIRM
                               </Button>
-                            )}
-                          </div>
+                              <OrderCancelBox
+                                buttonName={"Cancel"}
+                                buttonSize="sm"
+                                buttonVariant={"secondary"}
+                                confirmTitle={"Are you sure?"}
+                                confirmDescription={
+                                  "This action cannot be undone!"
+                                }
+                                confirmButtonText={"Yes, cancel this order."}
+                                cancelReason={cancelReason}
+                                setCancelReason={setCancelReason}
+                                run={async () => {
+                                  setStatus("CANCEL");
+
+                                  const res = await process({
+                                    orderStatus: "CANCEL",
+                                    cancelReason: cancelReason,
+                                  });
+
+                                  if (res?.status) {
+                                    setStatus("");
+                                    setCancelReason("");
+                                  }
+                                }}
+                              />
+                            </div>
+                          ) : (
+                            <div className=" flex gap-1.5">
+                              <Button
+                                onClick={() => setOpen(!open)}
+                                disabled={
+                                  data?.orderStatus == "CANCEL" ||
+                                  data?.orderStatus == "COMPLETE"
+                                }
+                                size={"sm"}
+                                type="button"
+                                variant={"outline"}
+                              >
+                                {open ? "Cancel" : "Edit"}
+                              </Button>
+                              {open && (
+                                <Button disabled={status == ""} size={"sm"}>
+                                  Save
+                                </Button>
+                              )}
+                            </div>
+                          )}
                         </div>
-                        {!open && <p>{data?.orderStatus}</p>}
+
+                        {!open && (
+                          <p className=" uppercase">{data?.orderStatus}</p>
+                        )}
                         {open && (
                           <div className=" space-y-1.5">
                             <Select
@@ -146,26 +188,6 @@ const OrderDetailAdminPage = ({ params }: any) => {
                                 <SelectValue placeholder="Select Stage" />
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem
-                                  value="CANCEL"
-                                  disabled={
-                                    data?.orderStatus === "CONFIRM" ||
-                                    data?.orderStatus === "DELIVERY" ||
-                                    data?.orderStatus === "COMPLETE"
-                                  }
-                                >
-                                  Cancel
-                                </SelectItem>
-                                <SelectItem
-                                  value="CONFIRM"
-                                  disabled={
-                                    data?.orderStatus === "COMPLETE" ||
-                                    data?.orderStatus === "DELIVERY"
-                                  }
-                                >
-                                  Confirm
-                                </SelectItem>
-
                                 <SelectItem
                                   value="DELIVERY"
                                   disabled={data?.orderStatus === "COMPLETE"}

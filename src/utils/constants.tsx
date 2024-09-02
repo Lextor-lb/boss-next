@@ -192,13 +192,13 @@ export const sidebarMenuItems: menuItems = [
     icon: <FolderOpen size={20} strokeWidth={1.5} />,
   },
 
-  // {
-  //   id: 27,
-  //   group: "Ecommerce",
-  //   pageName: "Slider",
-  //   path: "/pos/app/slider",
-  //   icon: <SlidersIcon size={20} strokeWidth={1.5} />,
-  // },
+  {
+    id: 27,
+    group: "Ecommerce",
+    pageName: "Slider",
+    path: "/pos/app/slider",
+    icon: <SlidersIcon size={20} strokeWidth={1.5} />,
+  },
 
   {
     id: 28,

@@ -28,8 +28,6 @@ const AddProductPageSix = () => {
     onSuccess: () => router.push("/pos/app/products"),
   });
 
-  console.log(error);
-
   const handleSubmit = async () => {
     // create product
     const formData = new FormData();

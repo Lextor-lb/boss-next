@@ -16,7 +16,7 @@ const Layout = ({ children }: any) => {
   return (
     <AppLayout>
       <Container>
-        <p className=" pt-4 text-sm lg:text-sm pb-12 font-normal">
+        <p className=" pt-12 text-sm lg:text-sm pb-12 font-normal">
           Profile | My account
         </p>
         <div className=" grid grid-cols-12 gap-8">

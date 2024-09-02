@@ -34,16 +34,19 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useRouter } from "next/navigation";
+import OrderCancelBox from "./OrderCancelBox";
 
 type processDataType = {
   orderStatus: string;
   voucherCode?: string;
+  cancelReason?: string;
 };
 
 const OrderTable = ({ data, refetch }: any) => {
   const router = useRouter();
   const [id, setId] = useState<number | null>(null);
   const [status, setStatus] = useState<string>("");
+  const [cancelReason, setCancelReason] = useState<string>("");
   const closeRef = useRef<HTMLButtonElement | null>(null);
 
   const generateLongNumber = (length: number) => {
@@ -71,12 +74,20 @@ const OrderTable = ({ data, refetch }: any) => {
     if (type == "CONFIRM") {
       data.voucherCode = `${generateLongNumber(7)}`;
     }
+    if (type == "CANCEL") {
+      data.cancelReason = cancelReason;
+    }
+
+    console.log(cancelReason);
+
+    console.log(data);
     const res = await process(data);
     console.log(res);
     if (res?.status) {
       refetch();
       closeRef.current && closeRef.current.click();
       setStatus("");
+      setCancelReason("");
     }
   };
 
@@ -144,13 +155,15 @@ const OrderTable = ({ data, refetch }: any) => {
                           >
                             CONFIRM
                           </Button>
-                          <ConfirmBox
+                          <OrderCancelBox
                             buttonName={"Cancel"}
                             buttonSize="sm"
                             buttonVariant={"secondary"}
                             confirmTitle={"Are you sure?"}
                             confirmDescription={"This action cannot be undone!"}
                             confirmButtonText={"Yes, cancel this order."}
+                            cancelReason={cancelReason}
+                            setCancelReason={setCancelReason}
                             run={async () => {
                               await setId(id);
                               processOrder("CANCEL");

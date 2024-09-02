@@ -214,7 +214,7 @@ const Checkout = () => {
     userId !== null ? `${Backend_URL}/ecommerce-users/${userId}` : null,
     getData
   );
-  
+
   const {
     data: addressData,
     isLoading: addressLoading,
@@ -223,7 +223,7 @@ const Checkout = () => {
 
   useEffect(() => {
     if (addressData) {
-      setSelectedAddress(`${addressData[0].id}`);
+      setSelectedAddress(`${addressData[0]?.id}`);
     }
   }, [addressData]);
 

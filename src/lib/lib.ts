@@ -89,9 +89,8 @@ export async function login(
     const { accessToken, refreshToken } = res.data;
     setTokens({ accessToken, refreshToken });
     return res.data;
-  } catch (error) {
-    console.error("Login failed", error);
-    return null;
+  } catch (error: any) {
+    throw new Error(error);
   }
 }
 

@@ -8,6 +8,13 @@ import { Backend_URL, fetchApi } from "@/lib/api";
 import { useForm } from "react-hook-form";
 import useSWRMutation from "swr/mutation";
 import { login } from "@/lib/lib";
+import Image from "next/image";
+import image1 from "../../../public/image1.png";
+import image2 from "../../../public/image2.png";
+import image3 from "../../../public/image3.png";
+import image4 from "../../../public/image4.png";
+import image5 from "../../../public/image5.png";
+import image6 from "../../../public/image6.png";
 
 export default function Login() {
   const router = useRouter();
@@ -45,7 +52,21 @@ export default function Login() {
   return (
     <div className="grid grid-cols-12 h-screen items-center">
       <div className="col-span-6 h-full border-e flex justify-center items-center">
-        {/* <LoginPageAnimation /> */}
+        <div className="w-full h-full overflow-hidden relative">
+          <div className="grid grid-cols-5 md:gap-5 gap-2 md:w-[100vw] w-[150vw] h-full tile-box">
+            {Array.from({ length: 5 }).map((_, index) => (
+              <div key={index} className="col-span-1 tiles">
+                <div className="w-full h-full flex flex-col md:gap-5 gap-2">
+                  {[image1, image2, image3, image4, image5, image6].map(
+                    (el, index) => (
+                      <Image key={index} src={el} alt="home" />
+                    )
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
       <div className="col-span-6 h-full">
         <div className="flex justify-center h-full flex-col items-center">

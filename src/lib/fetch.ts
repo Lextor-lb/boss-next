@@ -319,6 +319,52 @@ export const editProductFetch = async (
   }
 };
 
+export const editSliderFetch = async (
+  url: string,
+  body: FormData,
+  headers: Record<string, string> = {}
+) => {
+  try {
+    const token = await findToken();
+    if (!token) {
+      throw new Error("No access token found");
+    }
+
+    const options: RequestInit = {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        ...headers,
+      },
+      body: body,
+    };
+
+    const response = await fetch(url, options);
+
+    // Check if the response is in JSON format
+    const contentType = response.headers.get("Content-Type");
+    let data;
+
+    if (contentType && contentType.includes("application/json")) {
+      data = await response.json();
+    } else {
+      // Handle non-JSON response (e.g., text or HTML)
+      data = await response.text();
+    }
+
+    console.log("Response data:", data);
+
+    if (!response.ok) {
+      throw new Error(data.message || "An error occurred");
+    }
+
+    return data;
+  } catch (error: any) {
+    console.error("Error during fetch:", error);
+    throw error;
+  }
+};
+
 export const putMediaFetch = async (
   url: string,
   body: FormData,
