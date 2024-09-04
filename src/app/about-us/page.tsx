@@ -26,19 +26,14 @@ const ContactUs = () => {
         </div>
         <div className=" mt-12 lg:w-[50%] mx-auto text-center">
           <ul className=" text-primary/70 flex flex-col gap-4 text-start">
-            <li className=" list-item">
-              - Since established in 2021."Boss Nation" has gained the full
-              trust of customers by enabling to sell up to 3,000 pieces of Boss
-              brand Polo-shirt over a year.
+          <li className="list-item">
+              - Since established in 2021.&quot;Boss Nation&quot; has gained the full trust of customers by enabling to sell up to 3,000 pieces of Boss brand Polo-shirt over a year.
             </li>
-            <li className=" list-item">
-              - All items from "Boss Nation" are guaranteed to be 100%
-              authentic. If there may be counterfeits, we will refund (10) times
-              the value of your purchased items.
+            <li className="list-item">
+              - All items from &quot;Boss Nation&quot; are guaranteed to be 100% authentic. If there may be counterfeits, we will refund (10) times the value of your purchased items.
             </li>
-            <li className=" list-item">
-              - In addition to this refund, we have strongly commited that we
-              will no longer sell "Boss" branded items.
+            <li className="list-item">
+              - In addition to this refund, we have strongly committed that we will no longer sell &quot;Boss&quot; branded items.
             </li>
           </ul>
         </div>
