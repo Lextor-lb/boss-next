@@ -83,7 +83,8 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
       const result = await signInWithPopup(auth, provider);
       const idToken = await result.user.getIdToken(true);
 
-      console.log(result);
+      console.log(`token ${idToken}`);
+
 
       setIdToken(idToken);
     } catch (error) {
