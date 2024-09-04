@@ -358,7 +358,7 @@ const SaleForm: React.FC = () => {
                                   </SheetTitle>
                                   <SheetDescription className="!mt-0 text-start">
                                     Make new Customer here. Click save when
-                                    you're done.
+                                    you&apos;re done.
                                   </SheetDescription>
                                 </SheetHeader>
                                 <AddCustomerForm
