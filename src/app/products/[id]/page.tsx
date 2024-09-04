@@ -151,9 +151,11 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
         });
       }
     }
+    setSwalProps({
+      ...swalProps,
+      show: true,
+    });
   };
-
-  console.log(productData);
 
   return (
     <>
@@ -482,18 +484,29 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
                 </div>
               </div>
             </div>
+
             <hr className=" my-8" />
+
             <HotDealAlert data={data} isLoading={dealLoading} />
           </div>
+
           {isClient && (
-            <SweetAlert2 {...swalProps}>
+            <SweetAlert2
+              didClose={() => {
+                setSwalProps({
+                  ...swalProps,
+                  show: false,
+                });
+              }}
+              {...swalProps}
+            >
               <div className=" pointer-events-none space-y-3 text-center">
                 <p className=" pointer-events-none font-medium">Wishlist</p>
                 <p className=" pointer-events-none text-black/50 text-base">
                   Your wishlist is currently empty. Sign in or create an account
                   to save your wishlist across all your devices.
                 </p>
-                <div className="  pointer-events-none flex gap-3 justify-center items-center">
+                <div className="pointer-events-none flex gap-3 justify-center items-center">
                   <Button
                     onClick={(e) => {
                       e.stopPropagation();
@@ -503,7 +516,7 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
                       });
                     }}
                     size={"sm"}
-                    className="  pointer-events-auto"
+                    className="pointer-events-auto"
                     variant={"outline"}
                   >
                     Cancel

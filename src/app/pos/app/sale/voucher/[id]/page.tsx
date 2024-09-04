@@ -43,7 +43,7 @@ const VoucherPage = ({ params }: { params: { id: string } }) => {
   return (
     <Container>
       <NavHeader path="Voucher" parentPage="Voucher" />
-      <div className=" flex justify-center gap-4 flex-col items-center">
+      <div className=" flex gap-4 flex-col items-center">
         {!isLoading && (
           <div ref={printRef}>
             <Voucher
@@ -53,7 +53,8 @@ const VoucherPage = ({ params }: { params: { id: string } }) => {
               total={data.total}
               tax={data.tax > 0}
               voucherCode={data.voucherCode}
-              overallDiscount={data.discount}
+              discountByValue={data.discountByValue}
+              discount={data.discount}
               loyaltyDiscount={data.royaltyDiscount}
               customerInfoData={{
                 name: data.customerName,

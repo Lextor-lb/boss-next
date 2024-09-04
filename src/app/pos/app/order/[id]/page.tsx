@@ -87,15 +87,16 @@ const OrderDetailAdminPage = ({ params }: any) => {
         />
         {!isLoading && data && (
           <div className=" space-y-4">
-            <div className=" p-5 bg-white border border-input  rounded-md">
+            <div className=" p-5 bg-white border border-input rounded-md">
               <div className=" grid grid-cols-3">
-                <div className=" grid grid-cols-1 gap-5 border-e">
+                <div className=" grid grid-cols-1 gap-3 border-e">
                   <div className=" space-y-1.5">
                     <p className=" opacity-70 font-light text-sm">
                       Order Number
-                    </p>
+                    </p> 
                     <p>{data?.orderCode}</p>
                   </div>
+
                   <div className=" space-y-1.5">
                     <p className=" opacity-70 font-light text-sm">Ordered At</p>
                     <p>

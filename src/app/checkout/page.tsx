@@ -1,4 +1,5 @@
 "use client";
+
 import { Container } from "@/components/ecom";
 import React, { useEffect, useState } from "react";
 import { useAppProvider } from "../Provider/AppProvider";
@@ -626,6 +627,7 @@ const Checkout = () => {
                   type="email"
                   id={"email"}
                 />
+
                 {infoErrors.email && (
                   <p className="text-red-500 text-xs">
                     {infoErrors.email?.message}

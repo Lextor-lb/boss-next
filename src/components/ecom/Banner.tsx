@@ -15,8 +15,26 @@ const Banner = () => {
     getData
   );
 
+  const someData = [
+    {
+      id: 1,
+      name: "KYK",
+      sorting: 2,
+    },
+    {
+      id: 2,
+      name: "YN",
+      sorting: 1,
+    },
+    {
+      id: 3,
+      name: "PMZ",
+      sorting: 3,
+    },
+  ];
+
   return (
-    <div className="">
+    <div>
       <div className="flex justify-center object-contain items-center">
         <Carousel
           plugins={[
@@ -28,14 +46,12 @@ const Banner = () => {
         >
           <CarouselContent>
             {error || isLoading ? (
-              <CarouselItem className=" h-[400px] lg:h-[600px] flex justify-center items-center   text-red-300 py-12 bg-neutral-600">
-                <p className=" text-3xl ">up to 60% off</p>
-              </CarouselItem>
+              <CarouselItem className=" h-[400px] lg:h-[600px] flex justify-center items-center  text-red-300 py-12 bg-neutral-600"></CarouselItem>
             ) : (
               <>
                 {data?.data
                   ?.sort((a: any, b: any) => a.sorting - b.sorting)
-                  .map(({ id, desktopImage, mobileImage, sorting }: any) => (
+                  .map(({ id, desktopImage, mobileImage }: any) => (
                     <CarouselItem
                       key={id}
                       className=" h-[400px] lg:h-[600px] flex justify-center items-center   text-red-300 py-12"

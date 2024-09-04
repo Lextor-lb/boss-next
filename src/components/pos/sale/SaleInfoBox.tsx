@@ -15,20 +15,21 @@ interface Product {
   price: number;
   quantity: number;
   discount: number;
+  discountByValue: number;
   cost: number;
   productCategory: string;
   productFitting: string;
   productType: string;
   gender: string;
   productSizing: string;
-  discountPercent: number;
 }
 
 interface Voucher {
   voucher_code: string;
   customerId?: any;
   type: any;
-  discount: any;
+  discount?: number;
+  discountByValue?: number;
   subTotal: number;
   total: number;
   paymentMethod: any;
@@ -37,28 +38,31 @@ interface Voucher {
     quantity: number;
     sale_price: number;
     discount: number;
+    discountByValue?: number;
   }[];
-  tax?: number; // Add the tax property here
+  tax?: number;
 }
 
 const SaleInfoBox = ({
   data,
   setData,
-  overallDiscount,
+  discountByValue,
   loyaltyDiscount,
   paymentInfo,
   setPaymentInfo,
   customerInfoData,
   setCustomerPromotion,
+  discount,
 }: {
   data: Product[];
   setData: React.Dispatch<React.SetStateAction<Product[]>>;
-  overallDiscount: number;
+  discountByValue: number;
   loyaltyDiscount: number | undefined;
   paymentInfo: any;
   setPaymentInfo: any;
   customerInfoData: any;
   setCustomerPromotion: any;
+  discount: any;
 }) => {
   const [swalProps, setSwalProps] = useState({
     show: false,
@@ -73,23 +77,34 @@ const SaleInfoBox = ({
   useEffect(() => {
     const totalCostWithoutDiscounts = data.reduce((pv, cv) => pv + cv.cost, 0);
 
-    const overallDiscountAmount =
-      (overallDiscount / 100) * totalCostWithoutDiscounts;
-    const totalCostAfterOverallDiscount =
-      totalCostWithoutDiscounts - overallDiscountAmount;
+    let totalCostAfterdiscountByValue = 0;
 
-    const loyaltyDiscountValue = loyaltyDiscount ?? 0; // Default to 0 if undefined
+    if (discount > 0) {
+      const discountAmount = (discount / 100) * totalCostWithoutDiscounts;
+      totalCostAfterdiscountByValue =
+        totalCostWithoutDiscounts - discountAmount;
+    }
+
+    if (discountByValue > 0) {
+      totalCostAfterdiscountByValue =
+        totalCostWithoutDiscounts - discountByValue;
+    }
+
+    const loyaltyDiscountValue = loyaltyDiscount ?? 0;
     const loyaltyDiscountAmount =
-      (loyaltyDiscountValue / 100) * totalCostAfterOverallDiscount;
-    const totalCostAfterDiscounts = (
-      totalCostAfterOverallDiscount - loyaltyDiscountAmount
-    ).toFixed(0); // Keeping .toFixed(0)
+      (loyaltyDiscountValue / 100) * totalCostAfterdiscountByValue;
 
-    const total = paymentInfo.tax
-      ? (Number(totalCostAfterDiscounts) * 1.05).toFixed(0) // Apply 5% tax
-      : totalCostAfterDiscounts;
+    let totalCostAfterDiscounts = 0;
 
-    setTotal(Number(total));
+    if (totalCostAfterdiscountByValue > 0) {
+      totalCostAfterDiscounts = Number(
+        (totalCostAfterdiscountByValue - loyaltyDiscountAmount).toFixed(0)
+      );
+    } else {
+      totalCostAfterDiscounts = totalCostWithoutDiscounts;
+    }
+
+    setTotal(Number(totalCostAfterDiscounts));
 
     const newChange =
       chargeValue > Number(totalCostAfterDiscounts)
@@ -97,7 +112,14 @@ const SaleInfoBox = ({
         : 0;
 
     setChange(newChange);
-  }, [data, chargeValue, overallDiscount, loyaltyDiscount, paymentInfo.tax]);
+  }, [
+    data,
+    chargeValue,
+    discountByValue,
+    loyaltyDiscount,
+    paymentInfo.tax,
+    discount,
+  ]);
 
   const [isClient, setIsClient] = useState(false);
 
@@ -143,19 +165,20 @@ const SaleInfoBox = ({
     } else {
       const voucher = {
         voucherCode: `${voucherCode}`,
-        // customerId: paymentInfo.customer.customerId,
         type: paymentInfo.type.toUpperCase(),
-        discount: paymentInfo.overallDiscount,
         subTotal: data.reduce((pv, cv) => pv + cv.cost, 0),
         total,
         paymentMethod: paymentInfo.payment_method.toUpperCase(),
-        voucherRecords: data.map(({ id, quantity, discount, price, cost }) => ({
-          productVariantId: id,
-          quantity,
-          salePrice: price,
-          discount,
-          cost: Number(cost.toFixed(0)),
-        })),
+        voucherRecords: data.map(
+          ({ id, quantity, discountByValue, price, cost, discount }) => ({
+            productVariantId: id,
+            quantity,
+            salePrice: price,
+            discount: discount,
+            cost: Number(cost.toFixed(0)),
+            discountByValue: discountByValue,
+          })
+        ),
       } as any;
 
       if (paymentInfo.tax) {
@@ -166,8 +189,20 @@ const SaleInfoBox = ({
         (voucher as any).customerId = paymentInfo.customer.customerId;
       }
 
+      if (paymentInfo.discountByValue > 0) {
+        (voucher as any).discountByValue = paymentInfo.discountByValue;
+      }
+
+      if (paymentInfo.discount > 0) {
+        (voucher as any).discount = paymentInfo.discount;
+      }
+
+      console.log(voucher);
+
       const res = await sell(voucher);
+
       console.log(res);
+
       if (res.status) {
         setData([]);
         setPaymentInfo({
@@ -177,7 +212,7 @@ const SaleInfoBox = ({
           },
           type: "offline",
           payment_method: "cash",
-          overallDiscount: 0,
+          discountByValue: 0,
           tax: false,
         });
         setCustomerPromotion(undefined);
@@ -186,7 +221,7 @@ const SaleInfoBox = ({
       }
     }
   };
-  console.log(data);
+
   return (
     <>
       {error && <p className=" text-red-500">{error.message}</p>}
@@ -260,11 +295,12 @@ const SaleInfoBox = ({
         >
           <Voucher
             data={data}
+            discount={paymentInfo.discount}
             subTotal={data.reduce((pv, cv) => pv + cv.cost, 0)}
             total={total}
             tax={paymentInfo.tax}
             voucherCode={voucherCode}
-            overallDiscount={paymentInfo.overallDiscount}
+            discountByValue={paymentInfo.discountByValue}
             loyaltyDiscount={loyaltyDiscount}
             customerInfoData={customerInfoData}
           />

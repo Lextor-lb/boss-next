@@ -67,14 +67,14 @@ interface Product {
   productName: string;
   price: number;
   quantity: number;
-  discount: number;
+  discountByValue: number;
   cost: number;
   productCategory: string;
   productFitting: string;
   productType: string;
   gender: string;
   productSizing: string;
-  discountPercent: number;
+  discount: number;
 }
 
 interface customerInfoData {
@@ -102,8 +102,8 @@ const SaleForm: React.FC = () => {
     },
     type: "offline",
     payment_method: "cash",
-    overallDiscount: 0,
-    overallDiscountPercent: 0,
+    discountByValue: 0,
+    discount: 0,
     tax: false,
   });
 
@@ -152,8 +152,6 @@ const SaleForm: React.FC = () => {
     }
   }, []);
 
-  console.log("from barcode", productData);
-
   useEffect(() => {
     if (productError) {
       if (barcodeRef.current) {
@@ -176,10 +174,11 @@ const SaleForm: React.FC = () => {
         const newData = {
           ...productData,
           quantity: 1,
-          discount: 0,
+          discountByValue: 0,
         };
+
         newData.cost = newData.quantity * newData.price;
-        newData.discountPercent = productData.discountPrice || 0;
+        newData.discount = productData.discountPrice || 0;
 
         setData([...data, newData]);
         if (barcodeRef.current) {
@@ -218,7 +217,7 @@ const SaleForm: React.FC = () => {
             <SaleTable data={data} setData={setData} />
           </div>
 
-          <div className="space-y-3 col-span-3">
+          <div className="space-y-2 col-span-3">
             <p className=" text-2xl font-bold">Information</p>
 
             <form onSubmit={submitBarcode}>
@@ -241,7 +240,8 @@ const SaleForm: React.FC = () => {
                 {/* customer */}
                 <div className="space-y-1.5">
                   <div className=" flex gap-3 justify-between">
-                    <Label>Select customers</Label>
+                    <Label htmlFor="Customer">Select Customer</Label>
+
                     <div className=" text-end text-sm">
                       {customerPromotion} %
                     </div>
@@ -307,7 +307,9 @@ const SaleForm: React.FC = () => {
                                         ...paymentInfo,
                                         customer: {
                                           customerId: id,
-                                          amount: 0,
+                                          amount: customerData?.find(
+                                            (el: any) => el.id == id
+                                          )?.special.promotionRate,
                                         },
                                       });
                                       setCustomer(`${e}`);
@@ -383,7 +385,7 @@ const SaleForm: React.FC = () => {
                 {/* type */}
                 <div className="grid grid-cols-2 gap-3">
                   <div className=" flex flex-col gap-1.5">
-                    <Label>Type</Label>
+                    <Label htmlFor="Type">Type</Label>
                     <Select
                       defaultValue={paymentInfo.type}
                       onValueChange={(e) =>
@@ -404,7 +406,7 @@ const SaleForm: React.FC = () => {
                   </div>
 
                   <div className=" flex flex-col gap-1.5">
-                    <Label>Payment Method</Label>
+                    <Label>Method</Label>
                     <Select
                       defaultValue={paymentInfo.payment_method}
                       onValueChange={(e) =>
@@ -426,37 +428,41 @@ const SaleForm: React.FC = () => {
                   </div>
                 </div>
 
-                {/* discount % */}
-                <div className=" flex flex-col gap-1.5">
-                  <Label htmlFor="discount">Disc %</Label>
-                  <Input
-                    id="discount"
-                    type="number"
-                    className="h-9 "
-                    value={paymentInfo.overallDiscount}
-                    onChange={(e) =>
-                      setPaymentInfo({
-                        ...paymentInfo,
-                        overallDiscount: parseFloat(e.target.value),
-                      })
-                    }
-                  />
-                </div>
+                <div className=" grid grid-cols-2 gap-3">
+                  {/* discount % */}
+                  <div className=" flex flex-col gap-1.5">
+                    <Label htmlFor="discount">Disc %</Label>
+                    <Input
+                      id="discount"
+                      type="number"
+                      className="h-9 "
+                      value={paymentInfo.discount}
+                      onChange={(e) =>
+                        setPaymentInfo({
+                          ...paymentInfo,
+                          discount: parseFloat(e.target.value),
+                          discountByValue: 0,
+                        })
+                      }
+                    />
+                  </div>
 
-                <div className=" flex flex-col gap-1.5">
-                  <Label htmlFor="discountValue">Disc (Amount)</Label>
-                  <Input
-                    id="discountValue"
-                    type="number"
-                    className="h-9 "
-                    value={paymentInfo.overallDiscount}
-                    onChange={(e) =>
-                      setPaymentInfo({
-                        ...paymentInfo,
-                        overallDiscount: parseFloat(e.target.value),
-                      })
-                    }
-                  />
+                  <div className=" flex flex-col gap-1.5">
+                    <Label htmlFor="discountValue">Disc</Label>
+                    <Input
+                      id="discountValue"
+                      type="number"
+                      className="h-9 "
+                      value={paymentInfo.discountByValue}
+                      onChange={(e) =>
+                        setPaymentInfo({
+                          ...paymentInfo,
+                          discountByValue: parseFloat(e.target.value),
+                          discount: 0,
+                        })
+                      }
+                    />
+                  </div>
                 </div>
 
                 <div className=" flex flex-col gap-1.5">
@@ -464,10 +470,10 @@ const SaleForm: React.FC = () => {
                   <Input ref={barcodeRef} id="barcode" className="h-9" />
                 </div>
 
-                <div className=" flex flex-col gap-1.5">
+                {/* <div className=" flex flex-col gap-1.5">
                   <Label htmlFor="remark">Remark</Label>
                   <Textarea className=" bg-white" id="remark" />
-                </div>
+                </div> */}
 
                 <Button disabled={productLoading} type="submit" size="sm">
                   {productLoading ? (
@@ -496,7 +502,8 @@ const SaleForm: React.FC = () => {
           <SaleInfoBox
             setPaymentInfo={setPaymentInfo}
             loyaltyDiscount={customerPromotion}
-            overallDiscount={paymentInfo.overallDiscount}
+            discountByValue={paymentInfo.discountByValue}
+            discount={paymentInfo.discount}
             data={data}
             setData={setData}
             paymentInfo={paymentInfo}

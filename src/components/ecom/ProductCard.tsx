@@ -67,17 +67,17 @@ const ProductCard = ({
           alt=""
         />
         <div className=" absolute  top-3 right-3">
-          {/* <Button
+          <Button
             onClick={(e) => {
               e.stopPropagation();
-              addToWishList();
+              console.log("Hello");
             }}
             variant={"outline"}
             className=" h-6 w-6 p-0.5 rounded-full"
             size={"sm"}
           >
             <Heart size={18} color="#333" />
-          </Button> */}
+          </Button>
         </div>
         <div className=" absolute left-3 bottom-3">
           <Badge

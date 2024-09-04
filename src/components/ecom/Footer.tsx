@@ -5,6 +5,7 @@ import Container from "./Container";
 import { Mail, Phone } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAppProvider } from "@/app/Provider/AppProvider";
+import { SiFacebook, SiTiktok } from "react-icons/si";
 
 const Footer = () => {
   const router = useRouter();
@@ -21,15 +22,37 @@ const Footer = () => {
             <p className=" text-xs lg:text-sm text-secondary/50">
               Authentic Fashion
             </p>
+            <div className=" flex gap-3 items-center">
+              <p className=" text-xs lg:text-sm text-secondary/50">
+                Follow us :{" "}
+              </p>
+              <div className=" flex items-center">
+                <a
+                  href="https://www.facebook.com/boss.nation.clothing.shop"
+                  target="_blank"
+                >
+                  <span className="  rounded flex justify-center items-center w-6 h-6">
+                    <SiFacebook size={18} color="#1877F2" />
+                  </span>
+                </a>
+                <a
+                  href="https://www.tiktok.com/@boss.nation0?lang=en"
+                  target="_blank"
+                >
+                  <span className="  rounded flex justify-center items-center w-6 h-6">
+                    <SiTiktok size={18} color="white"/>
+                  </span>
+                </a>
+              </div>
+            </div>
           </div>
           <div className=" space-y-3">
             <p className=" text-secondary/60 text-[14px] lg:text-xs uppercase font-medium">
               Customer care
             </p>
             <ul className=" space-y-3 cursor-pointer text-xs lg:text-sm capitalize">
-              <li>contact us</li>
-              <li>about us</li>
-              <li>FAQ</li>
+              <li onClick={() => router.push("/contact-us")}>contact us</li>
+              <li onClick={() => router.push("/about-us")}>about us</li>
               <li onClick={() => handleLogin()}>Login</li>
             </ul>
           </div>
@@ -107,8 +130,7 @@ const Footer = () => {
         </div>
         <hr className=" border-3 border-secondary" />
         <p className=" text-xs font-medium text-center py-3">
-          Copyright © 2024 BossNation | All Rights Reserved 
- 
+          Copyright © 2024 BossNation | All Rights Reserved
         </p>
       </Container>
     </div>

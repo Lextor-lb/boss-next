@@ -27,7 +27,8 @@ const Voucher = ({
   tax,
   subTotal,
   voucherCode,
-  overallDiscount,
+  discount,
+  discountByValue,
   loyaltyDiscount,
   date = new Date().toLocaleDateString("en-GB"),
   time = new Date().toLocaleTimeString("en-GB", {
@@ -110,7 +111,6 @@ const Voucher = ({
             <TableHead>Product Name</TableHead>
             <TableHead className="text-end">Price</TableHead>
             <TableHead className="text-end">Qty</TableHead>
-            <TableHead className="text-end">Disc %</TableHead>
             <TableHead className="text-end">Disc</TableHead>
             <TableHead className="text-end">Cost</TableHead>
           </TableRow>
@@ -126,11 +126,8 @@ const Voucher = ({
                 discountPercent,
                 id,
                 cost,
-                productCategory,
-                productFitting,
-                productType,
-                gender,
                 salePrice,
+                discountByValue,
               }: any,
               index: number
             ) => (
@@ -159,10 +156,17 @@ const Voucher = ({
                   {new Intl.NumberFormat("ja-JP").format(price || salePrice)}
                 </TableCell>
                 <TableCell className="text-end">1</TableCell>
-                <TableCell className="text-end">{discountPercent}</TableCell>
+
                 <TableCell className="text-end">
-                  {new Intl.NumberFormat("ja-JP").format(discount)}
+                  {discountByValue > 0 && <span>-</span>}
+
+                  {new Intl.NumberFormat("ja-JP").format(
+                    discountByValue || discount
+                  )}
+
+                  {discount > 0 && <span>%</span>}
                 </TableCell>
+
                 <TableCell className="text-end">
                   {cost ? (
                     <>{new Intl.NumberFormat("ja-JP").format(cost)}</>
@@ -184,12 +188,17 @@ const Voucher = ({
         {tax && <Info title={"Tax"} amount="5" />}
         <>
           {loyaltyDiscount > 0 && (
-            <Info title={"Loyalty Discount % "} amount={loyaltyDiscount} />
+            <Info
+              title={"Loyalty Discount % "}
+              amount={`${loyaltyDiscount}%`}
+            />
           )}
         </>
 
-        {overallDiscount > 0 && (
-          <Info title={"Total Discount %"} amount={overallDiscount} />
+        {discount > 0 && <Info title={"Total Discount %"} amount={discount} />}
+
+        {discountByValue > 0 && (
+          <Info title={"Total Discount "} amount={`-${discountByValue}`} />
         )}
 
         <hr className="border-primary/40 w-[50%]" />

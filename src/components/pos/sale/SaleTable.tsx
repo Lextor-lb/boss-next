@@ -20,14 +20,14 @@ interface Product {
   productName: string;
   price: number;
   quantity: number;
-  discount: number;
+  discountByValue: number;
   cost: number;
   productCategory: string;
   productFitting: string;
   productType: string;
   gender: string;
   productSizing: string;
-  discountPercent: number;
+  discount: number;
 }
 
 interface SaleTableProps {
@@ -46,10 +46,10 @@ const SaleTable: React.FC<SaleTableProps> = ({ data, setData }) => {
               ...el,
               price: priceValue,
               cost:
-                el.discount > 0
-                  ? el.quantity * priceValue - el.discount
-                  : el.discountPercent > 0
-                  ? el.quantity * priceValue * (1 - el.discountPercent / 100)
+                el.discountByValue > 0
+                  ? el.quantity * priceValue - el.discountByValue
+                  : el.discount > 0
+                  ? el.quantity * priceValue * (1 - el.discount / 100)
                   : el.quantity * priceValue,
             }
           : el
@@ -64,8 +64,8 @@ const SaleTable: React.FC<SaleTableProps> = ({ data, setData }) => {
         el.id === id
           ? {
               ...el,
-              discountPercent: 0,
-              discount: discountValue,
+              discountByValue: discountValue,
+              discount: 0,
               cost:
                 discountValue > 0
                   ? el.quantity * el.price - discountValue
@@ -76,6 +76,8 @@ const SaleTable: React.FC<SaleTableProps> = ({ data, setData }) => {
     );
   };
 
+  console.log(data);
+
   const discountPercentChange = (id: number, discount: string) => {
     const discountValue = parseFloat(discount);
     setData(
@@ -83,8 +85,8 @@ const SaleTable: React.FC<SaleTableProps> = ({ data, setData }) => {
         el.id === id
           ? {
               ...el,
-              discountPercent: discountValue,
-              discount: 0,
+              discountByValue: 0,
+              discount: discountValue,
               cost:
                 discountValue > 0
                   ? el.quantity * el.price * (1 - discountValue / 100)
@@ -134,11 +136,11 @@ const SaleTable: React.FC<SaleTableProps> = ({ data, setData }) => {
                     price,
                     id,
                     quantity,
-                    discount,
+                    discountByValue,
                     cost,
                     gender,
                     productSizing,
-                    discountPercent,
+                    discount,
                   },
                   index
                 ) => (
@@ -184,7 +186,7 @@ const SaleTable: React.FC<SaleTableProps> = ({ data, setData }) => {
                     <TableCell className="text-end">
                       <div className="flex justify-end">
                         <Input
-                          value={discountPercent}
+                          value={discount}
                           onChange={(e) => {
                             discountPercentChange(id, e.target.value);
                           }}
@@ -198,7 +200,7 @@ const SaleTable: React.FC<SaleTableProps> = ({ data, setData }) => {
                     <TableCell className="text-end">
                       <div className="flex justify-end">
                         <Input
-                          value={discount}
+                          value={discountByValue}
                           onChange={(e) => {
                             discountChange(id, e.target.value);
                           }}
@@ -214,7 +216,11 @@ const SaleTable: React.FC<SaleTableProps> = ({ data, setData }) => {
                         {isNaN(cost) ? (
                           0
                         ) : (
-                          <>{new Intl.NumberFormat("ja-JP").format(cost)}</>
+                          <>
+                            {new Intl.NumberFormat("ja-JP").format(
+                              cost.toFixed(0) as never
+                            )}
+                          </>
                         )}
                       </div>
                     </TableCell>

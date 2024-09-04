@@ -26,6 +26,7 @@ const SliderPage = () => {
   const [images, setImages] = useState<any[]>([]);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [editId, setEditId] = useState<number | null>(null);
+  const [editId2, setEditId2] = useState<number | null>(null);
 
   const getData = (url: string) => {
     return getFetch(url);
@@ -58,10 +59,17 @@ const SliderPage = () => {
     postFetcher
   );
 
-  const { trigger: edit, error: editError } = useSWRMutation(
-    `${Backend_URL}/api/v1/sliders/${editId}`,
-    editFetcher
-  );
+  const {
+    trigger: edit,
+    error: editError,
+    data: editData,
+  } = useSWRMutation(`${Backend_URL}/api/v1/sliders/${editId}`, editFetcher);
+
+  const {
+    trigger: edit2,
+    error: editError2,
+    data: editData2,
+  } = useSWRMutation(`${Backend_URL}/api/v1/sliders/${editId2}`, editFetcher);
 
   useEffect(() => {
     if (data) {
@@ -73,6 +81,7 @@ const SliderPage = () => {
     const data = images.filter((el) => el.toBeUploaded);
     if (data.length > 0) {
       const formData = new FormData();
+
       data.map((el) => {
         if (el.desktopImage) {
           formData.append("desktopImage", el.desktopImage[0].file);
@@ -129,6 +138,7 @@ const SliderPage = () => {
             dataWithoutSortingChanged[0].desktopImage[0].file
           );
         }
+
         if (typeof dataWithoutSortingChanged[0].mobileImage !== "string") {
           formData.append(
             "mobileImage",
@@ -143,37 +153,30 @@ const SliderPage = () => {
         }
       }
       if (dataWithSortingChanged.length > 0) {
-        console.log(
-          "here",
-          dataWithSortingChanged,
-          dataWithSortingChanged[0].sorting,
-          dataWithSortingChanged[1].sorting
-        );
-
         await setEditId(dataWithSortingChanged[0]?.id);
+        await setEditId2(dataWithSortingChanged[1]?.id);
+
+        const formData2 = new FormData();
+
+        formData.append("sorting", dataWithSortingChanged[0].sorting);
+        formData2.append("sorting", dataWithSortingChanged[1].sorting);
 
         const res = await edit(formData);
+        const res2 = await edit2(formData2);
 
-        if (res) {
-          await setEditId(dataWithSortingChanged[1]?.id);
-
-          formData.append("sorting", dataWithSortingChanged[1].sorting);
-
-          const res2 = await edit(formData);
-
-          console.log(res2);
-          if (res2) {
-            setImages([]);
-            mutate();
-            setEditId(null);
-            return;
-          }
+        if (res && res2) {
+          setImages([]);
+          mutate();
+          setEditId(null);
+          return;
         }
       }
     } else {
       return;
     }
   };
+
+  console.log(editData);
 
   return (
     <Container>

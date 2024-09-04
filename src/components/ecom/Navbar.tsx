@@ -41,10 +41,10 @@ const Navbar = () => {
           }}
           className=" cursor-pointer text-xs flex gap-1 items-center text-neutral-50"
         >
-          <span>
+          <span className=" !my-3">
             <Gift />
           </span>
-          Sign up for exclusive offers!
+          <span>Sign up for exclusive offers!</span>
         </div>
       </div>
       <div className="z-[50] h-[80px] top-8 fixed flex justify-center items-center bg-secondary w-full border-b-2 border-input">

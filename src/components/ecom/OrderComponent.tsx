@@ -137,7 +137,7 @@ const OrderComponent = ({ data, refetch }: any) => {
               <p className="text-sm text-start w-[130px] text-primary/80">
                 Order Date :
               </p>
-              <p className="text-sm font-normal w-[104px] text-start ">
+              <p className="text-sm font-normal w-[134px] text-start ">
                 {data?.date}
               </p>
             </div>
@@ -270,7 +270,7 @@ const OrderComponent = ({ data, refetch }: any) => {
                 <p className="text-sm text-start w-[130px] text-primary/80">
                   Order Date :
                 </p>
-                <p className="text-sm font-normal w-[104px] text-start ">
+                <p className="text-sm font-normal w-[134px] text-start ">
                   {data?.date}
                 </p>
               </div>
