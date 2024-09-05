@@ -46,6 +46,8 @@ export default function Home() {
     getData
   );
 
+  console.log(data);
+
   return (
     <main className=" min-h-screen w-screen overflow-x-hidden bg-secondary">
       <AppLayout>

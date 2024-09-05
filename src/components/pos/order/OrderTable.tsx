@@ -71,10 +71,10 @@ const OrderTable = ({ data, refetch }: any) => {
     const data: processDataType = {
       orderStatus: `${type}`,
     };
-    if (type == "CONFIRM") {
+    if (type == "CONFIRMED") {
       data.voucherCode = `${generateLongNumber(7)}`;
     }
-    if (type == "CANCEL") {
+    if (type == "CANCELED") {
       data.cancelReason = cancelReason;
     }
 
@@ -149,7 +149,7 @@ const OrderTable = ({ data, refetch }: any) => {
                             onClick={async (e) => {
                               e.stopPropagation();
                               await setId(id);
-                              processOrder("CONFIRM");
+                              processOrder("CONFIRMED");
                             }}
                             size={"sm"}
                           >
@@ -166,28 +166,28 @@ const OrderTable = ({ data, refetch }: any) => {
                             setCancelReason={setCancelReason}
                             run={async () => {
                               await setId(id);
-                              processOrder("CANCEL");
+                              processOrder("CANCELED");
                             }}
                           />
                         </div>
                       ) : (
                         <>
-                          {orderStatus == "CONFIRM" && (
+                          {orderStatus == "CONFIRMED" && (
                             <Badge className=" pointer-events-none bg-green-400">
                               Confirmed
                             </Badge>
                           )}
-                          {orderStatus == "CANCEL" && (
+                          {orderStatus == "CANCELED" && (
                             <Badge className=" pointer-events-none bg-red-500">
                               Canceled
                             </Badge>
                           )}
-                          {orderStatus == "DELIVERY" && (
+                          {orderStatus == "DELIVERED" && (
                             <Badge className=" pointer-events-none bg-yellow-400">
                               On Delivery
                             </Badge>
                           )}
-                          {orderStatus == "COMPLETE" && (
+                          {orderStatus == "COMPLETED" && (
                             <Badge className=" pointer-events-none bg-neutral-900">
                               Completed
                             </Badge>
@@ -201,8 +201,8 @@ const OrderTable = ({ data, refetch }: any) => {
                           <SheetTrigger asChild>
                             <Button
                               disabled={
-                                orderStatus == "CANCEL" ||
-                                orderStatus == "COMPLETE"
+                                orderStatus == "CANCELED" ||
+                                orderStatus == "COMPLETED"
                               }
                               onClick={(e) => e.stopPropagation()}
                               variant={"ghost"}
@@ -229,10 +229,10 @@ const OrderTable = ({ data, refetch }: any) => {
                                   <SelectValue placeholder="Select Stage" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  <SelectItem value="DELIVERY">
+                                  <SelectItem value="DELIVERED">
                                     Delivery
                                   </SelectItem>
-                                  <SelectItem value="COMPLETE">
+                                  <SelectItem value="COMPLETED">
                                     Completed
                                   </SelectItem>
                                 </SelectContent>

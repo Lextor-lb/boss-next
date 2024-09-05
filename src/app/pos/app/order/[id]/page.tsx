@@ -24,6 +24,7 @@ import {
 import Image from "next/image";
 import useSWRMutation from "swr/mutation";
 import OrderCancelBox from "@/components/pos/order/OrderCancelBox";
+import { Badge } from "@/components/ui/badge";
 
 const OrderDetailAdminPage = ({ params }: any) => {
   const [status, setStatus] = useState<string>("");
@@ -43,10 +44,11 @@ const OrderDetailAdminPage = ({ params }: any) => {
     return putFetch(url, arg);
   };
 
-  const { data: processData, trigger: process } = useSWRMutation(
-    `${Backend_URL}/orders/${params.id}`,
-    putFetcher
-  );
+  const {
+    data: processData,
+    trigger: process,
+    error: processError,
+  } = useSWRMutation(`${Backend_URL}/orders/${params.id}`, putFetcher);
 
   const generateLongNumber = (length: number) => {
     let number = "";
@@ -63,8 +65,12 @@ const OrderDetailAdminPage = ({ params }: any) => {
       orderStatus: type,
     };
 
-    if (type == "CONFIRM") {
+    if (type == "CONFIRMED") {
       processData.voucherCode = `${generateLongNumber(7)}`;
+    }
+
+    if (type == "CANCELED") {
+      processData.cancelReason = cancelReason;
     }
 
     const res = await process(processData);
@@ -85,35 +91,60 @@ const OrderDetailAdminPage = ({ params }: any) => {
           path="E-commerce"
           currentPage="Order Detail"
         />
+        {processError && (
+          <p className=" text-red-500 text-sm">{processError?.message}</p>
+        )}
         {!isLoading && data && (
           <div className=" space-y-4">
-            <div className=" p-5 bg-white border border-input rounded-md">
-              <div className=" grid grid-cols-3">
-                <div className=" grid grid-cols-1 gap-3 border-e">
+            <div className=" p-5  w-[90%] bg-white border border-input rounded-md">
+              <div className=" grid grid-cols-2  items-start">
+                <div className=" grid grid-cols-2 col-span-1 gap-3 border-e">
                   <div className=" space-y-1.5">
-                    <p className=" opacity-70 font-light text-sm">
+                    <p className=" opacity-70 text-neutral-700 text-sm">
                       Order Number
-                    </p> 
+                    </p>
                     <p>{data?.orderCode}</p>
                   </div>
 
                   <div className=" space-y-1.5">
-                    <p className=" opacity-70 font-light text-sm">Ordered At</p>
-                    <p>
-                      {data?.date}, {data?.time}
+                    <p className=" opacity-70 text-neutral-700 text-sm">
+                      Coupon Applied
                     </p>
+                    <p> - {data?.couponName}</p>
                   </div>
 
                   <div className=" space-y-1.5">
-                    <p className=" opacity-70 font-light text-sm">Total Cost</p>
-                    <p>{data?.total}</p>
+                    <p className=" opacity-70 text-neutral-700 text-sm">
+                      Ordered At
+                    </p>
+                    <p>{data?.date}</p>
                   </div>
 
                   <div className=" space-y-1.5">
+                    <p className=" opacity-70 text-neutral-700 text-sm">
+                      Ordered At
+                    </p>
+                    <p>{data?.time}</p>
+                  </div>
+
+                  <div className=" col-span-full space-y-1.5">
+                    <p className=" opacity-70 text-neutral-700 text-sm">
+                      Total Cost
+                    </p>
+                    <p>{new Intl.NumberFormat("ja-JP").format(data?.total)}</p>
+                  </div>
+
+                  <div className=" col-span-full space-y-1.5">
                     <form onSubmit={(e) => processOrder(e, status)}>
                       <div className=" w-2/3 space-y-2">
-                        <div className=" flex items-center justify-between">
-                          <p className=" opacity-70 font-light text-sm">
+                        <div
+                          className={` ${
+                            data?.orderStatus === "ORDERED"
+                              ? "flex-col"
+                              : "flex"
+                          } items-center  space-y-4 justify-between`}
+                        >
+                          <p className=" block w-full opacity-70 text-neutral-700 text-sm">
                             Order Status
                           </p>
                           {data?.orderStatus === "ORDERED" ? (
@@ -121,7 +152,7 @@ const OrderDetailAdminPage = ({ params }: any) => {
                               <Button
                                 onClick={async (e) => {
                                   e.stopPropagation();
-                                  setStatus("CONFIRM");
+                                  setStatus("CONFIRMED");
                                 }}
                                 size={"sm"}
                               >
@@ -139,10 +170,10 @@ const OrderDetailAdminPage = ({ params }: any) => {
                                 cancelReason={cancelReason}
                                 setCancelReason={setCancelReason}
                                 run={async () => {
-                                  setStatus("CANCEL");
+                                  setStatus("CANCELED");
 
                                   const res = await process({
-                                    orderStatus: "CANCEL",
+                                    orderStatus: "CANCELED",
                                     cancelReason: cancelReason,
                                   });
 
@@ -154,31 +185,47 @@ const OrderDetailAdminPage = ({ params }: any) => {
                               />
                             </div>
                           ) : (
-                            <div className=" flex gap-1.5">
-                              <Button
-                                onClick={() => setOpen(!open)}
-                                disabled={
-                                  data?.orderStatus == "CANCEL" ||
-                                  data?.orderStatus == "COMPLETE"
-                                }
-                                size={"sm"}
-                                type="button"
-                                variant={"outline"}
-                              >
-                                {open ? "Cancel" : "Edit"}
-                              </Button>
-                              {open && (
-                                <Button disabled={status == ""} size={"sm"}>
-                                  Save
-                                </Button>
-                              )}
-                            </div>
+                            <>
+                              {data?.orderStatus !== "CANCELED" &&
+                                data?.orderStatus !== "COMPLETED" && (
+                                  <div className=" flex gap-1.5">
+                                    <Button
+                                      onClick={() => setOpen(!open)}
+                                      disabled={
+                                        data?.orderStatus == "CANCEL" ||
+                                        data?.orderStatus == "COMPLETE"
+                                      }
+                                      size={"sm"}
+                                      type="button"
+                                      variant={"outline"}
+                                    >
+                                      {open ? "Cancel" : "Edit"}
+                                    </Button>
+                                    {open && (
+                                      <Button
+                                        disabled={status == ""}
+                                        size={"sm"}
+                                      >
+                                        Save
+                                      </Button>
+                                    )}
+                                  </div>
+                                )}
+                            </>
                           )}
                         </div>
 
                         {!open && (
-                          <p className=" uppercase">{data?.orderStatus}</p>
+                          <div className=" space-y-1.5">
+                            <Badge className=" uppercase">
+                              {data?.orderStatus}
+                            </Badge>
+                            <p className=" text-sm uppercase">
+                              {data?.cancelReason}
+                            </p>
+                          </div>
                         )}
+
                         {open && (
                           <div className=" space-y-1.5">
                             <Select
@@ -190,12 +237,12 @@ const OrderDetailAdminPage = ({ params }: any) => {
                               </SelectTrigger>
                               <SelectContent>
                                 <SelectItem
-                                  value="DELIVERY"
-                                  disabled={data?.orderStatus === "COMPLETE"}
+                                  value="DELIVERED"
+                                  disabled={data?.orderStatus === "COMPLETED"}
                                 >
                                   Delivery
                                 </SelectItem>
-                                <SelectItem value="COMPLETE">
+                                <SelectItem value="COMPLETED">
                                   Completed
                                 </SelectItem>
                               </SelectContent>
@@ -206,21 +253,39 @@ const OrderDetailAdminPage = ({ params }: any) => {
                     </form>
                   </div>
                 </div>
-                <div className=" ps-3 col-span-2 grid grid-cols-2 gap-3 ">
+                <div className=" ps-3 col-span-1 grid grid-cols-2 gap-12">
                   <div className=" space-y-1.5">
-                    <p className=" opacity-70 font-light text-sm">
+                    <p className=" opacity-70 text-neutral-700 text-sm">
                       Customer Name
                     </p>
                     <p>{data?.ecommerceUser.name}</p>
                   </div>
                   <div className=" space-y-1.5 ">
-                    <p className=" opacity-70 font-light text-sm">
+                    <p className=" opacity-70 text-neutral-700 text-sm">
                       Email Address
                     </p>
                     <p className="">{data?.ecommerceUser.email}</p>
                   </div>
+
                   <div className=" space-y-1.5">
-                    <p className=" opacity-70 font-light text-sm">Address</p>
+                    <p className=" opacity-70 text-neutral-700 text-sm">
+                      Phone
+                    </p>
+                    <a href={`tel:${data?.ecommerceUser.phone}`}>
+                      {data?.ecommerceUser.phone}
+                    </a>
+                  </div>
+                  <div className=" space-y-1.5">
+                    <p className=" opacity-70 text-neutral-700 text-sm">
+                      Date Of Birth
+                    </p>
+                    <p>{data?.ecommerceUser.birthday}</p>
+                  </div>
+
+                  <div className=" space-y-1.5">
+                    <p className=" opacity-70 text-neutral-700 text-sm">
+                      Address
+                    </p>
                     <p>
                       {data?.customerAddress.addressDetail},
                       {data?.customerAddress.street},
@@ -228,11 +293,12 @@ const OrderDetailAdminPage = ({ params }: any) => {
                       {data?.customerAddress.city}
                     </p>
                   </div>
+
                   <div className=" space-y-1.5">
-                    <p className=" opacity-70 font-light text-sm">Phone</p>
-                    <a href={`tel:${data?.ecommerceUser.phone}`}>
-                      {data?.ecommerceUser.phone}
-                    </a>
+                    <p className=" opacity-70 text-neutral-700 text-sm">
+                      Remark from Customer
+                    </p>
+                    <p>{data?.remark}</p>
                   </div>
                 </div>
               </div>

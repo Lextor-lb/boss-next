@@ -42,7 +42,7 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
         ...productData,
         quantity,
         selectedVariant: variantId,
-        selectedProduct: productData.productVariants.find(
+        selectedProduct: productData?.productVariants?.find(
           (el: any) => el.id === variantId
         ),
         discountInPrice:
@@ -61,11 +61,11 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
 
   useEffect(() => {
     if (productData) {
-      const initialVariant = productData.productVariants[0];
+      const initialVariant = productData?.productVariants[0];
       setSelectedColor(initialVariant?.colorCode);
 
       // Set the initial size by finding the first variant that matches the color code
-      const initialSize = productData.productVariants.find(
+      const initialSize = productData?.productVariants?.find(
         (variant: any) => variant.colorCode === initialVariant.colorCode
       )?.productSizing as string;
 
@@ -73,18 +73,18 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
 
       // Set available sizes
       const sizes = new Set(
-        productData.productVariants
-          .filter(
+        productData?.productVariants
+          ?.filter(
             (variant: any) => variant.colorCode === initialVariant.colorCode
           )
-          .map((variant: any) => variant.productSizing as string)
+          ?.map((variant: any) => variant?.productSizing as string)
       );
 
       const sizesArray = Array.from(sizes);
 
       setAvailableSizes(sizesArray);
 
-      setVariantId(initialVariant.id);
+      setVariantId(initialVariant?.id);
     }
   }, [productData]);
 
@@ -92,9 +92,9 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
     setSelectedColor(colorCode);
 
     const filteredSizes = new Set<string>(
-      productData.productVariants
-        .filter((variant: any) => variant.colorCode === colorCode)
-        .map((variant: any) => variant.productSizing as string)
+      productData?.productVariants
+        .filter((variant: any) => variant?.colorCode === colorCode)
+        .map((variant: any) => variant?.productSizing as string)
     );
 
     const sizesArray = Array.from(filteredSizes);
@@ -111,7 +111,7 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
   useEffect(() => {
     if (productData)
       setTotalAvailable(
-        productData.productVariants.filter(
+        productData?.productVariants?.filter(
           (variant: any) =>
             variant.colorCode === selectedColor &&
             variant.productSizing == selectedSize
@@ -156,6 +156,8 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
       show: true,
     });
   };
+
+  console.log(productData);
 
   return (
     <>
@@ -298,6 +300,9 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
                     <p className=" font-normal text-primary/90 lg:text-sm text-xs">
                       {productData?.description}
                     </p>
+                    {productData?.productVariants.length < 1 && (
+                      <Badge variant={"destructive"}>Out Of Stock</Badge>
+                    )}
                   </div>
                   <div className=" flex flex-col gap-[9px]">
                     {(productData?.discountPrice as number) > 0 ? (
@@ -335,134 +340,141 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
                       <Badge>{productData.productFitting}</Badge>
                     </div>
                   </div>
-                  <div>
-                    <p className="text-neutral-500 mb-2 text-xs lg:text-sm uppercase">
-                      available colors
-                    </p>
-                    <div className="flex gap-3">
-                      {productData.productVariants
-                        .filter(
-                          (variant: any, index: any, self: any) =>
-                            index ===
-                            self.findIndex(
-                              (v: any) => v.colorCode === variant.colorCode
+
+                  {productData?.productVariants.length > 0 && (
+                    <>
+                      <div>
+                        <p className="text-neutral-500 mb-2 text-xs lg:text-sm uppercase">
+                          available colors
+                        </p>
+                        <div className="flex gap-3">
+                          {productData?.productVariants
+                            .filter(
+                              (variant: any, index: any, self: any) =>
+                                index ===
+                                self.findIndex(
+                                  (v: any) => v.colorCode === variant.colorCode
+                                )
                             )
-                        )
-                        .map(
-                          (
-                            {
-                              mediaUrl,
-                              colorCode,
-                              id,
-                            }: {
-                              mediaUrl: string;
-                              colorCode: string;
-                              id: number;
-                            },
-                            index: number
-                          ) => (
-                            <div
-                              key={index}
-                              onClick={() => {
-                                handleColorChange(colorCode);
-                                setVariantId(id);
-                              }}
-                              className={`cursor-pointer rounded-full p-1 ${
-                                colorCode === selectedColor
-                                  ? "border border-input"
-                                  : ""
-                              }`}
-                            >
-                              <div
-                                style={{ backgroundImage: `url(${mediaUrl})` }}
-                                className="lg:w-7 lg:h-7 h-6 bg-red-900 w-6 rounded-full bg-cover bg-center"
-                              ></div>
-                            </div>
-                          )
-                        )}
-                    </div>
-                  </div>
-                  <div className=" lg:w-1/2">
-                    <div className="space-y-3">
-                      <p className="text-neutral-500 mb-2 text-xs lg:text-sm uppercase">
-                        Select Size
-                      </p>
-                      <ToggleGroup
-                        value={selectedSize}
-                        defaultValue={selectedSize}
-                        onValueChange={(e) => {
-                          setSelectedSize(e);
-                          setOnlyLeft("");
-                          setVariantId(
-                            productData.productVariants.find(
-                              (el: any) => el.productSizing == e
-                            ).id
-                          );
-                        }}
-                        size="sm"
-                        type="single"
-                      >
-                        {availableSizes?.map((el: any, index: any) => (
-                          <ToggleGroupItem
-                            disabled={availableSizes.length === 1}
-                            key={index}
-                            value={el}
+                            .map(
+                              (
+                                {
+                                  mediaUrl,
+                                  colorCode,
+                                  id,
+                                }: {
+                                  mediaUrl: string;
+                                  colorCode: string;
+                                  id: number;
+                                },
+                                index: number
+                              ) => (
+                                <div
+                                  key={index}
+                                  onClick={() => {
+                                    handleColorChange(colorCode);
+                                    setVariantId(id);
+                                  }}
+                                  className={`cursor-pointer rounded-full p-1 ${
+                                    colorCode === selectedColor
+                                      ? "border border-input"
+                                      : ""
+                                  }`}
+                                >
+                                  <div
+                                    style={{
+                                      backgroundImage: `url(${mediaUrl})`,
+                                    }}
+                                    className="lg:w-7 lg:h-7 h-6 bg-red-900 w-6 rounded-full bg-cover bg-center"
+                                  ></div>
+                                </div>
+                              )
+                            )}
+                        </div>
+                      </div>
+                      <div className=" lg:w-1/2">
+                        <div className="space-y-3">
+                          <p className="text-neutral-500 mb-2 text-xs lg:text-sm uppercase">
+                            Select Size
+                          </p>
+                          <ToggleGroup
+                            value={selectedSize}
+                            defaultValue={selectedSize}
+                            onValueChange={(e) => {
+                              setSelectedSize(e);
+                              setOnlyLeft("");
+                              setVariantId(
+                                productData?.productVariants.find(
+                                  (el: any) => el.productSizing == e
+                                ).id
+                              );
+                            }}
+                            size="sm"
+                            type="single"
                           >
-                            {el}
-                          </ToggleGroupItem>
-                        ))}
-                      </ToggleGroup>
-                    </div>
-                  </div>
-                  <div>
-                    <p className="text-neutral-500 mb-2 text-xs lg:text-sm uppercase">
-                      Quantity
-                    </p>
-                    <div className=" rounded-md border w-[130px] flex items-center">
-                      <Button
-                        onClick={() => {
-                          if (quantity !== 1) {
-                            setOnlyLeft("");
-                            setQuantity(quantity - 1);
-                          }
-                        }}
-                        size={"sm"}
-                        variant={"ghost"}
-                      >
-                        <DashIcon />
-                      </Button>
-                      <p className=" text-center w-[2rem]">{quantity}</p>
-                      <Button
-                        size={"sm"}
-                        onClick={() => {
-                          if (selectedSize == "") {
-                            setOnlyLeft(`Select Size First!`);
-                            return;
-                          }
-                          if (quantity == totalAvailable) {
-                            setOnlyLeft(
-                              ` Sorry! Only ${totalAvailable} is in stock now.`
-                            );
-                          } else {
-                            setQuantity(quantity + 1);
-                          }
-                        }}
-                        variant={"ghost"}
-                      >
-                        <PlusIcon />
-                      </Button>
-                    </div>
-                    {onlyLeft && (
-                      <p className=" my-2 text-base text-red-500">
-                        {onlyLeft}.
-                      </p>
-                    )}
-                  </div>
+                            {availableSizes?.map((el: any, index: any) => (
+                              <ToggleGroupItem
+                                disabled={availableSizes.length === 1}
+                                key={index}
+                                value={el}
+                              >
+                                {el}
+                              </ToggleGroupItem>
+                            ))}
+                          </ToggleGroup>
+                        </div>
+                      </div>
+                      <div>
+                        <p className="text-neutral-500 mb-2 text-xs lg:text-sm uppercase">
+                          Quantity
+                        </p>
+                        <div className=" rounded-md border w-[130px] flex items-center">
+                          <Button
+                            onClick={() => {
+                              if (quantity !== 1) {
+                                setOnlyLeft("");
+                                setQuantity(quantity - 1);
+                              }
+                            }}
+                            size={"sm"}
+                            variant={"ghost"}
+                          >
+                            <DashIcon />
+                          </Button>
+                          <p className=" text-center w-[2rem]">{quantity}</p>
+                          <Button
+                            size={"sm"}
+                            onClick={() => {
+                              if (selectedSize == "") {
+                                setOnlyLeft(`Select Size First!`);
+                                return;
+                              }
+                              if (quantity == totalAvailable) {
+                                setOnlyLeft(
+                                  ` Sorry! Only ${totalAvailable} is in stock now.`
+                                );
+                              } else {
+                                setQuantity(quantity + 1);
+                              }
+                            }}
+                            variant={"ghost"}
+                          >
+                            <PlusIcon />
+                          </Button>
+                        </div>
+                        {onlyLeft && (
+                          <p className=" my-2 text-base text-red-500">
+                            {onlyLeft}.
+                          </p>
+                        )}
+                      </div>
+                    </>
+                  )}
                   <div className=" flex items-center justify-start pt-2 gap-2">
                     <Button
                       size={"lg"}
                       onClick={addToCart()}
-                      disabled={isLoading}
+                      disabled={productData?.productVariants.length < 1}
                       className=" w-full lg:w-3/5"
                     >
                       {cartItems.some(
@@ -473,13 +485,14 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
                         <span className=" me-1">Add to Cart</span>
                       )}
                     </Button>
-                    <Button
+                    {/* <Button
                       className=" h-10"
+                      disabled={productData?.productVariants.length < 1}
                       onClick={() => addToWishList()}
                       variant={"outline"}
                     >
                       <Heart />
-                    </Button>
+                    </Button> */}
                   </div>
                 </div>
               </div>

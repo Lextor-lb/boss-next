@@ -48,13 +48,13 @@ const Order = ({ params }: any) => {
     }
   };
 
-  const { data, isLoading, error } = useSWR(
+  const { data, isLoading, error, mutate } = useSWR(
     userId !== null ? `${Backend_URL}/orders/${params.id}` : null,
     getData,
     {
-      refreshInterval: 40000,
+      refreshInterval: 4000,
       errorRetryCount: 0,
-      errorRetryInterval: 6000000,
+      errorRetryInterval: 6000,
     }
   );
 
@@ -65,7 +65,9 @@ const Order = ({ params }: any) => {
           Checkout | Orders
         </p>
       </Container>
-      {(!error || !isLoading) && <OrderComponent data={data} />}
+      {(!error || !isLoading) && (
+        <OrderComponent data={data} refetch={mutate} />
+      )}
     </div>
   );
 };

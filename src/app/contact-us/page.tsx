@@ -3,7 +3,7 @@
 import { Container } from "@/components/ecom";
 import { useRouter } from "next/navigation";
 import React from "react";
-import { SiFacebook, SiTiktok } from "react-icons/si";
+import { SiFacebook, SiTiktok, SiViber } from "react-icons/si";
 
 const ContactUs = () => {
   const router = useRouter();
@@ -53,6 +53,14 @@ const ContactUs = () => {
                 >
                   <span className=" bg-neutral-200 rounded flex justify-center items-center w-6 h-6">
                     <SiTiktok size={18} />
+                  </span>
+                </a>
+                <a
+                  href="https://invite.viber.com/?g2=AQAr3pdeu90u3k9M%2FQ%2BlMW9UYGgkdtZuAEpIwxSsQ7%2FpwBBU%2B5qaIDmkU2urII8w"
+                  target="_blank"
+                >
+                  <span className="  rounded flex justify-center items-center w-6 h-6">
+                    <SiViber size={18} color="white" />
                   </span>
                 </a>
               </div>

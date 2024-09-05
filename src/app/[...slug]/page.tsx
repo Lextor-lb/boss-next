@@ -8,7 +8,6 @@ import {
 import PaginationEcom from "@/components/ecom/PaginationEcom";
 import ProductSkeleton from "@/components/ecom/ProductSkeleton";
 import ErrorComponent from "@/components/ErrorComponent";
-import { Button } from "@/components/ui/button";
 import { Backend_URL, getFetchForEcom } from "@/lib/fetch";
 import { SlidersHorizontal } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";

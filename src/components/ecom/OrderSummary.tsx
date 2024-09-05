@@ -119,7 +119,7 @@ const OrderSummary = ({
               onChange={(e) => setInputValue(e.target.value)}
               className="w-full border-none h-9 bg-transparent rounded-none focus:outline-none focus:border-0 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
               placeholder="Coupon Code"
-              disabled={validCoupon} // Disable input if coupon is applied
+              disabled={validCoupon}
             />
             <Button
               size={"sm"}

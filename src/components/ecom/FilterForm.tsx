@@ -72,6 +72,11 @@ const FilterForm = ({ closeRef }: any) => {
     getData
   );
 
+  // const { data: categoryData, isLoading: categoryLoading } = useSWR(
+  //   `${Backend_URL}/product-categories/all`,
+  //   getData
+  // );
+
   const { data: typesData, isLoading: typesLoading } = useSWR(
     `${Backend_URL}/product-types/alls`,
     getData
@@ -221,6 +226,7 @@ const FilterForm = ({ closeRef }: any) => {
             </div>
           )}
         </div>
+
         <div className="space-y-1.5">
           <div
             onClick={() => {

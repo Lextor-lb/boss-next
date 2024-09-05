@@ -30,6 +30,7 @@ interface Product {
   medias: any;
   discountPrice?: number;
   productCode: any;
+  productVariants: boolean;
 }
 
 const Products = ({
@@ -50,8 +51,8 @@ const Products = ({
         ) : (
           <div className=" grid grid-cols-2 gap-x-[10px] gap-y-[45px] lg:grid-cols-4">
             {data.length == 0 ? (
-              <div className=" h-[500px] text-red-600 col-span-full text-center">
-                Sorry, No Products found!
+              <div className=" h-[500px] text-sm text-red-500 col-span-full text-center">
+                Opps. There is no product found!
               </div>
             ) : (
               <>
@@ -65,6 +66,7 @@ const Products = ({
                     medias,
                     productCode,
                     discountPrice,
+                    productVariants,
                   }) => (
                     <ProductCard
                       id={id}
@@ -75,6 +77,7 @@ const Products = ({
                       medias={medias}
                       discountPrice={discountPrice}
                       productCode={productCode}
+                      productVariants={productVariants}
                     />
                   )
                 )}

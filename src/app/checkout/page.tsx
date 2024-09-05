@@ -11,7 +11,7 @@ import { Check, Edit, Plus } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import useSWR from "swr";
 import { Backend_URL } from "@/lib/fetch";
-import { z } from "zod";
+import { date, z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import useSWRMutation from "swr/mutation";
@@ -30,19 +30,31 @@ type OrderData = {
   subTotal: number;
   total: number;
   orderRecords: OrderRecord[];
-  couponDiscount?: number;
+  discount?: number;
   addressId: any;
+  remark?: string;
+  couponName?: string;
 };
 
 const Checkout = () => {
-  const { totalCost, cartItems, couponDiscount, setCartItems } =
-    useAppProvider();
+  const {
+    totalCost,
+    cartItems,
+    couponDiscount,
+    setCouponDiscount,
+    setCartItems,
+    couponCode,
+    setCouponCode,
+    setValidCoupon,
+    setInputValue,
+  } = useAppProvider();
 
   const [isClient, setIsClient] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   const [selectedAddress, setSelectedAddress] = useState<string>("");
   const [open, setOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [remark, setRemark] = useState("");
 
   useEffect(() => {
     setIsClient(true);
@@ -161,12 +173,14 @@ const Checkout = () => {
         },
         body: JSON.stringify(arg),
       };
+
       const response = await fetch(url, options);
       const data = await response.json();
 
       if (!response.ok) {
         throw new Error(data.message || "An error occurred");
       }
+
       return data;
     } catch (error: any) {
       console.error("Fetch API Error:", error.message);
@@ -198,6 +212,7 @@ const Checkout = () => {
       }
       return data;
     } catch (error: any) {
+      console.log(error);
       console.error("Fetch API Error:", error.message);
       throw new Error(error.message || "An error occurred");
     }
@@ -280,6 +295,7 @@ const Checkout = () => {
     name: z.string().min(3, { message: "This field cannot be empty!" }),
     phone: z.string().min(1, { message: "This field cannot be empty!" }),
     email: z.string().email({ message: "Invalid email format!" }),
+    dateOfBirth: z.string().nullable(),
   });
 
   type FormData = z.infer<typeof schema>;
@@ -313,6 +329,7 @@ const Checkout = () => {
       name: "",
       phone: "",
       email: "",
+      dateOfBirth: "",
     },
   });
 
@@ -335,7 +352,17 @@ const Checkout = () => {
   };
 
   const onSubmit = async (value: any) => {
+    if (value.dateOfBirth) {
+      const date = new Date(value.dateOfBirth);
+
+      // Format it as ISO 8601
+      const isoString = date.toISOString();
+
+      value.dateOfBirth = isoString;
+    }
+
     const res = await editUser(value);
+    console.log(res);
     if (res?.ok) {
       const dataToOrder: OrderData = {
         orderCode: `${generateLongNumber(7)}`,
@@ -351,14 +378,22 @@ const Checkout = () => {
       };
 
       if (couponDiscount > 0) {
-        dataToOrder.couponDiscount = couponDiscount;
+        dataToOrder.discount = couponDiscount;
+        dataToOrder.couponName = couponCode;
+      }
+
+      if (remark !== "") {
+        dataToOrder.remark = remark;
       }
 
       const orderRes = await order(dataToOrder);
-      console.log(orderRes);
-      if (orderRes.status) {
+      if (orderRes?.status) {
         setCartItems([]);
         router.push(`/order/${orderRes.data.id}`);
+        setCouponCode("");
+        setInputValue("");
+        setCouponDiscount("");
+        setValidCoupon(false);
       }
     }
   };
@@ -403,6 +438,15 @@ const Checkout = () => {
           <p className=" text-xl lg:text-3xl pb-3 capitalize font-semibold">
             delivery Information
           </p>
+          {orderError && (
+            <p className=" text-red-500 text-sm">{orderError.message}</p>
+          )}
+          {addAddressError && (
+            <p className=" text-red-500 text-sm">{addAddressError.message}</p>
+          )}
+          {editUserError && (
+            <p className=" text-red-500 text-sm">{editUserError.message}</p>
+          )}
           <div className=" space-y-4">
             <div className=" bg-secondary border border-input px-3 font-medium lg:text-lg py-2">
               Delivery address
@@ -614,6 +658,7 @@ const Checkout = () => {
                   type="text"
                   id={"phone"}
                 />
+
                 {infoErrors.phone && (
                   <p className="text-red-500 text-xs">
                     {infoErrors.phone?.message}
@@ -626,6 +671,35 @@ const Checkout = () => {
                   {...infoRegister("email")}
                   type="email"
                   id={"email"}
+                />
+
+                {infoErrors.email && (
+                  <p className="text-red-500 text-xs">
+                    {infoErrors.email?.message}
+                  </p>
+                )}
+              </div>
+
+              <div className=" space-y-1.5">
+                <FormInput
+                  label="Email"
+                  {...infoRegister("dateOfBirth")}
+                  type="date"
+                  id={"dateOfBirth"}
+                />
+
+                {infoErrors.email && (
+                  <p className="text-red-500 text-xs">
+                    {infoErrors.email?.message}
+                  </p>
+                )}
+              </div>
+
+              <div className=" space-y-1.5">
+                <Label>Remark</Label>
+                <Textarea
+                  value={remark}
+                  onChange={(e) => setRemark(e.target.value)}
                 />
 
                 {infoErrors.email && (

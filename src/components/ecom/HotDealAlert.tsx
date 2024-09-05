@@ -65,6 +65,7 @@ const HotDealAlert = ({ data, isLoading }: any) => {
                       id,
                       salePrice,
                       productCode,
+                      productVariants,
                     }: any,
                     index: number
                   ) => (
@@ -74,6 +75,7 @@ const HotDealAlert = ({ data, isLoading }: any) => {
                     >
                       <ProductCard
                         id={id}
+                        productVariants={productVariants}
                         productCode={productCode}
                         name={name}
                         productBrand={productBrand}

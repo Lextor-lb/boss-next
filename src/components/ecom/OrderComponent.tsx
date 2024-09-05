@@ -33,6 +33,7 @@ const OrderComponent = ({ data, refetch }: any) => {
   useEffect(() => {
     setIsClient(true);
   }, []);
+
   const patchOrder = async (url: string, { arg }: { arg: OrderData }) => {
     try {
       const token =
@@ -82,15 +83,15 @@ const OrderComponent = ({ data, refetch }: any) => {
         setActive(1);
         return;
       }
-      if (data.orderStatus == "CONFIRM") {
+      if (data.orderStatus == "CONFIRMED") {
         setActive(2);
         return;
       }
-      if (data.orderStatus == "DELIVERY") {
+      if (data.orderStatus == "DELIVERED") {
         setActive(3);
         return;
       }
-      if (data.orderStatus == "COMPLETE") {
+      if (data.orderStatus == "COMPLETED") {
         setActive(4);
         return;
       }
@@ -100,27 +101,23 @@ const OrderComponent = ({ data, refetch }: any) => {
   const handleCancelOrder = async () => {
     await setOrderId(data?.id);
     const orderData: OrderData = {
-      orderStatus: "Cancel",
+      orderStatus: "CANCELED",
       cancelReason: cancelReason,
     };
-    console.log(cancelReason);
-    // const res = await editOrder(orderData);
-    // if(res){
-    //   refetch()
-    // }
+    const res = await editOrder(orderData);
+    if (res) {
+      refetch();
+    }
   };
-
-  console.log(data);
 
   return (
     <>
-      {data?.orderStatus == "CANCEL" ? (
+      {data?.orderStatus == "CANCELED" ? (
         <div className="mx-auto border-b pb-3 space-y-4 h-full overflow-x-auto w-[80%] lg:w-[90%]">
           <div className=" bg-secondary overflow-x-auto space-y-4 p-3 lg:p-5 lg:w-[60%] border border-input">
-            <p className=" lg:text-base text-center text-xs font-medium">
+            <p className=" lg:text-base text-center text-sm font-medium">
               Your order has been canceled due to{" "}
-              {data?.cancelReason || "out of stock"}; we apologize for the
-              inconvenience and appreciate your understanding
+              {data?.cancelReason || "out of stock"}
             </p>
           </div>
           <div className=" bg-secondary space-y-4 p-5 lg:w-1/3 border border-input">

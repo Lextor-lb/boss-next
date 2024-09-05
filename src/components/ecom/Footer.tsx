@@ -5,7 +5,7 @@ import Container from "./Container";
 import { Mail, Phone } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAppProvider } from "@/app/Provider/AppProvider";
-import { SiFacebook, SiTiktok } from "react-icons/si";
+import { SiFacebook, SiTiktok, SiViber } from "react-icons/si";
 
 const Footer = () => {
   const router = useRouter();
@@ -40,7 +40,15 @@ const Footer = () => {
                   target="_blank"
                 >
                   <span className="  rounded flex justify-center items-center w-6 h-6">
-                    <SiTiktok size={18} color="white"/>
+                    <SiTiktok size={18} color="white" />
+                  </span>
+                </a>
+                <a
+                  href="https://invite.viber.com/?g2=AQAr3pdeu90u3k9M%2FQ%2BlMW9UYGgkdtZuAEpIwxSsQ7%2FpwBBU%2B5qaIDmkU2urII8w"
+                  target="_blank"
+                >
+                  <span className="  rounded flex justify-center items-center w-6 h-6">
+                    <SiViber size={18} color="white" />
                   </span>
                 </a>
               </div>

@@ -16,6 +16,7 @@ const ProductCard = ({
   medias,
   discountPrice,
   productCode,
+  productVariants,
 }: {
   id: number;
   name: string;
@@ -24,6 +25,7 @@ const ProductCard = ({
   medias: any;
   discountPrice?: number;
   productCode: any;
+  productVariants: boolean;
 }) => {
   const router = useRouter();
 
@@ -52,6 +54,8 @@ const ProductCard = ({
     }
   };
 
+
+
   return (
     <div
       onClick={() => router.push(`/products/${id}`)}
@@ -66,7 +70,7 @@ const ProductCard = ({
           className=" h-[500px] lg:h-[600px] object-cover "
           alt=""
         />
-        <div className=" absolute  top-3 right-3">
+        {/* <div className=" absolute top-3 right-3">
           <Button
             onClick={(e) => {
               e.stopPropagation();
@@ -78,7 +82,8 @@ const ProductCard = ({
           >
             <Heart size={18} color="#333" />
           </Button>
-        </div>
+        </div> */}
+
         <div className=" absolute left-3 bottom-3">
           <Badge
             variant={"secondary"}
@@ -87,6 +92,16 @@ const ProductCard = ({
             {productBrand}
           </Badge>
         </div>
+        {!productVariants && (
+          <div className=" absolute capitalize top-2 left-0">
+            <Badge
+              variant={"destructive"}
+              className=" opacity-90 text-[12px] rounded-none"
+            >
+              out of stock
+            </Badge>
+          </div>
+        )}
       </div>
       <div className=" flex flex-col gap-[10px] p-[15px]">
         <div className=" space-y-1.5">
