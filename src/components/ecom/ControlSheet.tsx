@@ -31,7 +31,7 @@ const ControlSheet = ({
   closeRef,
 }: controls) => {
   const [open, setOpen] = useState(false);
-  const { cartItems } = useAppProvider();
+  const { cartItems, orderRecord } = useAppProvider();
 
   return (
     <Sheet
@@ -47,9 +47,9 @@ const ControlSheet = ({
           </Button>
         ) : (
           <Button size={"sm"} variant={"ghost"} className=" relative">
-            {title == "Add to Cart" && cartItems?.length > 0 && (
+            {title == "Add to Cart" && orderRecord?.length > 0 && (
               <span className=" absolute -top-[0.8px] rounded-full right-1.5 h-3.5 w-3.5 bg-red-600 text-red-50 !p-0 flex justify-center items-center">
-                {cartItems?.length}
+                {orderRecord?.length}
               </span>
             )}
             {buttonName}

@@ -61,8 +61,6 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
           };
         });
 
-        console.log(records);
-
         setOrderRecord([...orderRecord, ...records]);
       }
     } else {
@@ -524,13 +522,7 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
                       disabled={productData?.productVariants.length < 1}
                       className=" w-full lg:w-3/5"
                     >
-                      {cartItems.some(
-                        (el: any) => el.selectedVariant === variantId
-                      ) ? (
-                        <span className=" me-1">Added to Cart</span>
-                      ) : (
-                        <span className=" me-1">Add to Cart</span>
-                      )}
+                      Add To Card
                     </Button>
                     {/* <Button
                       className=" h-10"

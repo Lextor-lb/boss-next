@@ -54,8 +54,6 @@ const ProductCard = ({
     }
   };
 
-
-
   return (
     <div
       onClick={() => router.push(`/products/${id}`)}
