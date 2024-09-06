@@ -14,8 +14,6 @@ const CartItem = ({ data }: any) => {
     setOrderRecord(orderRecord.filter((el: any) => el.variantId !== id));
   };
 
-  console.log(data);
-
   return (
     <div>
       <div className=" grid grid-cols-3 gap-4">
@@ -65,10 +63,7 @@ const CartItem = ({ data }: any) => {
 
                 <div className="lg:flex gap-2 items-center">
                   <p className=" line-through">
-                    {new Intl.NumberFormat("ja-JP").format(
-                      data.priceAfterDiscount
-                    )}{" "}
-                    MMK
+                    {new Intl.NumberFormat("ja-JP").format(data.salePrice)} MMK
                   </p>
                   <p className="text-xs lg:text-sm">
                     {new Intl.NumberFormat("ja-JP").format(

@@ -135,7 +135,7 @@ const ShoppingBag = () => {
                     </TableCell>
                     <TableCell className=" hidden lg:table-cell text-end ">
                       {new Intl.NumberFormat("ja-JP").format(
-                        data.discountInPrice
+                        data.discountPrice || 0
                       )}
                     </TableCell>
                     <TableCell className=" hidden lg:table-cell text-end">
@@ -160,7 +160,7 @@ const ShoppingBag = () => {
         </div>
         <div className=" col-span-full lg:col-span-3">
           <OrderSummary
-            disabled={cartItems.length == 0}
+            disabled={orderRecord.length == 0}
             buttonName="Proceed to checkout"
             cost={totalCost}
             run={handleClick}

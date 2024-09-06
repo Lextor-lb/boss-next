@@ -53,11 +53,18 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
           return {
             ...el,
             name: productData.name,
+            quantity: 1,
             variantId: el.id,
+            salePrice: productData.salePrice,
+            discountPrice: productData.discountPrice,
+
+            discountInPrice:
+              productData.salePrice *
+              (1 - (productData.discountPrice as number) / 100),
+
             priceAfterDiscount:
               productData.salePrice *
               (1 - (productData.discountPrice as number) / 100),
-            quantity: 1,
           };
         });
 
@@ -68,7 +75,7 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
         const item = {
           ...productData,
 
-          quantity: quantity,
+          quantity: 1,
 
           selectedVariant: variantId,
 
@@ -80,11 +87,14 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
             (el: any) => el.id === variantId
           ).id,
 
+          salePrice: productData.salePrice,
+
           discountInPrice:
             quantity * productData.salePrice -
             quantity *
               productData.salePrice *
               (1 - (productData.discountPrice as number) / 100),
+          discountPrice: productData.discountPrice,
 
           priceAfterDiscount:
             quantity *
@@ -522,7 +532,7 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
                       disabled={productData?.productVariants.length < 1}
                       className=" w-full lg:w-3/5"
                     >
-                      Add To Card
+                      Add To Cart
                     </Button>
                     {/* <Button
                       className=" h-10"

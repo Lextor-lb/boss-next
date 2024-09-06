@@ -360,8 +360,6 @@ const Checkout = () => {
     return parseInt(number);
   };
 
-  console.log(orderRecord);
-
   const onSubmit = async (value: any) => {
     const userData: userData = {
       name: value.name,
