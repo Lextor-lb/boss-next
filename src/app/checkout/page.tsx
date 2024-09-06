@@ -36,6 +36,13 @@ type OrderData = {
   couponName?: string;
 };
 
+type userData = {
+  name: "";
+  email: "";
+  phone: "";
+  dateOfBirth?: "";
+};
+
 const Checkout = () => {
   const {
     totalCost,
@@ -47,6 +54,8 @@ const Checkout = () => {
     setCouponCode,
     setValidCoupon,
     setInputValue,
+    orderRecord,
+    setOrderRecord,
   } = useAppProvider();
 
   const [isClient, setIsClient] = useState(false);
@@ -351,27 +360,36 @@ const Checkout = () => {
     return parseInt(number);
   };
 
+  console.log(orderRecord);
+
   const onSubmit = async (value: any) => {
-    if (value.dateOfBirth) {
-      const date = new Date(value.dateOfBirth);
+    const userData: userData = {
+      name: value.name,
+      phone: value.phone,
+      email: value.email,
+    };
+
+    if (value.dateOfBirth !== "") {
+      const date = new Date(value?.dateOfBirth);
 
       // Format it as ISO 8601
-      const isoString = date.toISOString();
+      const isoString = date?.toISOString();
 
       value.dateOfBirth = isoString;
+      userData.dateOfBirth = value.dateOfBirth;
     }
 
-    const res = await editUser(value);
-    console.log(res);
+    const res = await editUser(userData as never);
+
     if (res?.ok) {
       const dataToOrder: OrderData = {
         orderCode: `${generateLongNumber(7)}`,
         addressId: parseInt(selectedAddress),
         subTotal: totalCost,
         total: totalCost,
-        orderRecords: cartItems.map((el: any) => {
+        orderRecords: orderRecord.map((el: any) => {
           return {
-            productVariantId: el.selectedProduct.id,
+            productVariantId: el.variantId,
             salePrice: el.priceAfterDiscount,
           };
         }),
@@ -393,6 +411,7 @@ const Checkout = () => {
         setCouponCode("");
         setInputValue("");
         setCouponDiscount("");
+        setOrderRecord([]);
         setValidCoupon(false);
       }
     }
@@ -682,8 +701,9 @@ const Checkout = () => {
 
               <div className=" space-y-1.5">
                 <FormInput
-                  label="Email"
+                  label="Date of Birth"
                   {...infoRegister("dateOfBirth")}
+                  className=" !w-full"
                   type="date"
                   id={"dateOfBirth"}
                 />

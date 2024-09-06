@@ -42,7 +42,7 @@ const Navbar = () => {
           className=" cursor-pointer text-xs flex gap-1 items-center text-neutral-50"
         >
           <span className=" !my-3">
-            <Gift />
+            <Gift size={18} />
           </span>
           <span>Sign up for exclusive offers!</span>
         </div>

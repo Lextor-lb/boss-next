@@ -7,7 +7,6 @@ import {
   BreadCrumbComponent,
   Container,
   Heading,
-  Navbar,
   ProductCategories,
   Products,
 } from "@/components/ecom";

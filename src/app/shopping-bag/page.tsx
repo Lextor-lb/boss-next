@@ -10,7 +10,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAppProvider } from "../Provider/AppProvider";
@@ -20,10 +19,18 @@ import { useRouter } from "next/navigation";
 import SweetAlert2 from "react-sweetalert2";
 
 const ShoppingBag = () => {
-  const { cartItems, setCartItems, totalCost, handleLogin } = useAppProvider();
+  const {
+    cartItems,
+    setCartItems,
+    totalCost,
+    handleLogin,
+    orderRecord,
+    setOrderRecord,
+  } = useAppProvider();
 
   const remove = (id: number) => () => {
-    setCartItems(cartItems.filter((el: any) => el.selectedProduct.id !== id));
+    setCartItems(cartItems.filter((el: any) => el.variantId !== id));
+    setOrderRecord(orderRecord.filter((el: any) => el.variantId !== id));
   };
 
   const router = useRouter();
@@ -56,7 +63,7 @@ const ShoppingBag = () => {
       <p className=" text-sm my-[15px]">Shopping Bag</p>
       <div className=" grid grid-cols-12 gap-4">
         <div className=" col-span-full  lg:col-span-9">
-          <p className=" text-lg lg:text-3xl uppercase lg:pb-6 font-semibold">
+          <p className=" text-lg lg:text-3xl uppercase pb-6 font-semibold">
             Shopping Bag
           </p>
           <Table className=" border">
@@ -78,7 +85,7 @@ const ShoppingBag = () => {
                 <TableHead className="text-end"></TableHead>
               </TableRow>
             </TableHeader>
-            {cartItems.length < 1 ? (
+            {orderRecord.length < 1 ? (
               <TableBody>
                 <TableRow className="pointer-events-none bg-white">
                   {Array(7)
@@ -92,74 +99,61 @@ const ShoppingBag = () => {
               </TableBody>
             ) : (
               <TableBody>
-                {cartItems?.map(
-                  (
-                    {
-                      name,
-                      price,
-                      id,
-                      quantity,
-                      discountPrice,
-                      selectedProduct,
-                      salePrice,
-                      discountInPrice,
-                      priceAfterDiscount,
-                    }: any,
-                    index: number
-                  ) => (
-                    <TableRow
-                      key={`${id}-${index}`}
-                      className=" bg-white hover:bg-white/35"
+                {orderRecord?.map((data: any, index: number) => (
+                  <TableRow
+                    key={`${data.id}-${index}`}
+                    className=" bg-white hover:bg-white/35"
+                  >
+                    <TableCell className="w-[50px] ">{index + 1}.</TableCell>
+                    <TableCell
+                      onClick={() => router.push(`/products/${data.id}`)}
+                      className=" cursor-pointer"
                     >
-                      <TableCell className="w-[50px] ">{index + 1}.</TableCell>
-                      <TableCell
-                        onClick={() => router.push(`/products/${id}`)}
-                        className=" cursor-pointer"
-                      >
-                        <div className=" flex  gap-2">
-                          <Image
-                            src={selectedProduct.mediaUrl}
-                            width={300}
-                            className=" h-[60px] lg:h-[120px] w-[40px] lg:w-[100px] object-cover"
-                            height={300}
-                            alt=""
-                          />
-                          <div className="flex gap-1 items-start justify-center flex-col">
-                            <p className="capitalize font-medium">{name}</p>
-                            <div className="flex items-center gap-1">
-                              <div className="bg-muted/90 text-xs font-medium capitalize text-muted-foreground px-1.5 py-0.5 rounded-md">
-                                {selectedProduct.colorCode}
-                              </div>
-                              <div className="bg-muted/90 text-xs font-medium capitalize text-muted-foreground px-1.5 py-0.5 rounded-md">
-                                {selectedProduct.productSizing}
-                              </div>
+                      <div className=" flex  gap-2">
+                        <Image
+                          src={data.mediaUrl}
+                          width={300}
+                          className=" h-[60px] lg:h-[120px] w-[40px] lg:w-[100px] object-cover"
+                          height={300}
+                          alt=""
+                        />
+                        <div className="flex gap-1 items-start justify-center flex-col">
+                          <p className="capitalize font-medium">{data.name}</p>
+                          <div className="flex items-center gap-1">
+                            <div className="bg-muted/90 text-xs font-medium capitalize text-muted-foreground px-1.5 py-0.5 rounded-md">
+                              {data.colorCode}
+                            </div>
+                            <div className="bg-muted/90 text-xs font-medium capitalize text-muted-foreground px-1.5 py-0.5 rounded-md">
+                              {data.productSizing}
                             </div>
                           </div>
                         </div>
-                      </TableCell>
-                      <TableCell className=" hidden lg:table-cell text-end">
-                        {quantity}
-                      </TableCell>
-                      <TableCell className=" hidden lg:table-cell text-end ">
-                        {new Intl.NumberFormat("ja-JP").format(discountInPrice)}
-                      </TableCell>
-                      <TableCell className=" hidden lg:table-cell text-end">
-                        {new Intl.NumberFormat("ja-JP").format(
-                          priceAfterDiscount
-                        )}
-                      </TableCell>
-                      <TableCell className=" text-end ms-4">
-                        <Button
-                          onClick={remove(selectedProduct.id)}
-                          variant="ghost"
-                          size="sm"
-                        >
-                          <Trash2 />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  )
-                )}
+                      </div>
+                    </TableCell>
+                    <TableCell className=" hidden lg:table-cell text-end">
+                      {data.quantity}
+                    </TableCell>
+                    <TableCell className=" hidden lg:table-cell text-end ">
+                      {new Intl.NumberFormat("ja-JP").format(
+                        data.discountInPrice
+                      )}
+                    </TableCell>
+                    <TableCell className=" hidden lg:table-cell text-end">
+                      {new Intl.NumberFormat("ja-JP").format(
+                        data.priceAfterDiscount
+                      )}
+                    </TableCell>
+                    <TableCell className=" text-end ms-4">
+                      <Button
+                        onClick={remove(data.id)}
+                        variant="ghost"
+                        size="sm"
+                      >
+                        <Trash2 />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
               </TableBody>
             )}
           </Table>

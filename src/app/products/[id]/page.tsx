@@ -24,7 +24,8 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
   const [onlyLeft, setOnlyLeft] = useState<string>("");
   const [variantId, setVariantId] = useState<number>();
 
-  const { cartItems, setCartItems, handleLogin } = useAppProvider();
+  const { cartItems, setCartItems, handleLogin, orderRecord, setOrderRecord } =
+    useAppProvider();
 
   const getData = (url: string) => {
     return getFetchForEcom(url);
@@ -37,25 +38,69 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
   } = useSWR(`${Backend_URL}/ecommerce-products/${params.id}`, getData);
 
   const addToCart = () => () => {
-    if (!cartItems.some((el: any) => el.selectedVariant === variantId)) {
-      const item = {
-        ...productData,
-        quantity,
-        selectedVariant: variantId,
-        selectedProduct: productData?.productVariants?.find(
-          (el: any) => el.id === variantId
-        ),
-        discountInPrice:
-          quantity * productData.salePrice -
-          quantity *
+    if (quantity > 1) {
+      const data = productData.productVariants.filter(
+        (el: any) =>
+          el.productSizing == selectedSize && el.colorCode == selectedColor
+      );
+
+      if (
+        !orderRecord
+          .map((el: any) => el.variantId)
+          .some((variantId: any) => data.some((el: any) => el.id === variantId))
+      ) {
+        const records = data.map((el: any) => {
+          return {
+            ...el,
+            name: productData.name,
+            variantId: el.id,
+            priceAfterDiscount:
+              productData.salePrice *
+              (1 - (productData.discountPrice as number) / 100),
+            quantity: 1,
+          };
+        });
+
+        console.log(records);
+
+        setOrderRecord([...orderRecord, ...records]);
+      }
+    } else {
+      if (!cartItems.some((el: any) => el.selectedVariant === variantId)) {
+        const item = {
+          ...productData,
+
+          quantity: quantity,
+
+          selectedVariant: variantId,
+
+          selectedProduct: productData?.productVariants?.find(
+            (el: any) => el.id === variantId
+          ),
+
+          variantId: productData?.productVariants?.find(
+            (el: any) => el.id === variantId
+          ).id,
+
+          discountInPrice:
+            quantity * productData.salePrice -
+            quantity *
+              productData.salePrice *
+              (1 - (productData.discountPrice as number) / 100),
+
+          priceAfterDiscount:
+            quantity *
             productData.salePrice *
             (1 - (productData.discountPrice as number) / 100),
-        priceAfterDiscount:
-          quantity *
-          productData.salePrice *
-          (1 - (productData.discountPrice as number) / 100),
-      };
-      setCartItems((prev: any) => [...prev, item]);
+
+          productSizing: productData?.productVariants?.find(
+            (el: any) => el.id === variantId
+          ).productSizing,
+        };
+
+        setCartItems((prev: any) => [...prev, item]);
+        setOrderRecord([...orderRecord, item]);
+      }
     }
   };
 
@@ -131,6 +176,7 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
   );
 
   const [isClient, setIsClient] = useState(false);
+
   useEffect(() => {
     setIsClient(true);
   }, []);
@@ -139,6 +185,8 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
     show: false,
     showConfirmButton: false,
   });
+
+  console.log(orderRecord);
 
   const addToWishList = () => {
     if (isClient) {
@@ -151,13 +199,12 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
         });
       }
     }
+
     setSwalProps({
       ...swalProps,
       show: true,
     });
   };
-
-  console.log(productData);
 
   return (
     <>

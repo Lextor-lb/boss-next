@@ -31,6 +31,7 @@ const OrderSummary = ({
     error,
     setError,
     totalCost,
+    orderRecord,
   } = useAppProvider();
 
   const getData = (url: string) => getFetchForEcom(url);
@@ -78,14 +79,20 @@ const OrderSummary = ({
             <p>0</p>
           </div>
         ) : (
-          cartItems?.map(
+          orderRecord?.map(
             (
-              { name, priceAfterDiscount, selectedProduct }: any,
+              {
+                name,
+                priceAfterDiscount,
+                selectedProduct,
+                productSizing,
+                quantity,
+              }: any,
               index: number
             ) => (
               <div key={index} className="flex justify-between">
                 <p>
-                  {name} ({selectedProduct.productSizing})
+                  {name} ({productSizing}) x {quantity}
                 </p>
                 <p>
                   {new Intl.NumberFormat("ja-JP").format(priceAfterDiscount)}

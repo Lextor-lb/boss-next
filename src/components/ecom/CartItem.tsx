@@ -6,11 +6,15 @@ import { useAppProvider } from "@/app/Provider/AppProvider";
 import { Badge } from "../ui/badge";
 
 const CartItem = ({ data }: any) => {
-  const { cartItems, setCartItems } = useAppProvider();
+  const { cartItems, setCartItems, orderRecord, setOrderRecord } =
+    useAppProvider();
 
   const remove = (id: number) => {
-    setCartItems(cartItems.filter((el: any) => el.selectedProduct.id !== id));
+    setCartItems(cartItems.filter((el: any) => el.variantId !== id));
+    setOrderRecord(orderRecord.filter((el: any) => el.variantId !== id));
   };
+
+  console.log(data);
 
   return (
     <div>
@@ -18,14 +22,14 @@ const CartItem = ({ data }: any) => {
         <div className=" col-span-1">
           <div className=" relative">
             <Image
-              src={data.selectedProduct.mediaUrl}
+              src={data.mediaUrl}
               width={300}
               className=" h-[100px] lg:h-[150px] w-[150px] object-cover"
               height={300}
               alt=""
             />
             <Button
-              onClick={() => remove(data.selectedProduct.id)}
+              onClick={() => remove(data.variantId)}
               variant={"outline"}
               size={"sm"}
               className=" absolute w-5 h-5 right-1 !p-0 top-0"
@@ -44,12 +48,12 @@ const CartItem = ({ data }: any) => {
               <div className=" flex gap-3 items-center">
                 <div
                   style={{
-                    backgroundImage: `url(${data.selectedProduct.mediaUrl})`,
+                    backgroundImage: `url(${data.mediaUrl})`,
                   }}
                   className="lg:w-7 lg:h-7 h-4 bg-red-900 w-4 rounded-full bg-cover bg-center"
                 ></div>
                 <p className=" text-xs text-primary/60 lg:text-sm font-normal">
-                  {data.selectedProduct.productSizing}
+                  {data.productSizing}
                 </p>
               </div>
             </div>
@@ -61,7 +65,10 @@ const CartItem = ({ data }: any) => {
 
                 <div className="lg:flex gap-2 items-center">
                   <p className=" line-through">
-                    {new Intl.NumberFormat("ja-JP").format(data.salePrice)} MMK
+                    {new Intl.NumberFormat("ja-JP").format(
+                      data.priceAfterDiscount
+                    )}{" "}
+                    MMK
                   </p>
                   <p className="text-xs lg:text-sm">
                     {new Intl.NumberFormat("ja-JP").format(
@@ -74,7 +81,8 @@ const CartItem = ({ data }: any) => {
               </div>
             ) : (
               <p className=" text-xs lg:text-sm">
-                {new Intl.NumberFormat("ja-JP").format(data.salePrice)} MMK
+                {new Intl.NumberFormat("ja-JP").format(data.priceAfterDiscount)}{" "}
+                MMK
               </p>
             )}
           </div>

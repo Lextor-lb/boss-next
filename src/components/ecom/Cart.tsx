@@ -7,16 +7,18 @@ import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
 
 const Cart = ({ closeRef }: any) => {
-  const { cartItems, totalCost } = useAppProvider();
+  const { cartItems, totalCost, orderRecord } = useAppProvider();
+
+  console.log(orderRecord);
 
   const router = useRouter();
   return (
     <div className=" space-y-3 bg-white pt-4 z-50 overflow-auto h-[90%] relative">
-      {cartItems.length == 0 ? (
+      {orderRecord.length == 0 ? (
         <p>Your Cart is empty!</p>
       ) : (
         <div className=" h-[70%] overflow-auto space-y-3">
-          {cartItems.map((data: any, index: number) => (
+          {orderRecord.map((data: any, index: number) => (
             <CartItem data={data} key={index} />
           ))}
         </div>
@@ -38,7 +40,7 @@ const Cart = ({ closeRef }: any) => {
           <Button
             onClick={() => router.push("/shopping-bag")}
             size={"sm"}
-            disabled={cartItems.length == 0}
+            disabled={orderRecord.length == 0}
             className=" w-full text-center"
           >
             Shopping Bag

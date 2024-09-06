@@ -76,8 +76,6 @@ const SaleTable: React.FC<SaleTableProps> = ({ data, setData }) => {
     );
   };
 
-  console.log(data);
-
   const discountPercentChange = (id: number, discount: string) => {
     const discountValue = parseFloat(discount);
     setData(

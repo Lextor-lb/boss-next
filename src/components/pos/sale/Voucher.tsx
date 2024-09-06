@@ -128,6 +128,7 @@ const Voucher = ({
                 cost,
                 salePrice,
                 discountByValue,
+                productSizing,
               }: any,
               index: number
             ) => (
@@ -137,18 +138,9 @@ const Voucher = ({
                   <div className="flex gap-1 flex-col">
                     <p className="capitalize">{productName}</p>
                     <div className="flex items-center gap-1">
-                      {/* <div className="bg-muted/90 text-xs font-medium capitalize text-muted-foreground px-1.5 py-0.5 rounded-md">
-                        {gender}
-                      </div> */}
-                      {/* <div className="bg-muted/90 text-xs font-medium capitalize text-muted-foreground px-1.5 py-0.5 rounded-md">
-                        {productType}
-                      </div>
                       <div className="bg-muted/90 text-xs font-medium capitalize text-muted-foreground px-1.5 py-0.5 rounded-md">
-                        {productCategory}
+                        {productSizing}
                       </div>
-                      <div className="bg-muted/90 text-xs font-medium capitalize text-muted-foreground px-1.5 py-0.5 rounded-md">
-                        {productFitting}
-                      </div> */}
                     </div>
                   </div>
                 </TableCell>

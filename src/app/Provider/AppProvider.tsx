@@ -40,6 +40,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const [searchInputValue, setSearchInputValue] = useState("");
   const [isClient, setIsClient] = useState(false);
   const [cartItems, setCartItems] = useState<any[]>([]);
+  const [orderRecord, setOrderRecord] = useState<any[]>([]);
   const [idToken, setIdToken] = useState<string | null>(null);
 
   const [couponCode, setCouponCode] = useState("");
@@ -55,8 +56,10 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     if (isClient) {
       const savedCartItems = localStorage.getItem("cartItems");
+      const orderRecordItems = localStorage.getItem("orderRecord");
       try {
         setCartItems(savedCartItems ? JSON.parse(savedCartItems) : []);
+        setOrderRecord(orderRecordItems ? JSON.parse(orderRecordItems) : []);
       } catch (error) {
         console.error("Failed to parse cartItems from localStorage:", error);
       }
@@ -64,19 +67,16 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   }, [isClient]);
 
   // Update localStorage whenever cartItems change
-
   useEffect(() => {
     if (isClient) {
       localStorage.setItem("cartItems", JSON.stringify(cartItems));
+      localStorage.setItem("orderRecord", JSON.stringify(orderRecord));
     }
-  }, [cartItems, isClient]);
+  }, [cartItems, isClient, orderRecord]);
 
   const totalCost =
-    cartItems.reduce((pv: number, cv: any) => {
-      const finalPrice = cv.discountPrice
-        ? cv.quantity * cv.salePrice * (1 - cv.discountPrice / 100)
-        : cv.quantity * cv.salePrice;
-      return pv + finalPrice;
+    orderRecord.reduce((pv: number, cv: any) => {
+      return pv + cv.priceAfterDiscount;
     }, 0) *
     (1 - couponDiscount / 100);
 
@@ -84,8 +84,6 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       const result = await signInWithPopup(auth, provider);
       const idToken = await result.user.getIdToken(true);
-
-      console.log(`token ${idToken}`);
 
       setIdToken(idToken);
     } catch (error) {
@@ -136,7 +134,8 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
         setCouponDiscount,
         error,
         setError,
-        
+        orderRecord,
+        setOrderRecord,
       }}
     >
       {children}
