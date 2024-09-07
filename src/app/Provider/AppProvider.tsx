@@ -8,6 +8,17 @@ import useSWR from "swr";
 
 const Provider = createContext<any | undefined>(undefined);
 
+type cartItem = {
+  name: string;
+  colorCode: string;
+  photo: string;
+  priceAfterDiscount?: number;
+  quantity: number;
+  discount?: number;
+  salePrice?: number;
+  productSizing: string;
+};
+
 const fetcher = async (url: string, idToken: string) => {
   const response = await fetch(url, {
     method: "POST",
@@ -40,13 +51,14 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const [searchInputValue, setSearchInputValue] = useState("");
   const [isClient, setIsClient] = useState(false);
   const [cartItems, setCartItems] = useState<any[]>([]);
-  const [orderRecord, setOrderRecord] = useState<any[]>([]);
+  const [orderRecord, setOrderRecord] = useState<cartItem[]>([]);
   const [idToken, setIdToken] = useState<string | null>(null);
 
   const [couponCode, setCouponCode] = useState("");
   const [inputValue, setInputValue] = useState("");
   const [validCoupon, setValidCoupon] = useState(false);
   const [couponDiscount, setCouponDiscount] = useState(0);
+  const [addedCartIds, setAddedCartIds] = useState<number[]>([]);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -57,9 +69,11 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     if (isClient) {
       const savedCartItems = localStorage.getItem("cartItems");
       const orderRecordItems = localStorage.getItem("orderRecord");
+      const addedCartIds = localStorage.getItem("addedCartIds");
       try {
         setCartItems(savedCartItems ? JSON.parse(savedCartItems) : []);
         setOrderRecord(orderRecordItems ? JSON.parse(orderRecordItems) : []);
+        setAddedCartIds(addedCartIds ? JSON.parse(addedCartIds) : []);
       } catch (error) {
         console.error("Failed to parse cartItems from localStorage:", error);
       }
@@ -71,8 +85,9 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     if (isClient) {
       localStorage.setItem("cartItems", JSON.stringify(cartItems));
       localStorage.setItem("orderRecord", JSON.stringify(orderRecord));
+      localStorage.setItem("addedCartIds", JSON.stringify(addedCartIds));
     }
-  }, [cartItems, isClient, orderRecord]);
+  }, [cartItems, isClient, orderRecord, addedCartIds]);
 
   const totalCost =
     orderRecord.reduce((pv: number, cv: any) => {
@@ -116,6 +131,11 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [data, error]);
 
+  const removeFromCart = (id: string | string[]) => () => {
+    setOrderRecord(orderRecord.filter((el: any) => !id.includes(el.variantId)));
+    setCartItems(cartItems.filter((el: any) => !id.includes(el.variantId)));
+  };
+
   return (
     <Provider.Provider
       value={{
@@ -138,6 +158,9 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
         setError,
         orderRecord,
         setOrderRecord,
+        removeFromCart,
+        addedCartIds,
+        setAddedCartIds,
       }}
     >
       {children}

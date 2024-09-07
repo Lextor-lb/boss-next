@@ -73,13 +73,13 @@ const OrderSummary = ({
     <div className="lg:border-2 lg:border-input lg:p-5 lg:bg-secondary">
       <p className="text-lg font-semibold mb-6">Order Summary</p>
       <div className="text-sm space-y-4">
-        {orderRecord?.length === 0 ? (
+        {cartItems?.length === 0 ? (
           <div className="flex justify-between">
             <p>Price</p>
             <p>0</p>
           </div>
         ) : (
-          orderRecord?.map(
+          cartItems?.map(
             (
               {
                 name,

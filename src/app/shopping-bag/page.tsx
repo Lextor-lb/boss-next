@@ -26,6 +26,7 @@ const ShoppingBag = () => {
     handleLogin,
     orderRecord,
     setOrderRecord,
+    removeFromCart,
   } = useAppProvider();
 
   const remove = (id: number) => () => {
@@ -59,7 +60,7 @@ const ShoppingBag = () => {
   };
 
   return (
-    <Container className="  pt-4">
+    <Container className=" pt-4">
       <p className=" text-sm my-[15px]">Shopping Bag</p>
       <div className=" grid grid-cols-12 gap-4">
         <div className=" col-span-full  lg:col-span-9">
@@ -77,6 +78,9 @@ const ShoppingBag = () => {
                   Quantity
                 </TableHead>
                 <TableHead className=" hidden lg:table-cell text-end">
+                  Price
+                </TableHead>
+                <TableHead className=" hidden lg:table-cell text-end">
                   Discount
                 </TableHead>
                 <TableHead className=" hidden  lg:table-cell w-[200px] text-end">
@@ -85,7 +89,7 @@ const ShoppingBag = () => {
                 <TableHead className="text-end"></TableHead>
               </TableRow>
             </TableHeader>
-            {orderRecord.length < 1 ? (
+            {cartItems.length < 1 ? (
               <TableBody>
                 <TableRow className="pointer-events-none bg-white">
                   {Array(7)
@@ -99,19 +103,16 @@ const ShoppingBag = () => {
               </TableBody>
             ) : (
               <TableBody>
-                {orderRecord?.map((data: any, index: number) => (
+                {cartItems?.map((data: any, index: number) => (
                   <TableRow
                     key={`${data.id}-${index}`}
                     className=" bg-white hover:bg-white/35"
                   >
                     <TableCell className="w-[50px] ">{index + 1}.</TableCell>
-                    <TableCell
-                      onClick={() => router.push(`/products/${data.id}`)}
-                      className=" cursor-pointer"
-                    >
+                    <TableCell>
                       <div className=" flex  gap-2">
                         <Image
-                          src={data.mediaUrl}
+                          src={data.photo}
                           width={300}
                           className=" h-[60px] lg:h-[120px] w-[40px] lg:w-[100px] object-cover"
                           height={300}
@@ -133,9 +134,21 @@ const ShoppingBag = () => {
                     <TableCell className=" hidden lg:table-cell text-end">
                       {data.quantity}
                     </TableCell>
-                    <TableCell className=" hidden lg:table-cell text-end ">
+                    <TableCell className=" hidden lg:table-cell text-end">
                       {new Intl.NumberFormat("ja-JP").format(
-                        data.discountPrice || 0
+                        data.salePrice || 0
+                      )}
+                    </TableCell>
+                    <TableCell className=" hidden lg:table-cell text-end ">
+                      {data.amountSaved > 0 ? (
+                        <>
+                          -
+                          {new Intl.NumberFormat("ja-JP").format(
+                            data.amountSaved || 0
+                          )}
+                        </>
+                      ) : (
+                        <p>0</p>
                       )}
                     </TableCell>
                     <TableCell className=" hidden lg:table-cell text-end">
@@ -145,9 +158,10 @@ const ShoppingBag = () => {
                     </TableCell>
                     <TableCell className=" text-end ms-4">
                       <Button
-                        onClick={remove(data.id)}
+                        onClick={removeFromCart(data.ids)}
                         variant="ghost"
                         size="sm"
+                        type="button"
                       >
                         <Trash2 />
                       </Button>

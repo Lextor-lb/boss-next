@@ -9,6 +9,7 @@ import ControlSheet from "./ControlSheet";
 import { useAppProvider } from "@/app/Provider/AppProvider";
 import { HamburgerMenuIcon } from "@radix-ui/react-icons";
 import Cart from "./Cart";
+import Wishlist from "./Wishlist";
 
 const Navbar = () => {
   const router = useRouter();
@@ -148,12 +149,12 @@ const Navbar = () => {
               </div>
               <div className="hidden lg:block">
                 {/* <ControlSheet
-                buttonName={<Heart />}
-                title="Wish List"
-                desc="Your wishlist is here"
-              >
-                Wish list
-              </ControlSheet> */}
+                  buttonName={<Heart />}
+                  title="Wishlist"
+                  desc="Your wishlist is here"
+                >
+                  <Wishlist />
+                </ControlSheet> */}
               </div>
 
               <ControlSheet

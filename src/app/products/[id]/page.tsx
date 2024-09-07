@@ -13,6 +13,21 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import SweetAlert2 from "react-sweetalert2";
 import useSWR from "swr";
+import useSWRMutation from "swr/mutation";
+
+type orderItem = {
+  name: string;
+  variantId: number;
+  colorCode: string;
+  photo: string;
+  priceAfterDiscount?: number;
+  quantity: number;
+  discount?: number;
+  salePrice: number;
+  productSizing: string;
+  amountSaved?: number;
+  ids: any;
+};
 
 const ProductDetailPage = ({ params }: { params: { id: string } }) => {
   const [selectedColor, setSelectedColor] = useState("");
@@ -23,9 +38,17 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
   const [totalAvailable, setTotalAvailable] = useState<number>(1);
   const [onlyLeft, setOnlyLeft] = useState<string>("");
   const [variantId, setVariantId] = useState<number>();
+  const [userId, setUserId] = useState<number | null>();
 
-  const { cartItems, setCartItems, handleLogin, orderRecord, setOrderRecord } =
-    useAppProvider();
+  const {
+    cartItems,
+    setCartItems,
+    handleLogin,
+    orderRecord,
+    setOrderRecord,
+    addedCartIds,
+    setAddedCartIds,
+  } = useAppProvider();
 
   const getData = (url: string) => {
     return getFetchForEcom(url);
@@ -37,77 +60,144 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
     isLoading,
   } = useSWR(`${Backend_URL}/ecommerce-products/${params.id}`, getData);
 
-  const addToCart = () => () => {
+  const addToCart = () => {
     if (quantity > 1) {
-      const data = productData.productVariants.filter(
-        (el: any) =>
-          el.productSizing == selectedSize && el.colorCode == selectedColor
+      const data = productData.productVariants
+        .filter(
+          (el: any) =>
+            el.colorCode === selectedColor && el.productSizing === selectedSize
+        )
+        .slice(0, quantity);
+      const ids = data.map((el: any) => el.id);
+
+      const existsInOrder = orderRecord?.some((el: orderItem) =>
+        ids.includes(el.variantId)
       );
 
-      if (
-        !orderRecord
-          .map((el: any) => el.variantId)
-          .some((variantId: any) => data.some((el: any) => el.id === variantId))
-      ) {
-        const records = data.map((el: any) => {
-          return {
-            ...el,
-            name: productData.name,
+      if (!existsInOrder) {
+        // to send data to backend
+        const records: orderItem[] = data.map((el: any) => {
+          const itemData: orderItem = {
+            name: productData.name as string,
             quantity: 1,
+            salePrice: productData.salePrice as number,
+            colorCode: el.colorCode,
+            productSizing: el.productSizing,
             variantId: el.id,
-            salePrice: productData.salePrice,
-            discountPrice: productData.discountPrice,
-
-            discountInPrice:
-              productData.salePrice *
-              (1 - (productData.discountPrice as number) / 100),
+            photo: el.mediaUrl,
+            discount: productData.discountPrice,
 
             priceAfterDiscount:
               productData.salePrice *
               (1 - (productData.discountPrice as number) / 100),
+
+            amountSaved:
+              productData.salePrice -
+              productData.salePrice *
+                (1 - (productData.discountPrice as number) / 100),
+            ids: ids,
           };
+          return itemData;
+        });
+
+        const foundItem = data.find((el: any) => el.id === variantId);
+
+        const dataToDisplay = foundItem
+          ? {
+              name: productData.name as string,
+              quantity: quantity,
+              salePrice: productData.salePrice as number,
+              colorCode: foundItem.colorCode,
+              productSizing: foundItem.productSizing,
+              variantId: foundItem.id,
+              photo: foundItem.mediaUrl,
+              discount: productData.discountPrice,
+
+              priceAfterDiscount:
+                quantity *
+                productData.salePrice *
+                (1 - (productData.discountPrice as number) / 100),
+
+              amountSaved:
+                quantity * productData.salePrice -
+                quantity *
+                  productData.salePrice *
+                  (1 - (productData.discountPrice as number) / 100),
+              ids: ids,
+            }
+          : null;
+
+        setOrderRecord([...orderRecord, ...records]);
+        setCartItems([...cartItems, dataToDisplay]);
+      }
+    } else {
+      const foundItem = productData.productVariants.filter(
+        (el: any) => el.id === variantId
+      );
+
+      const existsInOrder = orderRecord
+        ?.map((el: orderItem) => el.variantId)
+        .includes(variantId);
+
+      if (!existsInOrder) {
+        const dataToDisplay = foundItem[0]
+          ? {
+              name: productData.name as string,
+              quantity: quantity,
+              salePrice: productData.salePrice as number,
+              colorCode: foundItem[0].colorCode,
+              productSizing: foundItem[0].productSizing,
+              variantId: foundItem[0].id,
+              photo: foundItem[0].mediaUrl,
+              discount: productData.discountPrice,
+
+              priceAfterDiscount:
+                quantity *
+                productData.salePrice *
+                (1 - (productData.discountPrice as number) / 100),
+
+              amountSaved:
+                quantity * productData.salePrice -
+                quantity *
+                  productData.salePrice *
+                  (1 - (productData.discountPrice as number) / 100),
+              ids: [foundItem[0].id],
+            }
+          : null;
+
+        const records: orderItem[] = foundItem.map((el: any) => {
+          const itemData: orderItem = {
+            name: productData.name as string,
+
+            quantity: 1,
+
+            salePrice: productData.salePrice as number,
+
+            colorCode: el.colorCode,
+
+            productSizing: el.productSizing,
+
+            variantId: el.id,
+
+            photo: el.mediaUrl,
+
+            discount: productData.discountPrice,
+
+            priceAfterDiscount:
+              productData.salePrice *
+              (1 - (productData.discountPrice as number) / 100),
+
+            amountSaved:
+              productData.salePrice -
+              productData.salePrice *
+                (1 - (productData.discountPrice as number) / 100),
+            ids: [el.id],
+          };
+          return itemData;
         });
 
         setOrderRecord([...orderRecord, ...records]);
-      }
-    } else {
-      if (!cartItems.some((el: any) => el.selectedVariant === variantId)) {
-        const item = {
-          ...productData,
-
-          quantity: 1,
-
-          selectedVariant: variantId,
-
-          selectedProduct: productData?.productVariants?.find(
-            (el: any) => el.id === variantId
-          ),
-
-          variantId: productData?.productVariants?.find(
-            (el: any) => el.id === variantId
-          ).id,
-
-          salePrice: productData.salePrice,
-
-          discountInPrice:
-            quantity * productData.salePrice -
-            quantity *
-              productData.salePrice *
-              (1 - (productData.discountPrice as number) / 100),
-          discountPrice: productData.discountPrice,
-
-          priceAfterDiscount:
-            quantity *
-            productData.salePrice *
-            (1 - (productData.discountPrice as number) / 100),
-
-          productSizing: productData?.productVariants?.find(
-            (el: any) => el.id === variantId
-          ).productSizing,
-        };
-
-        setCartItems((prev: any) => [...prev, item]);
-        setOrderRecord([...orderRecord, item]);
+        setCartItems([...cartItems, dataToDisplay]);
       }
     }
   };
@@ -138,8 +228,20 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
       setAvailableSizes(sizesArray);
 
       setVariantId(initialVariant?.id);
+
+      if (addedCartIds.length > 0) {
+        const ids = productData?.productVariants.map((el: any) =>
+          Number(el.id)
+        );
+
+        const missingIds = ids.filter(
+          (id: number) => !addedCartIds.includes(id)
+        );
+
+        setVariantId(missingIds[0]);
+      }
     }
-  }, [productData]);
+  }, [productData, addedCartIds, setAddedCartIds]);
 
   const handleColorChange = (colorCode: string) => {
     setSelectedColor(colorCode);
@@ -194,12 +296,58 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
     showConfirmButton: false,
   });
 
-  console.log(orderRecord);
+  const postData = async (url: string, { arg }: { arg: any }) => {
+    try {
+      const token = isClient && localStorage.getItem("accessToken");
+      if (!token) {
+        throw new Error("No access token found");
+      }
 
-  const addToWishList = () => {
+      const options: RequestInit = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "multipart/form-data",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(arg),
+      };
+
+      const response = await fetch(url, options);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "An error occurred");
+      }
+
+      return data;
+    } catch (error: any) {
+      console.error("Fetch API Error:", error.message);
+      throw new Error(error.message || "An error occurred");
+    }
+  };
+
+  const {
+    data: addData,
+    trigger: addWishList,
+    error: addError,
+  } = useSWRMutation(`${Backend_URL}/wishlist`, postData);
+
+  const addToWishList = async () => {
     if (isClient) {
-      if (localStorage.getItem("auth")) {
-        console.log("add here");
+      if (localStorage.getItem("accessToken")) {
+        const data = {
+          wishlistId: Date.now().toString(),
+          productVariantIds: [
+            {
+              productVariantId: variantId,
+              salePrice: productData.salePrice,
+            },
+          ],
+        };
+        const res = await addWishList(data);
+        if (res) {
+        }
       } else {
         setSwalProps({
           ...swalProps,
@@ -207,11 +355,6 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
         });
       }
     }
-
-    setSwalProps({
-      ...swalProps,
-      show: true,
-    });
   };
 
   return (
@@ -278,18 +421,10 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
 
               <div className=" pt-2 flex gap-2">
                 <Button
-                  onClick={addToCart()}
+                  onClick={addToCart}
                   disabled={isLoading}
                   className=" w-full lg:w-3/5"
-                >
-                  {cartItems.some(
-                    (el: any) => el.selectedVariant === variantId
-                  ) ? (
-                    <span className=" me-1">Added to Cart</span>
-                  ) : (
-                    <span className=" me-1">Add to Cart</span>
-                  )}
-                </Button>
+                ></Button>
                 <Button
                   onClick={() => addToWishList()}
                   size={"sm"}
@@ -304,6 +439,9 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
       ) : (
         <Container>
           <div>
+            {addError && (
+              <p className=" text-red-500 text-sm">{addError.message}</p>
+            )}
             <div className="grid lg:grid-cols-12 gap-5 lg:gap-0 h-auto">
               <div className="overflow-auto w-full lg:col-span-6">
                 <div className=" flex gap-3 lg:flex-col w-full lg:h-[860px] overflow-auto  h-[300px]">
@@ -528,11 +666,11 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
                   <div className=" flex items-center justify-start pt-2 gap-2">
                     <Button
                       size={"lg"}
-                      onClick={addToCart()}
+                      onClick={addToCart}
                       disabled={productData?.productVariants.length < 1}
                       className=" w-full lg:w-3/5"
                     >
-                      Add To Cart
+                      Add to cart
                     </Button>
                     {/* <Button
                       className=" h-10"
@@ -552,7 +690,7 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
             <HotDealAlert data={data} isLoading={dealLoading} />
           </div>
 
-          {isClient && (
+          {isClient && userId !== null && (
             <SweetAlert2
               didClose={() => {
                 setSwalProps({
@@ -561,6 +699,7 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
                 });
               }}
               {...swalProps}
+              // customClass={{ popup: "!w-auto" }}
             >
               <div className=" pointer-events-none space-y-3 text-center">
                 <p className=" pointer-events-none font-medium">Wishlist</p>
@@ -571,7 +710,6 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
                 <div className="pointer-events-none flex gap-3 justify-center items-center">
                   <Button
                     onClick={(e) => {
-                      e.stopPropagation();
                       setSwalProps({
                         ...swalProps,
                         show: false,

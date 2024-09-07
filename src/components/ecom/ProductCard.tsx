@@ -7,6 +7,8 @@ import { Badge } from "../ui/badge";
 import Image from "next/image";
 import SweetAlert2 from "react-sweetalert2";
 import { useAppProvider } from "@/app/Provider/AppProvider";
+import useSWRMutation from "swr/mutation";
+import { Backend_URL } from "@/lib/fetch";
 
 const ProductCard = ({
   id,
@@ -41,10 +43,59 @@ const ProductCard = ({
     showConfirmButton: false,
   });
 
+  const postData = async (url: string, { arg }: { arg: any }) => {
+    try {
+      const token = isClient && localStorage.getItem("accessToken");
+      if (!token) {
+        throw new Error("No access token found");
+      }
+
+      const options: RequestInit = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "multipart/form-data",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(arg),
+      };
+
+      const response = await fetch(url, options);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "An error occurred");
+      }
+
+      return data;
+    } catch (error: any) {
+      console.error("Fetch API Error:", error.message);
+      throw new Error(error.message || "An error occurred");
+    }
+  };
+
+  const { data, trigger: add } = useSWRMutation(
+    `${Backend_URL}/wishlist`,
+    postData
+  );
+
   const addToWishList = () => {
     if (isClient) {
       if (localStorage.getItem("userId")) {
         console.log("id par", localStorage.getItem("userId"));
+        const data = {
+          wishlistId: Date.now().toString(),
+          productVariantIds: [
+            {
+              productVariantId: 1,
+              salePrice: 500,
+            },
+            {
+              productVariantId: 2,
+              salePrice: 1500,
+            },
+          ],
+        };
       } else {
         setSwalProps({
           ...swalProps,
@@ -68,19 +119,19 @@ const ProductCard = ({
           className=" h-[500px] lg:h-[600px] object-cover "
           alt=""
         />
-        {/* <div className=" absolute top-3 right-3">
-          <Button
+        <div className=" absolute top-3 right-3">
+          {/* <Button
             onClick={(e) => {
               e.stopPropagation();
-              console.log("Hello");
+              addToWishList();
             }}
             variant={"outline"}
             className=" h-6 w-6 p-0.5 rounded-full"
             size={"sm"}
           >
             <Heart size={18} color="#333" />
-          </Button>
-        </div> */}
+          </Button> */}
+        </div>
 
         <div className=" absolute left-3 bottom-3">
           <Badge

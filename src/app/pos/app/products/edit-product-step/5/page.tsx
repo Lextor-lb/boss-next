@@ -75,12 +75,16 @@ const EditProductPageFive = () => {
   };
 
   useEffect(() => {
-    setVariants(editProductFormData.productVariants);
+    setVariants(
+      editProductFormData.productVariants.filter((el) => !el.statusStock)
+    );
   }, []);
 
   const inputRef = useRef<HTMLInputElement>(null);
 
   const { data } = useSWR(`${Backend_URL}/product-sizings/all`, getData);
+
+  console.log(editProductFormData.productVariants);
 
   const schema = z.object({
     image:

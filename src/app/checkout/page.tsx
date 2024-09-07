@@ -392,7 +392,7 @@ const Checkout = () => {
           };
         }),
       };
-
+      console.log(dataToOrder);
       if (couponDiscount > 0) {
         dataToOrder.discount = couponDiscount;
         dataToOrder.couponName = couponCode;
