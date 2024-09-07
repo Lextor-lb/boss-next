@@ -7,17 +7,23 @@ import { useProductProvider } from "@/app/pos/app/products/Provider/ProductProvi
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import useSWRMutation from "swr/mutation";
-import { Backend_URL, postFetch, postMediaFetch } from "@/lib/fetch";
+import { Backend_URL, getFetch, postFetch, postMediaFetch } from "@/lib/fetch";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import useSWR from "swr";
 
 const AddProductPageSix = () => {
-  const { addProductFormData, navigateBackward } = useProductProvider();
+  const { addProductFormData, navigateBackward, setAddProductFormData } =
+    useProductProvider();
 
   const router = useRouter();
 
   const postFetcher = async (url: string, { arg }: { arg: any }) => {
     return postMediaFetch(url, arg);
+  };
+
+  const getData = async (url: string) => {
+    return getFetch(url);
   };
 
   const {
@@ -27,6 +33,28 @@ const AddProductPageSix = () => {
   } = useSWRMutation(`${Backend_URL}/products`, postFetcher, {
     onSuccess: () => router.push("/pos/app/products"),
   });
+
+  const { data: brandData, error: brandError } = useSWR(
+    `${Backend_URL}/product-brands/${addProductFormData.brand}`,
+    getData
+  );
+
+  const { data: categoryData, error: categoryError } = useSWR(
+    `${Backend_URL}/product-categories/${addProductFormData.product_category_id}`,
+    getData
+  );
+
+  const { data: typeData } = useSWR(
+    `${Backend_URL}/product-types/${addProductFormData.product_type_id}`,
+    getData
+  );
+
+  const { data: fittingData } = useSWR(
+    `${Backend_URL}/product-fittings/${addProductFormData.product_fitting_id}`,
+    getData
+  );
+
+  console.log(brandData);
 
   const handleSubmit = async () => {
     // create product
@@ -83,7 +111,29 @@ const AddProductPageSix = () => {
 
     try {
       const res = await add(formData);
-      console.log(res);
+      if (res) {
+        setAddProductFormData({
+          addTo: {
+            eCommerce: true,
+            pos: true,
+          },
+          name: "",
+          description: "",
+          gender: "",
+          brand: Number(""),
+          productCode: "",
+          product_type_id: Number(""),
+          product_category_id: Number(""),
+          product_fitting_id: Number(""),
+          image: [],
+          stock_price: 0,
+          sale_price: 0,
+          discount: 0,
+          profitInPercent: 0,
+          profitInDigit: 0,
+          productVariants: [],
+        });
+      }
     } catch (error) {
       console.error("Error occurred:", error);
     }
@@ -140,7 +190,7 @@ const AddProductPageSix = () => {
             <Badge className={" text-primary/60"} variant={"secondary"}>
               <span>Brand :</span>
               <span className=" text-primary/80 ms-1 text-xs capitalize">
-                {addProductFormData.brand}
+                {brandData?.name}
               </span>
             </Badge>
             <Badge className={" text-primary/60"} variant={"secondary"}>
@@ -154,19 +204,19 @@ const AddProductPageSix = () => {
             <Badge className={" text-primary/60"} variant={"secondary"}>
               <span> Type :</span>
               <span className=" text-primary/80 ms-1 text-xs capitalize">
-                {addProductFormData.product_type_id || ""}
+                {typeData?.name}
               </span>
             </Badge>
             <Badge className={" text-primary/60"} variant={"secondary"}>
               <span> Category :</span>
               <span className=" text-primary/80 ms-1 text-xs capitalize">
-                {addProductFormData.product_category_id || ""}{" "}
+                {categoryData?.name}
               </span>
             </Badge>
             <Badge className={" text-primary/60"} variant={"secondary"}>
               <span>Fitting :</span>
               <span className=" text-primary/80 ms-1 text-xs capitalize">
-                {addProductFormData.product_fitting_id || ""}
+                {fittingData?.name}
               </span>
             </Badge>
           </div>
@@ -197,19 +247,25 @@ const AddProductPageSix = () => {
           <div className="text-end basis-1/4 bg-white rounded-r-none p-3 rounded border border-input">
             <p className="text-xs me-2 text-primary/60">Total Color</p>
             <p className="text-xl me-2">
-              {addProductFormData.productVariants.length}
+              {
+                Array.from(
+                  new Set(
+                    addProductFormData.productVariants.map((el) => el.colorCode)
+                  )
+                ).length
+              }
             </p>
           </div>
           <div className="text-end basis-1/4 rounded-s-none  border-s-0 rounded-r-none bg-white p-3 rounded border border-input">
             <p className="text-xs text-primary/60">Size</p>
             <p className="text-xl">
-              {addProductFormData.productVariants.map((el, index) => (
-                <React.Fragment key={index}>
-                  {el.sizeName}
-                  {index !== addProductFormData.productVariants.length - 1 &&
-                    ", "}
-                </React.Fragment>
-              ))}
+              <React.Fragment>
+                {Array.from(
+                  new Set(
+                    addProductFormData.productVariants.map((el) => el.sizeName)
+                  )
+                ).toString()}
+              </React.Fragment>
             </p>
           </div>
           <div className="text-end basis-1/4 rounded-s-none border-s-0 rounded-r-none bg-white p-3 rounded border border-input">

@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Backend_URL, getFetch, getFetchForEcom } from "@/lib/fetch";
 import { DashIcon } from "@radix-ui/react-icons";
-import { Heart, Plus, PlusIcon, ShoppingCart } from "lucide-react";
+import { Heart, PlusIcon } from "lucide-react";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import SweetAlert2 from "react-sweetalert2";

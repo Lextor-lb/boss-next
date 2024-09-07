@@ -109,6 +109,7 @@ export const ProductProvider = ({
       setPath(undefined);
     }
   }, [pathName]);
+
   // side bar steps
   const addProductStages = [
     {
