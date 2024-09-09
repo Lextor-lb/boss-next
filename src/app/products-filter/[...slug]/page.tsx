@@ -36,6 +36,8 @@ const GeneralizedPage = ({ params }: { params: any }) => {
 
   let newString = decodedString.replace(/&page=\d+/, "");
 
+  console.log(newString);
+
   return (
     <div className=" py-8 space-y-4">
       <Container>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Label } from "../ui/label";
-import { ChevronDown } from "lucide-react";
+import { Check, ChevronDown, ChevronUp } from "lucide-react";
 import useSWR from "swr";
 import { Backend_URL, getFetch, getFetchForEcom } from "@/lib/fetch";
 import FilterItem from "./FilterItem";
@@ -9,6 +9,22 @@ import { Slider } from "../ui/slider";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
 import { Checkbox } from "../ui/checkbox";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { CaretSortIcon } from "@radix-ui/react-icons";
+import { cn } from "@/lib/utils";
+import { ScrollArea } from "../ui/scroll-area";
 
 const FilterForm = ({ closeRef }: any) => {
   const [isClient, setIsClient] = useState(false);
@@ -16,8 +32,14 @@ const FilterForm = ({ closeRef }: any) => {
   const [brands, setBrands] = useState<(string | number)[]>([]);
   const [brandName, setBrandName] = useState<string[]>([]);
   const [type, setType] = useState<(string | number)[]>([]);
+  const [size, setSize] = useState<(string | number)[]>([]);
+  const [category, setCategory] = useState<(string | number)[]>([]);
   const [range, setRange] = useState([0, 0]);
   const [open, setOpen] = useState<number[]>([1, 2, 3, 4]);
+  const [categoryData, setCategoryData] = useState<any[]>([]);
+  const [sizeData, setSizeData] = useState([]);
+  const [openSelect, setOpenSelect] = useState(false);
+  const [categoryName, setCategoryName] = useState("");
 
   const router = useRouter();
 
@@ -31,7 +53,8 @@ const FilterForm = ({ closeRef }: any) => {
       setType(filters.type || []);
       setRange(filters.range || [0, 0]);
       setBrandName(filters.brandName || []);
-      setOpen(filters.open || [1, 3]);
+      setSize(filters.size || [1, 5]);
+      setCategory(filters.category || [1, 5]);
     }
   }, [isClient]);
 
@@ -55,12 +78,35 @@ const FilterForm = ({ closeRef }: any) => {
     );
   };
 
-  const handleTypeChange = (value: string | number) => {
-    setType((prev) =>
+  const handleSizesChange = (value: string | number) => {
+    setSize((prev) =>
       prev.includes(value)
         ? prev.filter((item) => item !== value)
         : [...prev, value]
     );
+  };
+
+  const handleCategoryChange = (value: string | number) => {
+    setCategory([value]);
+  };
+
+  const handleTypeChange = (value: string | number) => {
+    // Update the selected types
+    const updatedTypes = type.includes(value)
+      ? type.filter((item) => item !== value)
+      : [...type, value];
+
+    setType(updatedTypes);
+
+    // If no type is selected, log all categories, otherwise log the selected categories
+    const selectedCategories =
+      updatedTypes.length === 0
+        ? typesData.data.flatMap((el: any) => el.productCategories) // Log all categories if no type is selected
+        : typesData.data
+            .filter((el: any) => updatedTypes.includes(el.id)) // Filter based on selected types
+            .flatMap((el: any) => el.productCategories); // Extract categories for selected types
+
+    setCategoryData(selectedCategories); // Log the categories
   };
 
   const getData = (url: string) => {
@@ -72,15 +118,32 @@ const FilterForm = ({ closeRef }: any) => {
     getData
   );
 
-  // const { data: categoryData, isLoading: categoryLoading } = useSWR(
-  //   `${Backend_URL}/product-categories/all`,
-  //   getData
-  // );
-
   const { data: typesData, isLoading: typesLoading } = useSWR(
     `${Backend_URL}/product-types/alls`,
     getData
   );
+
+  useEffect(() => {
+    if (typesData) {
+      setCategoryData(
+        typesData?.data?.flatMap((el: any) => el.productCategories)
+      );
+    }
+    console.log(categoryData);
+    if (category.length > 0) {
+      setSizeData(
+        typesData?.data
+          ?.flatMap((el: any) => el.productCategories)
+          .find((el: any) => el.id == category[0])?.productSizings
+      );
+
+      setCategoryName(
+        typesData?.data
+          ?.flatMap((el: any) => el.productCategories)
+          ?.find((categoryEl: any) => categoryEl.id == category[0])?.name
+      );
+    }
+  }, [typesData, category, categoryName]);
 
   // Function to handle input changes
   const handleInputChange = (index: number, value: string) => {
@@ -100,7 +163,16 @@ const FilterForm = ({ closeRef }: any) => {
     isClient &&
       localStorage.setItem(
         "filters",
-        JSON.stringify({ genders, brands, type, range, open, brandName })
+        JSON.stringify({
+          genders,
+          brands,
+          type,
+          range,
+          open,
+          brandName,
+          size,
+          category,
+        })
       );
 
     // Create an array to hold the query parameters
@@ -121,6 +193,14 @@ const FilterForm = ({ closeRef }: any) => {
       queryParams.push(`sortType=${type.join(",")}`);
     }
 
+    if (category.length > 0) {
+      queryParams.push(`sortCategory=${category.join(",")}`);
+    }
+
+    if (size.length > 0) {
+      queryParams.push(`sortSizing=${size.join(",")}`);
+    }
+
     // Add range to the query parameters
     if (range[0] > 0 && range[1] > 0) {
       queryParams.push(`min=${range[0]}`);
@@ -139,9 +219,11 @@ const FilterForm = ({ closeRef }: any) => {
     }
   };
 
+  console.log(categoryName);
+
   return (
-    <form className=" h-[90%] overflow-auto" onSubmit={handleSubmit}>
-      <div className="space-y-2.5">
+    <form className=" h-[90%] relative overflow-auto" onSubmit={handleSubmit}>
+      <div className="space-y-4 h-[90%] overflow-auto">
         <div className="space-y-1.5">
           <div
             onClick={() => {
@@ -154,7 +236,7 @@ const FilterForm = ({ closeRef }: any) => {
             className="flex justify-between"
           >
             <Label>Gender</Label>
-            <ChevronDown />
+            {open.includes(1) ? <ChevronDown /> : <ChevronUp />}
           </div>
           {open.includes(1) && (
             <div className="grid grid-cols-2 gap-3">
@@ -179,6 +261,7 @@ const FilterForm = ({ closeRef }: any) => {
             </div>
           )}
         </div>
+
         <div className="space-y-1.5">
           <div
             onClick={() => {
@@ -191,7 +274,7 @@ const FilterForm = ({ closeRef }: any) => {
             className="flex justify-between"
           >
             <Label>Brands</Label>
-            <ChevronDown />
+            {open.includes(2) ? <ChevronDown /> : <ChevronUp />}
           </div>
           {open.includes(2) && (
             <div className="grid grid-cols-2 gap-3">
@@ -239,16 +322,18 @@ const FilterForm = ({ closeRef }: any) => {
             className="flex justify-between"
           >
             <Label>Product Types</Label>
-            <ChevronDown />
+            {open.includes(3) ? <ChevronDown /> : <ChevronUp />}
           </div>
           {open.includes(3) && (
             <div className="grid grid-cols-2 gap-3">
               {!typesLoading &&
-                typesData?.data?.map(
+                typesData.data?.map(
                   ({ id, name }: { id: number; name: string }) => (
                     <FilterItem
                       key={id}
-                      run={handleTypeChange}
+                      run={() => {
+                        handleTypeChange(id);
+                      }}
                       name={name}
                       value={id}
                       isChecked={type.includes(id)}
@@ -258,6 +343,124 @@ const FilterForm = ({ closeRef }: any) => {
             </div>
           )}
         </div>
+
+        <div className="space-y-1.5">
+          <div
+            onClick={() => {
+              if (open.includes(5)) {
+                setOpen(open.filter((el) => el !== 5));
+              } else {
+                setOpen([...open, 5]);
+              }
+            }}
+            className="flex justify-between"
+          >
+            <Label>Product Categories</Label>
+            {open.includes(5) ? <ChevronDown /> : <ChevronUp />}
+          </div>
+          {open.includes(5) && (
+            <div className=" w-full">
+              <Popover open={openSelect} onOpenChange={setOpenSelect}>
+                <PopoverTrigger className=" w-full" asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    className="w-full justify-between !rounded-md"
+                  >
+                    {categoryName ? categoryName : "Categories"}
+                    <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className=" w-full h-full p-0">
+                  <Command defaultValue={category[0] as string}>
+                    <CommandInput
+                      placeholder="Search Category..."
+                      className="h-9"
+                    />
+                    <CommandEmpty>No category found!</CommandEmpty>
+                    <CommandList>
+                      <CommandGroup>
+                        {categoryData?.map(({ id, name }: any) => (
+                          <CommandItem
+                            className={cn(
+                              category[0] === id ? "bg-accent" : ""
+                            )}
+                            key={id}
+                            value={name}
+                            onSelect={() => {
+                              const selectedCategory = categoryData.find(
+                                (el: any) => el.id === id
+                              );
+                              setSizeData(
+                                selectedCategory?.productSizings || []
+                              );
+                              setOpenSelect(false);
+                              setCategoryName(selectedCategory?.name || ""); // Set categoryName properly
+                              handleCategoryChange(id); // Pass the id instead of name
+                            }}
+                          >
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4",
+                                size.includes(id) ? "opacity-100" : "opacity-0"
+                              )}
+                            />
+                            {name}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+            </div>
+          )}
+        </div>
+
+        <div className="space-y-1.5">
+          <div
+            onClick={() => {
+              if (open.includes(6)) {
+                setOpen(open.filter((el) => el !== 6));
+              } else {
+                setOpen([...open, 6]);
+              }
+            }}
+            className="flex justify-between"
+          >
+            <Label>Sizes</Label>
+            {open.includes(6) ? <ChevronDown /> : <ChevronUp />}
+          </div>
+          {open.includes(6) && (
+            <>
+              {sizeData.length > 0 && (
+                <div className=" space-y-1.5 basis-1/2">
+                  {sizeData?.map(({ id, name }: any) => (
+                    <div
+                      key={id}
+                      className="flex items-center select-none space-x-2 bg-secondary p-3"
+                    >
+                      <Checkbox
+                        id={name}
+                        checked={size.includes(id)}
+                        onCheckedChange={() => {
+                          handleSizesChange(id);
+                        }}
+                      />
+                      <label
+                        htmlFor={name}
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                      >
+                        {name}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+        </div>
+
         <div className="space-y-1.5 ">
           <div
             onClick={() => {
@@ -270,7 +473,7 @@ const FilterForm = ({ closeRef }: any) => {
             className="flex justify-between"
           >
             <Label>Prices</Label>
-            <ChevronDown />
+            {open.includes(4) ? <ChevronDown /> : <ChevronUp />}
           </div>
           {open.includes(4) && (
             <>
@@ -291,7 +494,7 @@ const FilterForm = ({ closeRef }: any) => {
               <div className="pt-1.5 mx-2">
                 <Slider
                   minStepsBetweenThumbs={1}
-                  max={5000000}
+                  max={50000000}
                   min={50000}
                   step={1}
                   value={range}
@@ -302,27 +505,29 @@ const FilterForm = ({ closeRef }: any) => {
             </>
           )}
         </div>
-        <div className=" flex justify-between">
-          <Button
-            onClick={() => closeRef.current && closeRef.current.click()}
-            type="button"
-            variant="link"
-          >
-            Cancel
-          </Button>
-          <Button
-            disabled={
-              genders.length == 0 &&
-              brands.length == 0 &&
-              type.length == 0 &&
-              range[1] == 0
-            }
-            type="submit"
-            size="sm"
-          >
-            Save changes
-          </Button>
-        </div>
+      </div>
+      <div className=" absolute bottom-0 w-full  flex justify-between">
+        <Button
+          onClick={() => closeRef.current && closeRef.current.click()}
+          type="button"
+          variant="link"
+        >
+          Cancel
+        </Button>
+        <Button
+          disabled={
+            genders.length == 0 &&
+            brands.length == 0 &&
+            type.length == 0 &&
+            range[1] == 0 &&
+            size.length == 0 &&
+            category.length == 0
+          }
+          type="submit"
+          size="sm"
+        >
+          Save changes
+        </Button>
       </div>
     </form>
   );

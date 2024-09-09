@@ -26,6 +26,8 @@ const GeneralizedPage = ({ params }: { params: any }) => {
     return getFetchForEcom(url);
   };
 
+  console.log(params.slug);
+
   const closeRef = useRef<HTMLButtonElement | null>(null);
 
   const router = useRouter();

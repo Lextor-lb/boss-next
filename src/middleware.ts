@@ -1,8 +1,8 @@
-// middleware.ts
-
 import { NextRequest, NextResponse } from "next/server";
 
-const FRONTEND_URL = process.env.NEXT_PUBLIC_FRONTEND_URL;
+const FRONTEND_URL = process.env.FRONTEND_URL;
+
+console.log(FRONTEND_URL);
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -21,6 +21,14 @@ export async function middleware(req: NextRequest) {
   const token = req.cookies.get("accessToken");
 
   if (!token) {
+    // Check if FRONTEND_URL is set, otherwise throw an error or log it
+    if (!FRONTEND_URL) {
+      console.error("FRONTEND_URL is not defined");
+      throw new Error(
+        "FRONTEND_URL is required to redirect to the login page."
+      );
+    }
+
     // Redirect to login page if no token is present
     const loginUrl = new URL("/pos/login", FRONTEND_URL);
     return NextResponse.redirect(loginUrl);

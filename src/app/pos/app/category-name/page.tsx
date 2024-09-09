@@ -63,7 +63,7 @@ const CatPage = () => {
   };
 
   const { data, error, isLoading, mutate, isValidating } = useSWR(
-    `${Backend_URL}/ecommerce-categories`,
+    `${Backend_URL}/ecommerce-categories?search=${searchInputValue}`,
     getData,
     {
       revalidateIfStale: true,
