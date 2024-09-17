@@ -87,6 +87,8 @@ export default function ProductSizingsPage() {
     });
   };
 
+  const startIndex = (currentPage - 1) * 10;
+
   const fetcher = async (url: string, { arg }: { arg: { ids: number[] } }) => {
     return deleteFetch(url, arg);
   };
@@ -180,6 +182,7 @@ export default function ProductSizingsPage() {
                   refetch={refetch}
                   handleSingleDelete={handleSingleDelete}
                   setDeleteId={setDeleteId}
+                  startIndex={startIndex}
                 />
                 <PaginationComponent
                   goToFirstPage={goToFirstPage}

@@ -25,6 +25,7 @@ type ProductTableType = {
   handleSingleDelete: () => void;
   setDeleteId: any;
   openDetail: (id: number) => void;
+  startIndex: number;
 };
 
 const ProductTable = ({
@@ -36,6 +37,7 @@ const ProductTable = ({
   handleSingleDelete,
   setDeleteId,
   openDetail,
+  startIndex,
 }: ProductTableType) => {
   return (
     <div className=" min-h-[780px]">
@@ -130,7 +132,7 @@ const ProductTable = ({
                             handleCheckboxChange(e);
                           }}
                         />
-                        <span>{index + 1}</span>
+                        <span>{index + startIndex + 1}</span>
                       </div>
                     </TableCell>
                     <TableCell>

@@ -108,7 +108,6 @@ const OrderPage = () => {
 
   const handleSingleDelete = async () => {
     const res = await singleDrop();
-    console.log(res);
     if (res.status) setDeleteId(undefined);
     refetch();
   };
@@ -135,8 +134,6 @@ const OrderPage = () => {
       id: "",
     });
   };
-
-  console.log(data);
 
   return (
     <Container>

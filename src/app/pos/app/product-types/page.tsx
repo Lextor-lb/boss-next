@@ -139,6 +139,8 @@ export default function ProductTypesPage() {
     setInputValue("");
   };
 
+  const startIndex = (currentPage - 1) * 10;
+
   return (
     <Container>
       <div className="space-y-3">
@@ -178,6 +180,7 @@ export default function ProductTypesPage() {
               handleEdit={handleEdit}
               filterTable={filterTable}
               refetch={refetch}
+              startIndex={startIndex}
               handleSingleDelete={handleSingleDelete}
               setDeleteId={setDeleteId}
             />

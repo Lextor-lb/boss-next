@@ -95,12 +95,14 @@ const CategoryReport = () => {
     }
   );
 
-  console.log("Data:", data); // Correct way to log the object
-
   return (
     <Container>
       <div className=" space-y-4">
-        <NavHeader parentPage="Category" path="Sale Report" currentPage="Category" />
+        <NavHeader
+          parentPage="Category"
+          path="Sale Report"
+          currentPage="Category"
+        />
         <div className=" flex gap-3 items-center">
           <Popover>
             <PopoverTrigger asChild>

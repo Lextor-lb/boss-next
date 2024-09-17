@@ -43,6 +43,8 @@ export default function ProductPage() {
   const [filterType, setFilterType] = useState("name");
   const [sortBy, setSortBy] = useState("asc");
 
+  const startIndex = (currentPage - 1) * 10;
+
   const filterTable = (value: string) => {
     setSortBy(sortBy === "asc" ? "desc" : "asc");
     setFilterType(value);
@@ -238,6 +240,7 @@ export default function ProductPage() {
                   refetch={refetch}
                   handleSingleDelete={handleSingleDelete}
                   setDeleteId={setDeleteId}
+                  startIndex={startIndex}
                 />
                 <PaginationComponent
                   goToFirstPage={goToFirstPage}

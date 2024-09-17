@@ -107,10 +107,6 @@ const StockPage = () => {
     setSingleId(id);
   };
 
-  useEffect(() => {
-    console.log("object");
-  }, [editId, singleData]);
-
   return (
     <Container>
       <div className=" space-y-4">

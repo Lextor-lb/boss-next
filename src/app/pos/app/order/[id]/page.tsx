@@ -81,8 +81,6 @@ const OrderDetailAdminPage = ({ params }: any) => {
     }
   };
 
-  console.log(data);
-
   return (
     <Container>
       <div className="space-y-4">

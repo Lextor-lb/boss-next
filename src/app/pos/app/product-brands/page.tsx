@@ -139,6 +139,8 @@ export default function ProductBrandsPage() {
     setInputValue("");
   };
 
+  const startIndex = (currentPage - 1) * 10;
+
   return (
     <Container>
       <div className="space-y-3">
@@ -180,6 +182,7 @@ export default function ProductBrandsPage() {
                 setBrandImageToShow={setBrandImageToShow}
                 handleSingleDelete={handleSingleDelete}
                 setDeleteId={setDeleteId}
+                startIndex={startIndex}
               />
               <PaginationComponent
                 goToFirstPage={goToFirstPage}

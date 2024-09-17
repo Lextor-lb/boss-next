@@ -153,6 +153,8 @@ export default function ProductFittingsPage() {
     setProductSizingIds([]);
   };
 
+  const startIndex = (currentPage - 1) * 10;
+
   return (
     <Container>
       <div className="space-y-3">
@@ -194,6 +196,7 @@ export default function ProductFittingsPage() {
               setProductSizingIds={setProductSizingIds}
               handleSingleDelete={handleSingleDelete}
               setDeleteId={setDeleteId}
+              startIndex={startIndex}
             />
             <PaginationComponent
               goToFirstPage={goToFirstPage}

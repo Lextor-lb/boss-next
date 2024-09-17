@@ -129,7 +129,7 @@ const FilterForm = ({ closeRef }: any) => {
         typesData?.data?.flatMap((el: any) => el.productCategories)
       );
     }
-    console.log(categoryData);
+
     if (category.length > 0) {
       setSizeData(
         typesData?.data
@@ -218,8 +218,6 @@ const FilterForm = ({ closeRef }: any) => {
       router.push(`/products-filter${queryString}&page=1`);
     }
   };
-
-  console.log(categoryName);
 
   return (
     <form className=" h-[90%] relative overflow-auto" onSubmit={handleSubmit}>

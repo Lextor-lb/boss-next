@@ -8,12 +8,30 @@ import { Button } from "@/components/ui/button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Backend_URL, getFetch, getFetchForEcom } from "@/lib/fetch";
 import { DashIcon } from "@radix-ui/react-icons";
-import { Heart, PlusIcon } from "lucide-react";
+import { Heart, PlusIcon, X } from "lucide-react";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import SweetAlert2 from "react-sweetalert2";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 type orderItem = {
   name: string;
@@ -40,6 +58,11 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
   const [variantId, setVariantId] = useState<number>();
   const [userId, setUserId] = useState<number | null>();
 
+  const [swalProps, setSwalProps] = useState({
+    show: false,
+    showConfirmButton: false,
+  });
+
   const {
     cartItems,
     setCartItems,
@@ -59,6 +82,41 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
     error,
     isLoading,
   } = useSWR(`${Backend_URL}/ecommerce-products/${params.id}`, getData);
+
+  const getWishlistData = async (url: string) => {
+    try {
+      const token = isClient && localStorage.getItem("accessToken");
+      if (!token) {
+        throw new Error("No access token found");
+      }
+
+      const options: RequestInit = {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "multipart/form-data",
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      const response = await fetch(url, options);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "An error occurred");
+      }
+
+      return data;
+    } catch (error: any) {
+      console.error("Fetch API Error:", error.message);
+      throw new Error(error.message || "An error occurred");
+    }
+  };
+
+  const { data: wishlistData, error: wishlistError } = useSWR(
+    userId !== null ? `${Backend_URL}/wishlist` : null,
+    getWishlistData
+  );
 
   const addToCart = () => {
     if (quantity > 1) {
@@ -241,6 +299,7 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
         setVariantId(missingIds[0]);
       }
     }
+    isClient && setUserId(localStorage.getItem("userId") as number | null);
   }, [productData, addedCartIds, setAddedCartIds]);
 
   const handleColorChange = (colorCode: string) => {
@@ -291,10 +350,7 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
     setIsClient(true);
   }, []);
 
-  const [swalProps, setSwalProps] = useState({
-    show: false,
-    showConfirmButton: false,
-  });
+  const alertRef = useRef<HTMLButtonElement | null>(null);
 
   const postData = async (url: string, { arg }: { arg: any }) => {
     try {
@@ -328,34 +384,26 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
   };
 
   const {
-    data: addData,
+    data: addWishListData,
     trigger: addWishList,
     error: addError,
   } = useSWRMutation(`${Backend_URL}/wishlist`, postData);
 
   const addToWishList = async () => {
     if (isClient) {
-      if (localStorage.getItem("accessToken")) {
+      if (localStorage.getItem("userId")) {
         const data = {
-          wishlistId: Date.now().toString(),
-          productVariantIds: [
-            {
-              productVariantId: variantId,
-              salePrice: productData.salePrice,
-            },
-          ],
+          productId: productData.id,
+          salePrice: productData.salePrice,
         };
         const res = await addWishList(data);
-        if (res) {
-        }
+        (res);
       } else {
-        setSwalProps({
-          ...swalProps,
-          show: true,
-        });
+        alertRef.current && alertRef.current.click();
       }
     }
   };
+
 
   return (
     <>
@@ -450,6 +498,12 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
                       {productData.mediaUrls.map(({ url }: any, index: any) => (
                         <Image
                           key={index}
+                          onClick={() =>
+                            setSwalProps({
+                              ...swalProps,
+                              show: true,
+                            })
+                          }
                           src={url}
                           alt="product image"
                           className="!w-full !h-[full] object-cover"
@@ -656,7 +710,7 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
                           </Button>
                         </div>
                         {onlyLeft && (
-                          <p className=" my-2 text-base text-red-500">
+                          <p className=" my-2 text-sm text-red-500">
                             {onlyLeft}.
                           </p>
                         )}
@@ -672,73 +726,118 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
                     >
                       Add to cart
                     </Button>
-                    {/* <Button
+                    <Button
                       className=" h-10"
-                      disabled={productData?.productVariants.length < 1}
+                      disabled={
+                        productData?.productVariants.length < 1 ||
+                        wishlistData?.data
+                          .flatMap((el: any) => el.wishlistRecords)
+                          .map((el: any) => el?.productId)
+                          .includes(productData?.id)
+                      }
                       onClick={() => addToWishList()}
                       variant={"outline"}
                     >
-                      <Heart />
-                    </Button> */}
+                      {wishlistData?.data
+                        .flatMap((el: any) => el.wishlistRecords)
+                        .map((el: any) => el?.productId)
+                        .includes(productData?.id) ? (
+                        <Heart className=" fill-red-500 stroke-red-500" />
+                      ) : (
+                        <Heart />
+                      )}
+                    </Button>
                   </div>
                 </div>
               </div>
             </div>
+
+            {isClient && (
+              <SweetAlert2
+                customClass={{
+                  popup:
+                    " h-[90vh]  flex justify-center items-center w-auto  !bg-transparent ",
+                }}
+                didClose={() => {
+                  setSwalProps({
+                    ...swalProps,
+                    show: false,
+                  });
+                }}
+                {...swalProps}
+              >
+                <div className="  mx-12">
+                  <Carousel>
+                    <CarouselContent className=" mx-auto">
+                      {productData?.mediaUrls
+                        ?.map((el: any) => el.url)
+                        ?.map((el: any, index: any) => (
+                          <CarouselItem
+                            key={index}
+                            className=" flex  w-1/2 justify-center items-center"
+                          >
+                            <div className=" relative">
+                              <Image
+                                src={el}
+                                width={300}
+                                height={300}
+                                alt=""
+                                className=" w-[auto] flex justify-center items-center object-cover lg:object-contain mx-auto my-auto lg:!h-[850px] !h-[500px]"
+                              />
+                              <Button
+                                variant={"ghost"}
+                                className=" absolute top-0 right-0"
+                                onClick={() => {
+                                  setSwalProps({
+                                    ...swalProps,
+                                    show: false,
+                                  });
+                                }}
+                              >
+                                <X />
+                              </Button>
+                            </div>
+                          </CarouselItem>
+                        ))}
+                    </CarouselContent>
+                    <CarouselPrevious />
+                    <CarouselNext />
+                  </Carousel>
+                </div>
+              </SweetAlert2>
+            )}
 
             <hr className=" my-8" />
 
             <HotDealAlert data={data} isLoading={dealLoading} />
           </div>
 
-          {isClient && userId !== null && (
-            <SweetAlert2
-              didClose={() => {
-                setSwalProps({
-                  ...swalProps,
-                  show: false,
-                });
-              }}
-              {...swalProps}
-              // customClass={{ popup: "!w-auto" }}
-            >
-              <div className=" pointer-events-none space-y-3 text-center">
-                <p className=" pointer-events-none font-medium">Wishlist</p>
-                <p className=" pointer-events-none text-black/50 text-base">
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button className=" hidden" ref={alertRef} variant="outline">
+                Add to wishlist
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogDescription>
                   Your wishlist is currently empty. Sign in or create an account
                   to save your wishlist across all your devices.
-                </p>
-                <div className="pointer-events-none flex gap-3 justify-center items-center">
-                  <Button
-                    onClick={(e) => {
-                      setSwalProps({
-                        ...swalProps,
-                        show: false,
-                      });
-                    }}
-                    size={"sm"}
-                    className="pointer-events-auto"
-                    variant={"outline"}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    onClick={(e) => {
-                      handleLogin();
-                      e.stopPropagation();
-                      setSwalProps({
-                        ...swalProps,
-                        show: false,
-                      });
-                    }}
-                    size={"sm"}
-                    className="  pointer-events-auto"
-                  >
-                    Sign In
-                  </Button>
-                </div>
-              </div>
-            </SweetAlert2>
-          )}
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={(e) => {
+                    handleLogin();
+                    e.stopPropagation();
+                  }}
+                >
+                  Sign in
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </Container>
       )}
     </>

@@ -31,7 +31,7 @@ const ControlSheet = ({
   closeRef,
 }: controls) => {
   const [open, setOpen] = useState(false);
-  const { cartItems, orderRecord } = useAppProvider();
+  const { orderRecord } = useAppProvider();
 
   return (
     <Sheet

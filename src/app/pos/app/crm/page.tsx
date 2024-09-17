@@ -16,8 +16,17 @@ import React, { useState } from "react";
 import useSWR from "swr";
 
 const CRM = () => {
+  // for fetching
+
   const [currentPage, setCurrentPage] = useState(1);
   const [inputValue, setInputValue] = useState("");
+  const [filterType, setFilterType] = useState("name");
+  const [sortBy, setSortBy] = useState("asc");
+
+  const filterTable = (value: string) => {
+    setSortBy(sortBy === "asc" ? "desc" : "asc");
+    setFilterType(value);
+  };
 
   const getData = (url: string) => {
     return getFetch(url);
@@ -33,7 +42,7 @@ const CRM = () => {
     isLoading: customerLoading,
     error: customerError,
   } = useSWR(
-    `${Backend_URL}/customers?page=${currentPage}&search=${inputValue}`,
+    `${Backend_URL}/customers?page=${currentPage}&orderBy=${filterType}&orderDirection=${sortBy}&search=${inputValue}`,
     getData
   );
 
@@ -58,7 +67,7 @@ const CRM = () => {
 
   const router = useRouter();
 
-  console.log(data);
+  const startIndex = (currentPage - 1) * 10;
 
   return (
     <Container>
@@ -90,8 +99,12 @@ const CRM = () => {
                   {isLoading ? (
                     <TableSkeletonLoader />
                   ) : (
-                    <div className=" space-y-3">
-                      <CustomerTable data={customerData?.data} />
+                    <div className=" mt-3 space-y-3">
+                      <CustomerTable
+                        data={customerData?.data}
+                        startIndex={startIndex}
+                        filterTable={filterTable}
+                      />
                       <PaginationComponent
                         goToFirstPage={goToFirstPage}
                         currentPage={currentPage}

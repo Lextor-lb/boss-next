@@ -54,7 +54,7 @@ const Banner = () => {
                   .map(({ id, desktopImage, mobileImage }: any) => (
                     <CarouselItem
                       key={id}
-                      className=" h-[400px] lg:h-[600px] flex justify-center items-center   text-red-300 py-12"
+                      className=" h-[400px] lg:h-[600px] w-full flex justify-center items-center text-red-300 py-12"
                     >
                       <Image
                         src={desktopImage}

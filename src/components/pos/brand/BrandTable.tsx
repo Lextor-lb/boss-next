@@ -30,6 +30,7 @@ type SizeTable = {
   setBrandImageToShow: any;
   handleSingleDelete: () => void;
   setDeleteId: any;
+  startIndex: number;
 };
 
 const BrandTable = ({
@@ -45,6 +46,7 @@ const BrandTable = ({
   setBrandImageToShow,
   setDeleteId,
   handleSingleDelete,
+  startIndex,
 }: SizeTable) => {
   const getBrand = (url: string) => {
     return getFetch(url);
@@ -107,7 +109,7 @@ const BrandTable = ({
                     value={id}
                     onClick={(e) => handleCheckboxChange(e)}
                   />
-                  <span>{index + 1}</span>
+                  <span>{index + startIndex + 1}</span>
                 </div>
               </TableCell>
               <TableCell>

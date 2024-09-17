@@ -41,6 +41,7 @@ interface Voucher {
     discountByValue?: number;
   }[];
   tax?: number;
+  paymentType: string;
 }
 
 const SaleInfoBox = ({
@@ -53,6 +54,8 @@ const SaleInfoBox = ({
   customerInfoData,
   setCustomerPromotion,
   discount,
+  paymentType,
+  salePerson,
 }: {
   data: Product[];
   setData: React.Dispatch<React.SetStateAction<Product[]>>;
@@ -63,6 +66,8 @@ const SaleInfoBox = ({
   customerInfoData: any;
   setCustomerPromotion: any;
   discount: any;
+  paymentType: string;
+  salePerson: string;
 }) => {
   const [swalProps, setSwalProps] = useState({
     show: false,
@@ -75,40 +80,37 @@ const SaleInfoBox = ({
   const [total, setTotal] = useState(0);
 
   useEffect(() => {
+    // Calculate total cost without any discounts
     const totalCostWithoutDiscounts = data.reduce((pv, cv) => pv + cv.cost, 0);
 
-    let totalCostAfterdiscountByValue = 0;
-
+    // Apply percentage-based discount (if any)
+    let totalCostAfterDiscountByValue = totalCostWithoutDiscounts;
     if (discount > 0) {
       const discountAmount = (discount / 100) * totalCostWithoutDiscounts;
-      totalCostAfterdiscountByValue =
-        totalCostWithoutDiscounts - discountAmount;
+      totalCostAfterDiscountByValue -= discountAmount;
     }
 
+    // Apply discountByValue (if any)
     if (discountByValue > 0) {
-      totalCostAfterdiscountByValue =
-        totalCostWithoutDiscounts - discountByValue;
+      totalCostAfterDiscountByValue -= discountByValue;
     }
 
+    // Apply loyalty discount (if any)
     const loyaltyDiscountValue = loyaltyDiscount ?? 0;
     const loyaltyDiscountAmount =
-      (loyaltyDiscountValue / 100) * totalCostAfterdiscountByValue;
+      (loyaltyDiscountValue / 100) * totalCostAfterDiscountByValue;
 
-    let totalCostAfterDiscounts = 0;
+    // Final total after all discounts
+    const totalCostAfterDiscounts =
+      totalCostAfterDiscountByValue - loyaltyDiscountAmount;
 
-    if (totalCostAfterdiscountByValue > 0) {
-      totalCostAfterDiscounts = Number(
-        (totalCostAfterdiscountByValue - loyaltyDiscountAmount).toFixed(0)
-      );
-    } else {
-      totalCostAfterDiscounts = totalCostWithoutDiscounts;
-    }
+    // Set the total and ensure it's properly rounded
+    setTotal(Number(totalCostAfterDiscounts.toFixed(0)));
 
-    setTotal(Number(totalCostAfterDiscounts));
-
+    // Calculate change if charge is higher than total
     const newChange =
-      chargeValue > Number(totalCostAfterDiscounts)
-        ? parseFloat((chargeValue - Number(totalCostAfterDiscounts)).toFixed(0))
+      chargeValue > totalCostAfterDiscounts
+        ? parseFloat((chargeValue - totalCostAfterDiscounts).toFixed(0))
         : 0;
 
     setChange(newChange);
@@ -303,6 +305,8 @@ const SaleInfoBox = ({
             discountByValue={paymentInfo.discountByValue}
             loyaltyDiscount={loyaltyDiscount}
             customerInfoData={customerInfoData}
+            paymentType={paymentType}
+            salePerson={salePerson}
           />
         </SweetAlert2>
       )}

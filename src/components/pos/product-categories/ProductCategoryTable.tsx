@@ -30,6 +30,7 @@ type TypeTable = {
   setProductTypeId: any;
   handleSingleDelete: () => void;
   setDeleteId: any;
+  startIndex: number;
 };
 
 const ProductCategoryTable = ({
@@ -46,6 +47,7 @@ const ProductCategoryTable = ({
   setProductTypeId,
   setDeleteId,
   handleSingleDelete,
+  startIndex,
 }: TypeTable) => {
   const getCategory = (url: string) => {
     return getFetch(url);
@@ -129,7 +131,7 @@ const ProductCategoryTable = ({
                       onClick={(e) => handleCheckboxChange(e)}
                       // data-state={selectedSizes.includes(id)}
                     />
-                    <span>{index + 1}</span>
+                    <span>{index + startIndex + 1}</span>
                   </div>
                 </TableCell>
                 <TableCell>{name}</TableCell>

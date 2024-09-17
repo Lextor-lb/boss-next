@@ -221,7 +221,6 @@ const Checkout = () => {
       }
       return data;
     } catch (error: any) {
-      console.log(error);
       console.error("Fetch API Error:", error.message);
       throw new Error(error.message || "An error occurred");
     }
@@ -233,6 +232,7 @@ const Checkout = () => {
     data: orderData,
     error: orderError,
     trigger: order,
+    isMutating,
   } = useSWRMutation(`${Backend_URL}/orders`, postOrder);
 
   const { data: userInfoData } = useSWR(
@@ -392,7 +392,6 @@ const Checkout = () => {
           };
         }),
       };
-      console.log(dataToOrder);
       if (couponDiscount > 0) {
         dataToOrder.discount = couponDiscount;
         dataToOrder.couponName = couponCode;
@@ -432,7 +431,6 @@ const Checkout = () => {
 
   const handleEditAddress = async (value: any) => {
     const res = isEditing ? await editAddress(value) : await addAddress(value);
-    console.log(res);
     if (res) {
       setIsEditing(false);
       setOpen(false);
@@ -461,6 +459,13 @@ const Checkout = () => {
           {addAddressError && (
             <p className=" text-red-500 text-sm">{addAddressError.message}</p>
           )}
+
+          {selectedAddress == "" || selectedAddress == "undefined" ? (
+            <p className=" text-red-500 text-sm">
+              Please add an address to continue
+            </p>
+          ) : null}
+
           {editUserError && (
             <p className=" text-red-500 text-sm">{editUserError.message}</p>
           )}
@@ -742,7 +747,11 @@ const Checkout = () => {
           <OrderSummary
             buttonName={"Place Order"}
             cost={totalCost}
-            disabled={false}
+            disabled={
+              selectedAddress == "" ||
+              selectedAddress == "undefined" ||
+              isMutating
+            }
             run={handleSubmit(onSubmit)}
           />
         </div>

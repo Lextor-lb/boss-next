@@ -13,6 +13,8 @@ import { useRouter } from "next/navigation";
 
 const TodayReportTable = ({ data }: any) => {
   const router = useRouter();
+  console.log(data);
+  
   return (
     <Table>
       <TableHeader className="hover:bg-white z-50">

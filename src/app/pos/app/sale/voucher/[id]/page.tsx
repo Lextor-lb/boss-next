@@ -55,13 +55,15 @@ const VoucherPage = ({ params }: { params: { id: string } }) => {
               voucherCode={data.voucherCode}
               discountByValue={data.discountByValue}
               discount={data.discount}
-              loyaltyDiscount={data.royaltyDiscount}
+              loyaltyDiscount={data.royaltyDiscount || data?.promotionRate}
               customerInfoData={{
                 name: data.customerName,
-                phone: data.phone,
+                phone: data.phone || data.phoneNumber,
               }}
+              paymentType={data?.paymentMethod}
               time={data.time}
               date={data.date}
+              salePerson={data?.salePerson}
             />
           </div>
         )}

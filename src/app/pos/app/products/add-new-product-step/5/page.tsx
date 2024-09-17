@@ -186,8 +186,6 @@ const AddProductPageFive = () => {
     if (addProductFormData.productVariants.length > 0) setReadyToProceed(true);
   }, [addProductFormData.productVariants, setReadyToProceed]);
 
-  console.log(addProductFormData);
-
   return (
     <div className="space-y-4">
       <div>

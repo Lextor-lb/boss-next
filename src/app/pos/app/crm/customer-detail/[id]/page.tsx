@@ -20,8 +20,6 @@ const CustomerDetailPage = ({ params }: { params: { id: string } }) => {
     getData
   );
 
-  console.log(data);
-
   return (
     <Container>
       <NavHeader
@@ -106,7 +104,7 @@ const CustomerDetailPage = ({ params }: { params: { id: string } }) => {
                 <p className=" text-gray-500 text-sm"> {data?.totalPrice}</p>
               </div>
               <p className="text-sm  font-light">
-                {data?.totalVouchers || 0} (vouchers)
+                {data?.totalVoucher || 0} (vouchers)
               </p>
             </div>
             <div className=" grid pb-2 grid-cols-2">

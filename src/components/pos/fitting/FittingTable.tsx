@@ -29,6 +29,7 @@ type FittingTableType = {
   setProductSizingIds: any;
   handleSingleDelete: () => void;
   setDeleteId: any;
+  startIndex: number;
 };
 
 const FittingTable = ({
@@ -44,6 +45,7 @@ const FittingTable = ({
   setProductSizingIds,
   handleSingleDelete,
   setDeleteId,
+  startIndex,
 }: FittingTableType) => {
   const getFitting = (url: string) => {
     return getFetch(url);
@@ -122,7 +124,7 @@ const FittingTable = ({
                       onClick={(e) => handleCheckboxChange(e)}
                       // data-state={selectedSizes.includes(id)}
                     />
-                    <span>{index + 1}</span>
+                    <span>{index + startIndex + 1}</span>
                   </div>
                 </TableCell>
                 <TableCell>{name}</TableCell>

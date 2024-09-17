@@ -54,8 +54,6 @@ const AddProductPageSix = () => {
     getData
   );
 
-  console.log(brandData);
-
   const handleSubmit = async () => {
     // create product
     const formData = new FormData();

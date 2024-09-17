@@ -207,6 +207,11 @@ const SaleForm: React.FC = () => {
     setOpen(false);
   };
 
+  const { data: userData, isLoading } = useSWR(
+    `${Backend_URL}/users/me`,
+    getData
+  );
+
   return (
     <Container className=" h-screen">
       <div className=" relative w-full h-[95%]">
@@ -507,8 +512,10 @@ const SaleForm: React.FC = () => {
             data={data}
             setData={setData}
             paymentInfo={paymentInfo}
+            paymentType={paymentInfo.payment_method}
             customerInfoData={customerInfoData}
             setCustomerPromotion={setCustomerPromotion}
+            salePerson={userData?.name}
           />
         </div>
       </div>

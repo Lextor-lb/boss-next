@@ -72,8 +72,6 @@ const AddProductPageThree = () => {
     navigateForward(4);
   };
 
-  console.log(errors);
-
   return (
     <div className="space-y-4 ">
       <AddProductControlBar

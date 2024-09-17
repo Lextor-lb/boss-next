@@ -14,6 +14,7 @@ import Wishlist from "./Wishlist";
 const Navbar = () => {
   const router = useRouter();
   const closeRef = useRef<HTMLButtonElement | null>(null);
+  const closeWishListRef = useRef<HTMLButtonElement | null>(null);
   const { searchInputValue, setSearchInputValue } = useAppProvider();
   const [debouncedValue, setDebouncedValue] = useState(searchInputValue);
 
@@ -147,14 +148,15 @@ const Navbar = () => {
                   </form>
                 </ControlSheet>
               </div>
-              <div className="hidden lg:block">
-                {/* <ControlSheet
+              <div>
+                <ControlSheet
+                  closeRef={closeRef}
                   buttonName={<Heart />}
                   title="Wishlist"
                   desc="Your wishlist is here"
                 >
-                  <Wishlist />
-                </ControlSheet> */}
+                  <Wishlist closeRef={closeRef} />
+                </ControlSheet>
               </div>
 
               <ControlSheet

@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
 import { Heart, Plus } from "lucide-react";
@@ -9,6 +9,17 @@ import SweetAlert2 from "react-sweetalert2";
 import { useAppProvider } from "@/app/Provider/AppProvider";
 import useSWRMutation from "swr/mutation";
 import { Backend_URL } from "@/lib/fetch";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 const ProductCard = ({
   id,
@@ -79,28 +90,19 @@ const ProductCard = ({
     postData
   );
 
-  const addToWishList = () => {
+  const alertRef = useRef<HTMLButtonElement | null>(null);
+
+  const addToWishList = async () => {
     if (isClient) {
       if (localStorage.getItem("userId")) {
         console.log("id par", localStorage.getItem("userId"));
         const data = {
-          wishlistId: Date.now().toString(),
-          productVariantIds: [
-            {
-              productVariantId: 1,
-              salePrice: 500,
-            },
-            {
-              productVariantId: 2,
-              salePrice: 1500,
-            },
-          ],
+          productId: id,
+          salePrice: salePrice,
         };
+        const res = await add(data);
       } else {
-        setSwalProps({
-          ...swalProps,
-          show: true,
-        });
+        alertRef.current?.click();
       }
     }
   };
@@ -120,7 +122,7 @@ const ProductCard = ({
           alt=""
         />
         <div className=" absolute top-3 right-3">
-          {/* <Button
+          <Button
             onClick={(e) => {
               e.stopPropagation();
               addToWishList();
@@ -130,7 +132,7 @@ const ProductCard = ({
             size={"sm"}
           >
             <Heart size={18} color="#333" />
-          </Button> */}
+          </Button>
         </div>
 
         <div className=" absolute left-3 bottom-3">
@@ -181,47 +183,32 @@ const ProductCard = ({
           </p>
         )}
       </div>
-      {isClient && (
-        <SweetAlert2 {...swalProps}>
-          <div className=" pointer-events-none space-y-3 text-center">
-            <p className=" pointer-events-none font-medium">Wishlist</p>
-            <p className=" pointer-events-none text-black/50 text-sm">
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <Button className=" hidden" ref={alertRef} variant="outline">
+            Add to wishlist
+          </Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogDescription>
               Your wishlist is currently empty. Sign in or create an account to
               save your wishlist across all your devices.
-            </p>
-            <div className="  pointer-events-none flex gap-3 justify-center items-center">
-              <Button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setSwalProps({
-                    ...swalProps,
-                    show: false,
-                  });
-                }}
-                size={"sm"}
-                className="  pointer-events-auto"
-                variant={"outline"}
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={(e) => {
-                  handleLogin();
-                  e.stopPropagation();
-                  setSwalProps({
-                    ...swalProps,
-                    show: false,
-                  });
-                }}
-                size={"sm"}
-                className="  pointer-events-auto"
-              >
-                Sign In
-              </Button>
-            </div>
-          </div>
-        </SweetAlert2>
-      )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => {
+                handleLogin();
+                e.stopPropagation();
+              }}
+            >
+              Sign in
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

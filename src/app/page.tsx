@@ -24,7 +24,6 @@ export default function Home() {
     try {
       const result = await signInWithPopup(auth, provider);
       const idToken = await result.user.getIdToken(true); // Await the promise to get the ID token
-      console.log("ID Token:", idToken);
     } catch (error) {
       console.error(error);
     }
@@ -44,8 +43,6 @@ export default function Home() {
       : `${Backend_URL}/ecommerce-Products/riddle/man?limit=${12}`,
     getData
   );
-
-  console.log(data);
 
   return (
     <main className=" min-h-screen w-screen overflow-x-hidden bg-secondary">

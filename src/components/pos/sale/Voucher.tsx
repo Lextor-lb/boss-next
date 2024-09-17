@@ -37,6 +37,8 @@ const Voucher = ({
     hour12: true,
   }),
   customerInfoData,
+  paymentType,
+  salePerson,
 }: any) => {
   return (
     <div
@@ -89,11 +91,12 @@ const Voucher = ({
               className={` text-sm ${
                 customerInfoData.name !== ""
                   ? " w-[150px] text-center"
-                  : " w-[100px]  text-center"
+                  : " w-[150px]  text-start"
               }  text-black`}
             >
               Time
             </p>
+
             <p className=" text-sm text-black">{time}</p>
           </div>
           <div className="flex gap-4 items-center">
@@ -101,6 +104,33 @@ const Voucher = ({
               Voucher Code
             </p>
             <p className=" text-sm text-black">{voucherCode}</p>
+          </div>
+
+          <div className="flex gap-4 items-center">
+            <p
+              className={` text-sm ${
+                customerInfoData.name !== ""
+                  ? " w-[150px] ms-3.5 text-center"
+                  : " w-[150px]  text-start"
+              }  text-black`}
+            >
+              Payment
+            </p>
+
+            <p className=" text-sm -ms-3.5 text-black capitalize">{paymentType}</p>
+          </div>
+
+          <div className="flex gap-4 items-center">
+            <p
+              className={` text-sm ${
+                customerInfoData.name !== ""
+                  ? " w-[150px] text-start"
+                  : " w-[150px]  text-start"
+              }  text-black`}
+            >
+              Sale Person
+            </p>
+            <p className=" text-sm text-black capitalize">{salePerson}</p>
           </div>
         </div>
       </div>
@@ -193,7 +223,7 @@ const Voucher = ({
           <Info title={"Total Discount "} amount={`-${discountByValue}`} />
         )}
 
-        <hr className="border-primary/40 w-[50%]" />
+        {/* <hr className="border-primary/40 w-[50%]" /> */}
         <div className="flex my-3 gap-12">
           <p className="text-lg font-normal text-start w-[150px] text-primary">
             Total
@@ -202,7 +232,7 @@ const Voucher = ({
             {new Intl.NumberFormat("ja-JP").format(total)}
           </p>
         </div>
-        <hr className="border-primary/40 w-[50%]" />
+        {/* <hr className="border-primary/40 w-[50%]" /> */}
       </div>
     </div>
   );

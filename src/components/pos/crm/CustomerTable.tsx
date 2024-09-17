@@ -12,9 +12,11 @@ import { ArrowRightCircle, Edit2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { CaretSortIcon } from "@radix-ui/react-icons";
 
-const CustomerTable = ({ data }: any) => {
+const CustomerTable = ({ data, startIndex, filterTable }: any) => {
   const router = useRouter();
+
   return (
     <div className=" min-h-[780px]">
       <Table>
@@ -23,11 +25,25 @@ const CustomerTable = ({ data }: any) => {
             <TableHead>
               <span>No</span>
             </TableHead>
-
-            <TableHead>Name</TableHead>
+            <TableHead>
+              <div
+                onClick={() => filterTable("name")}
+                className="flex gap-1  cursor-pointer select-none items-center"
+              >
+                <span>Name</span> <CaretSortIcon />
+              </div>
+            </TableHead>
             <TableHead>Phone</TableHead>
             <TableHead>Age Range</TableHead>
             <TableHead>Rating</TableHead>
+            <TableHead className=" text-end">
+              <div
+                onClick={() => filterTable("totalPrice")}
+                className="flex gap-1 justify-end cursor-pointer select-none items-center"
+              >
+                <span>Total</span> <CaretSortIcon />
+              </div>
+            </TableHead>
             <TableHead></TableHead>
           </TableRow>
         </TableHeader>
@@ -40,11 +56,13 @@ const CustomerTable = ({ data }: any) => {
                 phoneNumber,
                 ageRange,
                 special,
+                totalPrice,
               }: {
                 id: any;
                 name: string;
                 phoneNumber: string;
                 ageRange: string;
+                totalPrice: number;
                 special: {
                   name: string;
                 };
@@ -59,7 +77,7 @@ const CustomerTable = ({ data }: any) => {
                 }}
               >
                 <TableCell>
-                  <span>{index + 1}</span>
+                  <span>{index + startIndex + 1}.</span>
                 </TableCell>
 
                 <TableCell>{name}</TableCell>
@@ -69,6 +87,10 @@ const CustomerTable = ({ data }: any) => {
                 </TableCell>
                 <TableCell>
                   <Badge variant={"secondary"}>{special.name}</Badge>
+                </TableCell>
+                <TableCell className=" text-end">
+                  {" "}
+                  {new Intl.NumberFormat("ja-JP").format(totalPrice)}
                 </TableCell>
                 <TableCell onClick={(e) => e.stopPropagation()}>
                   <div className="flex items-center gap-3 justify-end">

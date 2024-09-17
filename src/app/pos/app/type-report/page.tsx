@@ -95,8 +95,6 @@ const TypeReport = () => {
     }
   );
 
-  console.log("Data:", data); // Correct way to log the object
-
   return (
     <Container>
       <div className=" space-y-4">

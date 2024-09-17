@@ -176,8 +176,6 @@ const SliderPage = () => {
     }
   };
 
-  console.log(editData);
-
   return (
     <Container>
       <div className=" space-y-4">

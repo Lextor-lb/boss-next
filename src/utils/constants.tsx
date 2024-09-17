@@ -26,6 +26,7 @@ export interface menu {
   pageName: String;
   path: string;
   icon: ReactNode;
+  order?: any;
 }
 
 interface menuItems extends Array<menu> {}

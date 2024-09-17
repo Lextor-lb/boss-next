@@ -56,11 +56,9 @@ import { Avatar, AvatarImage } from "@/components/ui/avatar";
 const StockControlPage = () => {
   const router = useRouter();
 
-  const [sheetOpen, setSheetOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [searchInputValue, setSearchInputValue] = useState<string>("");
-  const [singleId, setSingleId] = useState<number | undefined>();
 
   // for fetching
   const [currentPage, setCurrentPage] = useState(1);
@@ -97,8 +95,17 @@ const StockControlPage = () => {
     return getFetch(url);
   };
 
+  const [debouncedValue, setDebouncedValue] = useState(searchInputValue);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedValue(searchInputValue);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [searchInputValue]); // Only call effect if value changes
+
   const { data, error, isLoading, mutate, isValidating } = useSWR(
-    `${Backend_URL}/stock-reports?page=${currentPage}`,
+    `${Backend_URL}/stock-reports?page=${currentPage}&search=${debouncedValue}`,
     getData,
     {
       revalidateIfStale: true,
@@ -214,10 +221,25 @@ const StockControlPage = () => {
     }
   };
 
+  const startIndex = (currentPage - 1) * 10;
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setDebouncedValue(e.target.value);
+  };
+
   return (
     <Container>
       <div className=" space-y-4">
         <NavHeader parentPage="Stock" path="Stock Control" />
+        <div className="flex justify-between">
+          <div className="">
+            <Input
+              placeholder="Search..."
+              value={debouncedValue}
+              onChange={handleInputChange}
+            />
+          </div>
+        </div>
         {isLoading ? (
           <TableSkeletonLoader />
         ) : (
@@ -279,7 +301,7 @@ const StockControlPage = () => {
                         >
                           <TableCell>
                             <div className="flex items-center gap-3">
-                              <span>{index + 1}</span>
+                              <span>{index + startIndex + 1}.</span>
                             </div>
                           </TableCell>
                           <TableCell>
@@ -315,7 +337,7 @@ const StockControlPage = () => {
                                 stockLevel == "LowStock" && "!bg-red-400"
                               }
                         ${stockLevel == "InStock" && "!bg-green-400"}
-                        ${stockLevel == "SoldOut" && "!bg-white"}
+                        ${stockLevel == "SoldOut" && "!bg-black"}
                         `}
                             >
                               {stockLevel}

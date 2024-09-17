@@ -14,13 +14,7 @@ import {
 
 import { Line } from "react-chartjs-2";
 
-import {
-  ChevronRight,
-  BadgeCheck,
-  FlipHorizontal2,
-  Ruler,
-  Shirt,
-} from "lucide-react";
+import { BadgeCheck, FlipHorizontal2, Ruler, Shirt } from "lucide-react";
 import { RulerSquareIcon } from "@radix-ui/react-icons";
 import { useRouter } from "next/navigation";
 

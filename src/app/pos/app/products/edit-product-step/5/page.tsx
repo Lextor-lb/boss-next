@@ -84,8 +84,6 @@ const EditProductPageFive = () => {
 
   const { data } = useSWR(`${Backend_URL}/product-sizings/all`, getData);
 
-  console.log(editProductFormData.productVariants);
-
   const schema = z.object({
     image:
       typeof window !== "undefined"
@@ -179,7 +177,6 @@ const EditProductPageFive = () => {
 
     if (editMode.status) {
       const res = await edit(formData);
-      console.log("res", res);
       if (res.status) {
         setVariants(
           variants.map((el) => (el.id == editMode.id ? res.data : el))

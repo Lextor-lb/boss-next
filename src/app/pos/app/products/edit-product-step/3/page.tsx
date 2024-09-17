@@ -105,10 +105,6 @@ const EditProductPageThree = () => {
   const handleDelete = async (id: any) => {
     await setDropImageId(id);
     const res = await drop();
-    console.log(res);
-    if (res) {
-      console.log("this is run");
-    }
   };
 
   const postFetcher = async (url: string, { arg }: { arg: any }) => {
@@ -127,7 +123,6 @@ const EditProductPageThree = () => {
 
   const onSubmit = async (data: FormData) => {
     const formData = new FormData();
-    console.log(data);
     data.images.forEach((img: { file: string | Blob }) =>
       formData.append("images", img.file)
     );

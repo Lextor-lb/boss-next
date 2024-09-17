@@ -28,6 +28,7 @@ type TypeTable = {
   refetch: () => void;
   handleSingleDelete: () => void;
   setDeleteId: any;
+  startIndex: number;
 };
 
 const ProductTypeTable = ({
@@ -42,6 +43,7 @@ const ProductTypeTable = ({
   refetch,
   setDeleteId,
   handleSingleDelete,
+  startIndex,
 }: TypeTable) => {
   const getSize = (url: string) => {
     return getFetch(url);
@@ -104,7 +106,7 @@ const ProductTypeTable = ({
                     onClick={(e) => handleCheckboxChange(e)}
                     // data-state={selectedSizes.includes(id)}
                   />
-                  <span>{index + 1}</span>
+                  <span>{index + startIndex + 1}</span>
                 </div>
               </TableCell>
               <TableCell>{name}</TableCell>

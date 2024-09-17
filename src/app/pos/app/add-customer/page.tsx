@@ -101,9 +101,7 @@ const AddCustomer = () => {
 
   const onSubmit = async (value: any) => {
     value.specialId = parseInt(value.specialId);
-    console.log(value);
     const res = await add(value);
-    console.log(res);
     if (res) {
       router.push("/pos/app/crm");
     }

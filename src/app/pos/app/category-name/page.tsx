@@ -109,7 +109,6 @@ const CatPage = () => {
 
   const handleSingleDelete = async () => {
     const res = await singleDrop();
-    console.log(res);
     if (res.status) setDeleteId(undefined);
     refetch();
   };
