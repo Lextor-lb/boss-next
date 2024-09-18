@@ -49,6 +49,7 @@ const GeneralizedPage = ({ params }: { params: any }) => {
             path="Home"
             currentPage={params.slug[0] == "new-in" ? "New In" : params.slug[0]}
           />
+          
           <Heading
             header={`New products for ${
               params.slug[0] == "new-in" ? "you" : params.slug[0]
