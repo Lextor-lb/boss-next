@@ -20,6 +20,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import useSWR from "swr";
 
 const ProductCard = ({
   id,
@@ -95,7 +96,6 @@ const ProductCard = ({
   const addToWishList = async () => {
     if (isClient) {
       if (localStorage.getItem("userId")) {
-        console.log("id par", localStorage.getItem("userId"));
         const data = {
           productId: id,
           salePrice: salePrice,
@@ -106,6 +106,74 @@ const ProductCard = ({
       }
     }
   };
+
+  const getWishlistData = async (url: string) => {
+    const token = localStorage.getItem("accessToken");
+
+    if (!token) {
+      throw new Error("No access token found");
+    }
+
+    const options: RequestInit = {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "multipart/form-data",
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    const response = await fetch(url, options);
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "An error occurred");
+    }
+
+    return data;
+  };
+
+  const {
+    data: wishlistData,
+    error: wishlistError,
+    mutate,
+  } = useSWR(`${Backend_URL}/wishlist`, getWishlistData);
+  const [deleteId, setDeleteId] = useState<number | null>(null);
+
+  const deleteData = async (url: string) => {
+    try {
+      const token =
+        typeof window !== "undefined" && localStorage.getItem("accessToken");
+      if (!token) {
+        throw new Error("No access token found");
+      }
+
+      const options: RequestInit = {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      const response = await fetch(url, options);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "An error occurred");
+      }
+
+      return data;
+    } catch (error: any) {
+      console.error("Fetch API Error:", error.message);
+      throw new Error(error.message || "An error occurred");
+    }
+  };
+
+  const { trigger: deleteItem } = useSWRMutation(
+    deleteId !== null ? `${Backend_URL}/wishlist/${deleteId}` : null,
+    deleteData
+  );
 
   return (
     <div
@@ -123,15 +191,41 @@ const ProductCard = ({
         />
         <div className=" absolute top-3 right-3">
           <Button
-            onClick={(e) => {
+            onClick={async (e) => {
               e.stopPropagation();
-              addToWishList();
+
+              if (
+                wishlistData?.data
+                  .flatMap((el: any) => el.wishlistRecords)
+                  .map((el: any) => el?.productId)
+                  .includes(id)
+              ) {
+                await setDeleteId(
+                  wishlistData?.data
+                    .flatMap((el: any) => el.wishlistRecords)
+                    .find((el: any) => el?.productId == id)?.id
+                );
+                const res = await deleteItem();
+                if (res) {
+                  mutate();
+                }
+                return;
+              } else {
+                await addToWishList();
+              }
             }}
             variant={"outline"}
             className=" h-6 w-6 p-0.5 rounded-full"
             size={"sm"}
           >
-            <Heart size={18} color="#333" />
+            {wishlistData?.data
+              .flatMap((el: any) => el.wishlistRecords)
+              .map((el: any) => el?.productId)
+              .includes(id) ? (
+              <Heart className=" fill-red-500 stroke-red-500" />
+            ) : (
+              <Heart />
+            )}
           </Button>
         </div>
 

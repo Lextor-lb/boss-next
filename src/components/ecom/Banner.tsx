@@ -15,24 +15,6 @@ const Banner = () => {
     getData
   );
 
-  const someData = [
-    {
-      id: 1,
-      name: "KYK",
-      sorting: 2,
-    },
-    {
-      id: 2,
-      name: "YN",
-      sorting: 1,
-    },
-    {
-      id: 3,
-      name: "PMZ",
-      sorting: 3,
-    },
-  ];
-
   return (
     <div>
       <div className="flex justify-center object-contain items-center">

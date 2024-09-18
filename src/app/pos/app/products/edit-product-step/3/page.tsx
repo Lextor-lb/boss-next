@@ -184,7 +184,7 @@ const EditProductPageThree = () => {
         )}
         {errors.images && (
           <p className="text-sm text-red-500">
-            {errors.images.message as never}
+            {errors.images.message as string}
           </p>
         )}
       </div>

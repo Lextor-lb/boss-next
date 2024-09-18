@@ -104,7 +104,7 @@ const AddProductPageThree = () => {
         />
         {errors.image && (
           <p className="text-sm text-red-500">
-            {errors.image.message as never}
+            {errors.image.message as string}
           </p>
         )}
       </div>

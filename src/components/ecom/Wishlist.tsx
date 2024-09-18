@@ -95,12 +95,6 @@ const WishList = ({ closeRef }: any) => {
     deleteData
   );
 
-  useEffect(() => {
-    if (data) console.log(data.data.flatMap((el: any) => el.wishlistRecords));
-  }, [data]);
-
-  console.log(data, error);
-
   return (
     <div className=" space-y-3 bg-white pt-4 z-50 overflow-auto h-[90%] relative">
       {data?.data.flatMap((el: any) => el.wishlistRecords).length == 0 ? (
@@ -124,7 +118,10 @@ const WishList = ({ closeRef }: any) => {
                       <Button
                         onClick={async () => {
                           await setDeleteId(data?.id);
-                          await deleteItem();
+                          const res = await deleteItem();
+                          if (res) {
+                            mutate();
+                          }
                         }}
                         variant={"outline"}
                         size={"sm"}

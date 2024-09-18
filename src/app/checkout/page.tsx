@@ -379,19 +379,44 @@ const Checkout = () => {
 
     const res = await editUser(userData as never);
 
+    const newOrderRecord = orderRecord.flatMap((el: any) => {
+      if (el.quantity > 1) {
+        const availableIds = el.availableIds.slice(0, el.quantity);
+        const data = availableIds.map((item: any) => ({
+          variantId: item,
+          salePrice: el.priceAfterDiscount,
+        }));
+        return data; // Return array of objects for multiple items
+      } else {
+        return {
+          variantId: el.variantId,
+          salePrice: el.priceAfterDiscount,
+        };
+      }
+    });
+
+    console.log(newOrderRecord);
+
     if (res?.ok) {
       const dataToOrder: OrderData = {
         orderCode: `${generateLongNumber(7)}`,
         addressId: parseInt(selectedAddress),
-        subTotal: totalCost,
-        total: totalCost,
-        orderRecords: orderRecord.map((el: any) => {
+        subTotal: newOrderRecord.reduce(
+          (pv: any, cv: any) => pv + cv.salePrice,
+          0
+        ),
+        total: newOrderRecord.reduce(
+          (pv: any, cv: any) => pv + cv.salePrice,
+          0
+        ),
+        orderRecords: newOrderRecord.map((el: any) => {
           return {
             productVariantId: el.variantId,
-            salePrice: el.priceAfterDiscount,
+            salePrice: el.salePrice,
           };
         }),
       };
+
       if (couponDiscount > 0) {
         dataToOrder.discount = couponDiscount;
         dataToOrder.couponName = couponCode;
@@ -400,6 +425,8 @@ const Checkout = () => {
       if (remark !== "") {
         dataToOrder.remark = remark;
       }
+
+      console.log(dataToOrder);
 
       const orderRes = await order(dataToOrder);
       if (orderRes?.status) {

@@ -166,7 +166,7 @@ const UserAddressPage = () => {
 
   useEffect(() => {
     if (addressData) {
-      setSelectedAddress(`${addressData[0].id}`);
+      setSelectedAddress(`${addressData[0]?.id}` );
     }
   }, [addressData]);
 

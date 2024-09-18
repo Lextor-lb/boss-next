@@ -40,8 +40,8 @@ export default function ProductPage() {
 
   // for fetching
   const [currentPage, setCurrentPage] = useState(1);
-  const [filterType, setFilterType] = useState("name");
-  const [sortBy, setSortBy] = useState("asc");
+  const [filterType, setFilterType] = useState("createdAt");
+  const [sortBy, setSortBy] = useState("desc");
 
   const startIndex = (currentPage - 1) * 10;
 
@@ -251,7 +251,7 @@ export default function ProductPage() {
                   lastPage={data?.totalPages}
                 />
               </div>
-            )}
+          )}
           </>
         )}
       </div>

@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Trash2 } from "lucide-react";
+import { Minus, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAppProvider } from "../Provider/AppProvider";
 import Image from "next/image";
@@ -22,17 +22,11 @@ const ShoppingBag = () => {
   const {
     cartItems,
     setCartItems,
-    totalCost,
     handleLogin,
     orderRecord,
     setOrderRecord,
     removeFromCart,
   } = useAppProvider();
-
-  const remove = (id: number) => () => {
-    setCartItems(cartItems.filter((el: any) => el.variantId !== id));
-    setOrderRecord(orderRecord.filter((el: any) => el.variantId !== id));
-  };
 
   const router = useRouter();
 
@@ -59,6 +53,11 @@ const ShoppingBag = () => {
     }
   };
 
+  const totalCost = orderRecord.reduce(
+    (pv: any, cv: any) => pv + cv.quantity * cv.priceAfterDiscount,
+    0
+  );
+
   return (
     <Container className=" pt-4">
       <p className=" text-sm my-[15px]">Shopping Bag</p>
@@ -74,9 +73,7 @@ const ShoppingBag = () => {
                   <span>No</span>
                 </TableHead>
                 <TableHead className=" ">Product Name</TableHead>
-                <TableHead className=" hidden lg:table-cell text-end">
-                  Quantity
-                </TableHead>
+                <TableHead className=" text-end">Quantity</TableHead>
                 <TableHead className=" hidden lg:table-cell text-end">
                   Price
                 </TableHead>
@@ -89,7 +86,7 @@ const ShoppingBag = () => {
                 <TableHead className="text-end"></TableHead>
               </TableRow>
             </TableHeader>
-            {cartItems.length < 1 ? (
+            {orderRecord.length < 1 ? (
               <TableBody>
                 <TableRow className="pointer-events-none bg-white">
                   {Array(7)
@@ -103,7 +100,7 @@ const ShoppingBag = () => {
               </TableBody>
             ) : (
               <TableBody>
-                {cartItems?.map((data: any, index: number) => (
+                {orderRecord?.map((data: any, index: number) => (
                   <TableRow
                     key={`${data.id}-${index}`}
                     className=" bg-white hover:bg-white/35"
@@ -131,12 +128,65 @@ const ShoppingBag = () => {
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell className=" hidden lg:table-cell text-end">
-                      {data.quantity}
+                    <TableCell className=" text-end">
+                      <div className="flex items-center gap-1">
+                        <Button
+                          variant={"outline"}
+                          className=" !p-2"
+                          size={"sm"}
+                          onClick={() => {
+                            if (data?.quantity > 1) {
+                              setOrderRecord(
+                                orderRecord.map((item: any) => {
+                                  if (item.itemId === data.itemId) {
+                                    return {
+                                      ...item,
+                                      quantity: item.quantity - 1,
+                                    };
+                                  }
+                                  return item;
+                                })
+                              );
+                            } else {
+                              removeFromCart(data?.itemId);
+                            }
+                          }}
+                        >
+                          <Minus size={14} />
+                        </Button>
+                        <p className=" w-[1rem]">{data.quantity}</p>
+                        <Button
+                          onClick={() => {
+                            if (data?.availableQuantity > data?.quantity) {
+                              const newOrderRecord = orderRecord.map(
+                                (item: any) => {
+                                  if (item.itemId === data.itemId) {
+                                    return {
+                                      ...item,
+                                      quantity: item.quantity + 1,
+                                    };
+                                  }
+                                  return item;
+                                }
+                              );
+                              setOrderRecord(
+                                newOrderRecord.filter(
+                                  (item: any) => item.quantity !== 0
+                                )
+                              );
+                            }
+                          }}
+                          variant={"outline"}
+                          className=" !p-2"
+                          size={"sm"}
+                        >
+                          <Plus size={14} />
+                        </Button>
+                      </div>
                     </TableCell>
                     <TableCell className=" hidden lg:table-cell text-end">
                       {new Intl.NumberFormat("ja-JP").format(
-                        data.salePrice || 0
+                        data.quantity * data.salePrice || 0
                       )}
                     </TableCell>
                     <TableCell className=" hidden lg:table-cell text-end ">
@@ -144,7 +194,7 @@ const ShoppingBag = () => {
                         <>
                           -
                           {new Intl.NumberFormat("ja-JP").format(
-                            data.amountSaved || 0
+                            data.quantity * data.amountSaved || 0
                           )}
                         </>
                       ) : (
@@ -153,12 +203,12 @@ const ShoppingBag = () => {
                     </TableCell>
                     <TableCell className=" hidden lg:table-cell text-end">
                       {new Intl.NumberFormat("ja-JP").format(
-                        data.priceAfterDiscount
+                        data.quantity * data.priceAfterDiscount
                       )}
                     </TableCell>
                     <TableCell className=" text-end ms-4">
                       <Button
-                        onClick={removeFromCart(data.ids)}
+                        onClick={() => removeFromCart(data.itemId)}
                         variant="ghost"
                         size="sm"
                         type="button"

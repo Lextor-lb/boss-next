@@ -27,7 +27,7 @@ const CartItem = ({ data }: any) => {
               alt=""
             />
             <Button
-              onClick={removeFromCart(data.ids)}
+              onClick={() => removeFromCart(data.itemId)}
               variant={"outline"}
               size={"sm"}
               className=" absolute w-5 h-5 right-1 !p-0 top-0"
@@ -63,10 +63,15 @@ const CartItem = ({ data }: any) => {
 
                 <div className="lg:flex gap-2 items-center">
                   <p className=" line-through">
-                    {new Intl.NumberFormat("ja-JP").format(data.salePrice)} MMK
+                    {new Intl.NumberFormat("ja-JP").format(
+                      data.quantity * data.salePrice
+                    )}{" "}
+                    MMK
                   </p>
                   <p className="text-xs lg:text-sm">
-                    {data?.priceAfterDiscount}
+                    {new Intl.NumberFormat("ja-JP").format(
+                      data?.quantity * data.priceAfterDiscount
+                    )}
                     MMK
                   </p>
                 </div>

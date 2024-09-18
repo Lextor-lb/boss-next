@@ -20,8 +20,8 @@ const CRM = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [inputValue, setInputValue] = useState("");
-  const [filterType, setFilterType] = useState("name");
-  const [sortBy, setSortBy] = useState("asc");
+  const [filterType, setFilterType] = useState("createdAt");
+  const [sortBy, setSortBy] = useState("desc");
 
   const filterTable = (value: string) => {
     setSortBy(sortBy === "asc" ? "desc" : "asc");

@@ -11,8 +11,8 @@ import React, { useState } from "react";
 import useSWR from "swr";
 
 const TodayReport = () => {
-  const [filterType, setFilterType] = useState("name");
-  const [sortBy, setSortBy] = useState("asc");
+  const [filterType, setFilterType] = useState("createdAt");
+  const [sortBy, setSortBy] = useState("desc");
   const [currentPage, setCurrentPage] = useState(1);
 
   // for pagination

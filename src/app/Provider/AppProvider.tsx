@@ -131,9 +131,8 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [data, error]);
 
-  const removeFromCart = (id: string | string[]) => () => {
-    setOrderRecord(orderRecord.filter((el: any) => !id.includes(el.variantId)));
-    setCartItems(cartItems.filter((el: any) => !id.includes(el.variantId)));
+  const removeFromCart = (id: string | string[]) => {
+    setOrderRecord(orderRecord.filter((el: any) => el.itemId !== id));
   };
 
   return (

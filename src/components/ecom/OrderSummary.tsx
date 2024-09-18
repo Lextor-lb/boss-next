@@ -30,7 +30,6 @@ const OrderSummary = ({
     setCouponDiscount,
     error,
     setError,
-    totalCost,
     orderRecord,
   } = useAppProvider();
 
@@ -69,17 +68,22 @@ const OrderSummary = ({
     }
   };
 
+  const totalCost = orderRecord.reduce(
+    (pv: any, cv: any) => pv + cv.quantity * cv.priceAfterDiscount,
+    0
+  );
+
   return (
     <div className="lg:border-2 lg:border-input lg:p-5 lg:bg-secondary">
       <p className="text-lg font-semibold mb-6">Order Summary</p>
       <div className="text-sm space-y-4">
-        {cartItems?.length === 0 ? (
+        {orderRecord?.length === 0 ? (
           <div className="flex justify-between">
             <p>Price</p>
             <p>0</p>
           </div>
         ) : (
-          cartItems?.map(
+          orderRecord?.map(
             (
               {
                 name,
@@ -95,7 +99,9 @@ const OrderSummary = ({
                   {name} ({productSizing}) x {quantity}
                 </p>
                 <p>
-                  {new Intl.NumberFormat("ja-JP").format(priceAfterDiscount)}
+                  {new Intl.NumberFormat("ja-JP").format(
+                    quantity * priceAfterDiscount
+                  )}
                 </p>
               </div>
             )
