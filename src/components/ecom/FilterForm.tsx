@@ -486,9 +486,7 @@ const FilterForm = ({ closeRef }: any) => {
                       <CommandGroup>
                         {fittingData?.map(({ id, name }: any) => (
                           <CommandItem
-                            className={cn(
-                              category[0] === id ? "bg-accent" : ""
-                            )}
+                            className={cn(fitting[0] === id ? "bg-accent" : "")}
                             key={id}
                             value={name}
                             onSelect={() => {
@@ -498,9 +496,9 @@ const FilterForm = ({ closeRef }: any) => {
                               setSizeData(
                                 selectedFitting?.productSizings || []
                               );
-                              setOpenSelect(false);
+                              setOpenSelectFitting(false);
                               setFittingName(selectedFitting?.name || ""); // Set categoryName properly
-                              handleFittingChange(id); // Pass the id instead of name
+                              handleFittingChange(id);
                             }}
                           >
                             <Check
