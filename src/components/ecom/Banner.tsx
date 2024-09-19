@@ -16,7 +16,7 @@ const Banner = () => {
   );
 
   return (
-    <div>
+    <div className="">
       <div className="flex justify-center object-contain items-center">
         <Carousel
           plugins={[
@@ -28,7 +28,7 @@ const Banner = () => {
         >
           <CarouselContent>
             {error || isLoading ? (
-              <CarouselItem className=" h-[400px] lg:h-[600px] flex justify-center items-center  text-red-300 py-12 bg-neutral-600"></CarouselItem>
+              <CarouselItem className=" h-[400px] lg:h-[600px] flex justify-center items-center lg:w-[1600px]  bg-neutral-600"></CarouselItem>
             ) : (
               <>
                 {data?.data
@@ -36,21 +36,21 @@ const Banner = () => {
                   .map(({ id, desktopImage, mobileImage }: any) => (
                     <CarouselItem
                       key={id}
-                      className=" h-[400px] lg:h-[600px] w-full flex justify-center items-center text-red-300 py-12"
+                      className=" h-[400px] lg:h-[600px] w-full flex justify-center items-center "
                     >
                       <Image
                         src={desktopImage}
-                        className=" hidden lg:block w-full object-cover h-[600px]"
+                        className=" hidden lg:block w-full object-contain h-full"
                         alt="banner photo"
-                        width={300}
-                        height={300}
+                        width={800}
+                        height={800}
                       />
                       <Image
                         src={mobileImage}
-                        className=" lg:hidden block w-full object-cover h-[400px]"
+                        className=" lg:hidden block w-full object-contain h-full"
                         alt="banner photo"
-                        width={300}
-                        height={300}
+                        width={800}
+                        height={800}
                       />
                     </CarouselItem>
                   ))}

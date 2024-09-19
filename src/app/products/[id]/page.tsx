@@ -28,12 +28,12 @@ export async function generateMetadata({
   }
 
   return {
-    title: `Boss Nation - ${product.name} ` || `Product ${product.productCode}`, // Dynamic title based on product data
+    title: "Boss Nation", // Dynamic title based on product data
     description:
       product.description || `Details about Product ${product.productCode}`,
     keywords: [product.description, `Boss ${product.productCode}`],
     openGraph: {
-      title: product.name || `Product ${product.productCode}`,
+      title: "Boss Nation",
       description: product.description || `Details about Product ${id}`,
       url: `https://bossn-nation/products/${id}`, // Dynamic URL
       images: [

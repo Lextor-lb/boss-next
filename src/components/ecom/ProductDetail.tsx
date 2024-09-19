@@ -96,9 +96,8 @@ const ProductDetail = ({ id }: { id: string }) => {
 
     return data;
   };
-  
 
-  const { data: wishlistData, error: wishlistError } = useSWR(
+  const { data: wishlistData } = useSWR(
     `${Backend_URL}/wishlist`,
     getWishlistData
   );
@@ -150,8 +149,6 @@ const ProductDetail = ({ id }: { id: string }) => {
               },
             ]
           : [];
-
-        console.log(records);
 
         setOrderRecord([...orderRecord, ...records]);
       }
@@ -357,7 +354,7 @@ const ProductDetail = ({ id }: { id: string }) => {
             )}
             <div className="grid lg:grid-cols-12 gap-5 lg:gap-0 h-auto">
               <div className="overflow-auto w-full lg:col-span-6">
-                <div className=" flex gap-3 lg:flex-col w-full lg:h-[860px] overflow-auto  h-[300px]">
+                <div className=" flex gap-3 lg:flex-col w-full lg:h-[860px] overflow-auto h-[600px]">
                   {imageToShow.length < 1 ? (
                     <>
                       {productData.mediaUrls.map(({ url }: any, index: any) => (
@@ -371,7 +368,7 @@ const ProductDetail = ({ id }: { id: string }) => {
                           }
                           src={url}
                           alt="product image"
-                          className="!w-full !h-[full] object-cover"
+                          className="!w-full !h-full object-cover"
                           width={300}
                           height={300}
                         />
@@ -383,7 +380,7 @@ const ProductDetail = ({ id }: { id: string }) => {
                         key={index}
                         src={el}
                         alt="product image"
-                        className="!w-full !h-[full] object-cover"
+                        className="!w-full !h-full object-cover"
                         width={300}
                         height={300}
                       />
@@ -615,7 +612,7 @@ const ProductDetail = ({ id }: { id: string }) => {
               <SweetAlert2
                 customClass={{
                   popup:
-                    " h-[90vh]  flex justify-center items-center w-auto  !bg-transparent ",
+                    " h-[90vh]  flex justify-center items-center !w-screen  !bg-transparent ",
                 }}
                 didClose={() => {
                   setSwalProps({
@@ -625,15 +622,15 @@ const ProductDetail = ({ id }: { id: string }) => {
                 }}
                 {...swalProps}
               >
-                <div className="  mx-12">
+                <div>
                   <Carousel>
-                    <CarouselContent className=" mx-auto">
+                    <CarouselContent>
                       {productData?.mediaUrls
                         ?.map((el: any) => el.url)
                         ?.map((el: any, index: any) => (
                           <CarouselItem
                             key={index}
-                            className=" flex  w-1/2 justify-center items-center"
+                            className=" flex w-full justify-center items-center"
                           >
                             <div className=" relative">
                               <Image
@@ -641,7 +638,7 @@ const ProductDetail = ({ id }: { id: string }) => {
                                 width={300}
                                 height={300}
                                 alt=""
-                                className=" w-[auto] flex justify-center items-center object-cover lg:object-contain mx-auto my-auto lg:!h-[850px] !h-[500px]"
+                                className=" w-full flex justify-center items-center object-cover lg:object-contain mx-auto my-auto lg:!h-[850px] !h-[500px]"
                               />
                               <Button
                                 variant={"ghost"}
