@@ -97,7 +97,7 @@ const ProductDetail = ({ id }: { id: string }) => {
     return data;
   };
 
-  const { data: wishlistData } = useSWR(
+  const { data: wishlistData, mutate } = useSWR(
     `${Backend_URL}/wishlist`,
     getWishlistData
   );
@@ -165,6 +165,8 @@ const ProductDetail = ({ id }: { id: string }) => {
       )?.productSizing as string;
 
       setSelectedSize(initialSize);
+
+      setImagesToShow(productData.mediaUrls.map((el: any) => el?.url));
 
       const sizes = new Set(
         productData?.productVariants
@@ -267,6 +269,45 @@ const ProductDetail = ({ id }: { id: string }) => {
     }
   };
 
+  const [deleteId, setDeleteId] = useState<number | null>(null);
+
+  const deleteData = async (url: string) => {
+    try {
+      const token =
+        typeof window !== "undefined" && localStorage.getItem("accessToken");
+      if (!token) {
+        throw new Error("No access token found");
+      }
+
+      const options: RequestInit = {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      const response = await fetch(url, options);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "An error occurred");
+      }
+
+      return data;
+    } catch (error: any) {
+      console.error("Fetch API Error:", error.message);
+      throw new Error(error.message || "An error occurred");
+    }
+  };
+
+  const { trigger: deleteItem } = useSWRMutation(
+    deleteId !== null ? `${Backend_URL}/wishlist/${deleteId}` : null,
+    deleteData
+  );
+
+  console.log(imageToShow);
+
   return (
     <>
       {isLoading ? (
@@ -355,9 +396,9 @@ const ProductDetail = ({ id }: { id: string }) => {
             <div className="grid lg:grid-cols-12 gap-5 lg:gap-0 h-auto">
               <div className="overflow-auto w-full lg:col-span-6">
                 <div className=" flex gap-3 lg:flex-col w-full lg:h-[860px] overflow-auto h-[600px]">
-                  {imageToShow.length < 1 ? (
+                  {imageToShow.length > 0 && (
                     <>
-                      {productData.mediaUrls.map(({ url }: any, index: any) => (
+                      {imageToShow.map((el: any, index: any) => (
                         <Image
                           key={index}
                           onClick={() =>
@@ -366,25 +407,14 @@ const ProductDetail = ({ id }: { id: string }) => {
                               show: true,
                             })
                           }
-                          src={url}
-                          alt="product image"
-                          className="!w-full !h-full object-cover"
+                          src={el}
+                          alt=""
+                          className="!w-full !h-full object-contain"
                           width={300}
                           height={300}
                         />
                       ))}
                     </>
-                  ) : (
-                    imageToShow.map((el, index) => (
-                      <Image
-                        key={index}
-                        src={el}
-                        alt="product image"
-                        className="!w-full !h-full object-cover"
-                        width={300}
-                        height={300}
-                      />
-                    ))
                   )}
                 </div>
               </div>
@@ -483,6 +513,7 @@ const ProductDetail = ({ id }: { id: string }) => {
                                   onClick={() => {
                                     handleColorChange(colorCode);
                                     setVariantId(id);
+                                    setImagesToShow([mediaUrl]);
                                     setTotalAvailable(1);
                                   }}
                                   className={`cursor-pointer rounded-full p-1 ${
@@ -590,9 +621,34 @@ const ProductDetail = ({ id }: { id: string }) => {
                       Add to cart
                     </Button>
                     <Button
-                      className=" h-10"
-                      onClick={() => addToWishList()}
+                      onClick={async (e) => {
+                        e.stopPropagation();
+
+                        if (
+                          wishlistData?.data
+                            .flatMap((el: any) => el.wishlistRecords)
+                            .map((el: any) => el?.productId)
+                            .includes(productData?.id)
+                        ) {
+                          await setDeleteId(
+                            wishlistData?.data
+                              .flatMap((el: any) => el.wishlistRecords)
+                              .find(
+                                (el: any) => el?.productId == productData?.id
+                              )?.id
+                          );
+                          const res = await deleteItem();
+                          if (res) {
+                            mutate();
+                          }
+                          return;
+                        } else {
+                          await addToWishList();
+                        }
+                      }}
                       variant={"outline"}
+                      className=" h-10"
+                      size={"sm"}
                     >
                       {wishlistData?.data
                         .flatMap((el: any) => el.wishlistRecords)
@@ -625,36 +681,34 @@ const ProductDetail = ({ id }: { id: string }) => {
                 <div>
                   <Carousel>
                     <CarouselContent>
-                      {productData?.mediaUrls
-                        ?.map((el: any) => el.url)
-                        ?.map((el: any, index: any) => (
-                          <CarouselItem
-                            key={index}
-                            className=" flex w-full justify-center items-center"
-                          >
-                            <div className=" relative">
-                              <Image
-                                src={el}
-                                width={300}
-                                height={300}
-                                alt=""
-                                className=" w-full flex justify-center items-center object-cover lg:object-contain mx-auto my-auto lg:!h-[850px] !h-[500px]"
-                              />
-                              <Button
-                                variant={"ghost"}
-                                className=" absolute top-0 right-0"
-                                onClick={() => {
-                                  setSwalProps({
-                                    ...swalProps,
-                                    show: false,
-                                  });
-                                }}
-                              >
-                                <X />
-                              </Button>
-                            </div>
-                          </CarouselItem>
-                        ))}
+                      {imageToShow?.map((el: any, index: any) => (
+                        <CarouselItem
+                          key={index}
+                          className=" flex w-full justify-center items-center"
+                        >
+                          <div className=" relative">
+                            <Image
+                              src={el}
+                              width={300}
+                              height={300}
+                              alt=""
+                              className="  w-full flex justify-center items-center object-contain lg:object-contain mx-auto my-auto lg:!h-[850px] !h-[500px]"
+                            />
+                            <Button
+                              variant={"ghost"}
+                              className=" absolute top-0 right-0"
+                              onClick={() => {
+                                setSwalProps({
+                                  ...swalProps,
+                                  show: false,
+                                });
+                              }}
+                            >
+                              <X />
+                            </Button>
+                          </div>
+                        </CarouselItem>
+                      ))}
                     </CarouselContent>
                     <CarouselPrevious />
                     <CarouselNext />

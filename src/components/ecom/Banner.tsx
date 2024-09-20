@@ -16,19 +16,19 @@ const Banner = () => {
   );
 
   return (
-    <div className="">
+    <div className=" lg:h-screen">
       <div className="flex justify-center object-contain items-center">
         <Carousel
-          plugins={[
-            Autoplay({
-              delay: 2000,
-            }),
-          ]}
+          // plugins={[
+          //   Autoplay({
+          //     delay: 2000,
+          //   }),
+          // ]}
           className="w-full"
         >
           <CarouselContent>
             {error || isLoading ? (
-              <CarouselItem className=" h-[400px] lg:h-[600px] flex justify-center items-center lg:w-[1600px]  bg-neutral-600"></CarouselItem>
+              <CarouselItem className=" h-[400px] lg:h-[600px] flex justify-center items-center lg:w-[1260px]  bg-neutral-600"></CarouselItem>
             ) : (
               <>
                 {data?.data
@@ -36,7 +36,7 @@ const Banner = () => {
                   .map(({ id, desktopImage, mobileImage }: any) => (
                     <CarouselItem
                       key={id}
-                      className=" h-[400px] lg:h-[600px] w-full flex justify-center items-center "
+                      className=" h-full w-full flex justify-center items-center "
                     >
                       <Image
                         src={desktopImage}

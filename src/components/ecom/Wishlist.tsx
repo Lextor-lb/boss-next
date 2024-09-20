@@ -98,7 +98,7 @@ const WishList = ({ closeRef }: any) => {
   return (
     <div className=" space-y-3 bg-white pt-4 z-50 overflow-auto h-[90%] relative">
       {data?.data.flatMap((el: any) => el.wishlistRecords).length == 0 ? (
-        <p>Your WishList is empty!</p>
+        <p>Your Wishlist is empty!</p>
       ) : (
         <div className=" h-[90%] overflow-auto space-y-3">
           {data?.data

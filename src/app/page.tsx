@@ -53,7 +53,7 @@ export default function Home() {
         ) : (
           <>
             <Container>
-              <div className=" flex flex-col gap-[40px] lg:pt-24 pt-12">
+              <div className=" flex flex-col gap-[40px] lg:pt-12 pt-6">
                 <div className=" flex flex-col gap-[15px]">
                   <BreadCrumbComponent path="Home" currentPage="Best Sellers" />
                   <Heading

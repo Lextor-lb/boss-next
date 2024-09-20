@@ -62,6 +62,16 @@ const Footer = () => {
               <li onClick={() => router.push("/contact-us")}>contact us</li>
               <li onClick={() => router.push("/about-us")}>about us</li>
               <li onClick={() => handleLogin()}>Login</li>
+              <li
+                onClick={() => {
+                  typeof window !== "undefined" &&
+                    localStorage.removeItem("accessToken");
+                  localStorage.removeItem("userId");
+                  router.push("/");
+                }}
+              >
+                Logout
+              </li>
             </ul>
           </div>
           <div className=" space-y-3">

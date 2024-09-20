@@ -7,8 +7,7 @@ const AppLayout = ({ children }: any) => {
   return (
     <div>
       <Navbar />
-      <div className="h-[119px]"></div>
-      {/* <div className=" flex flex-col gap-[40px]"> */}
+      <div className=" h-[120px] lg:h-[119px]"></div>
       {children}
       <CallToAction />
       <Footer />

@@ -43,10 +43,11 @@ export default function Sidebar() {
     return getFetch(url);
   };
 
-  const { data } = useSWR(`${Backend_URL}/orders`, getData);
-  const { data: userData } = useSWR(`${Backend_URL}/users/me`, getData);
+  const { data } = useSWR(`${Backend_URL}/orders`, getData, {
+    refreshInterval: 5000,
+  });
 
-  console.log(userData);
+  const { data: userData } = useSWR(`${Backend_URL}/users/me`, getData);
 
   const sidebarNavHeading = [
     {

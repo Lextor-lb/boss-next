@@ -166,7 +166,7 @@ const UserAddressPage = () => {
 
   useEffect(() => {
     if (addressData) {
-      setSelectedAddress(`${addressData[0]?.id}` );
+      setSelectedAddress(`${addressData[0]?.id}`);
     }
   }, [addressData]);
 
@@ -226,18 +226,6 @@ const UserAddressPage = () => {
     },
   });
 
-  // useEffect(() => {
-  //   if (data) {
-  //     reset({
-  //       city: "",
-  //       township: "",
-  //       street: "",
-  //       company: "",
-  //       addressDetail: "",
-  //     });
-  //   }
-  // }, [data]);
-
   const [swalProps2, setSwalProps2] = useState({
     show: false,
     showConfirmButton: false,
@@ -279,6 +267,7 @@ const UserAddressPage = () => {
     if (res) {
       setIsEditing(false);
       setOpen(false);
+      mutate();
     }
   };
 

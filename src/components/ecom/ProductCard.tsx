@@ -50,11 +50,6 @@ const ProductCard = ({
     setIsClient(true);
   }, []);
 
-  const [swalProps, setSwalProps] = useState({
-    show: false,
-    showConfirmButton: false,
-  });
-
   const postData = async (url: string, { arg }: { arg: any }) => {
     try {
       const token = isClient && localStorage.getItem("accessToken");
@@ -193,7 +188,6 @@ const ProductCard = ({
           <Button
             onClick={async (e) => {
               e.stopPropagation();
-
               if (
                 wishlistData?.data
                   .flatMap((el: any) => el.wishlistRecords)
@@ -277,32 +271,40 @@ const ProductCard = ({
           </p>
         )}
       </div>
-      <AlertDialog>
-        <AlertDialogTrigger asChild>
-          <Button className=" hidden" ref={alertRef} variant="outline">
-            Add to wishlist
-          </Button>
-        </AlertDialogTrigger>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogDescription>
-              Your wishlist is currently empty. Sign in or create an account to
-              save your wishlist across all your devices.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={(e) => {
-                handleLogin();
-                e.stopPropagation();
-              }}
+
+      <div onClick={(e) => e.stopPropagation()}>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button
+              className=" hidden"
+              onClick={(e) => e.stopPropagation()}
+              ref={alertRef}
+              variant="outline"
             >
-              Sign in
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+              Add to wishlist
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogDescription>
+                Your wishlist is currently empty. Sign in or create an account
+                to save your wishlist across all your devices.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={(e) => {
+                  handleLogin();
+                  e.stopPropagation();
+                }}
+              >
+                Sign in
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
     </div>
   );
 };
