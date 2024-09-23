@@ -35,12 +35,17 @@ const CategoryPage = ({ params }: { params: any }) => {
 
   const { data, isLoading, error } = useSWR(
     searchInputValue !== ""
-      ? `${Backend_URL}/ecommerce-Products/riddle/${params.slug[0]}?search=${searchInputValue}`
-      : `${Backend_URL}/ecommerce-Products/riddle?categoryId=${decodeURIComponent(
+      ? `${Backend_URL}/ecommerce-Products/riddle?sortCategory=${decodeURIComponent(
+          params.slug[1]
+        )}&search=${searchInputValue}`
+      : `${Backend_URL}/ecommerce-Products/riddle?sortCategory=${decodeURIComponent(
           params.slug[1]
         )}?page=${page}&limit=${12}`,
     getData
   );
+
+  console.log(data);
+  console.log(decodeURIComponent(params.slug[1]));
 
   return (
     <div className=" py-8 space-y-12">

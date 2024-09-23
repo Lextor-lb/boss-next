@@ -87,11 +87,7 @@ const CatListControlBar = ({
         ? z
             .array(
               z.object({
-                file: z
-                  .instanceof(File)
-                  .refine((file) => validImageTypes.includes(file.type), {
-                    message: "Invalid file type",
-                  }),
+                file: z.instanceof(File),
               })
             )
             .min(0, { message: "At least one image is required" })
