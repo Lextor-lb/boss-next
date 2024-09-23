@@ -95,6 +95,7 @@ const WishList = ({ closeRef }: any) => {
     deleteData
   );
 
+
   return (
     <div className=" space-y-3 bg-white pt-4 z-50 overflow-auto h-[90%] relative">
       {data?.data.flatMap((el: any) => el.wishlistRecords).length == 0 ? (
@@ -104,7 +105,13 @@ const WishList = ({ closeRef }: any) => {
           {data?.data
             .flatMap((el: any) => el.wishlistRecords)
             .map((data: any, index: number) => (
-              <div key={index}>
+              <div
+                onClick={() => {
+                  router.push(`/products/${data?.productId}`);
+                }}
+                className=" cursor-pointer"
+                key={index}
+              >
                 <div className=" grid grid-cols-3 gap-4">
                   <div className=" col-span-1">
                     <div className=" relative">

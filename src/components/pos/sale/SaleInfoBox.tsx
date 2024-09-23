@@ -199,11 +199,7 @@ const SaleInfoBox = ({
         (voucher as any).discount = paymentInfo.discount;
       }
 
-      console.log(voucher);
-
       const res = await sell(voucher);
-
-      console.log(res);
 
       if (res.status) {
         setData([]);

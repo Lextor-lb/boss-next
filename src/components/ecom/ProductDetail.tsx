@@ -306,7 +306,6 @@ const ProductDetail = ({ id }: { id: string }) => {
     deleteData
   );
 
-  console.log(imageToShow);
 
   return (
     <>
@@ -566,7 +565,7 @@ const ProductDetail = ({ id }: { id: string }) => {
                         </div>
                       </div>
                       <div>
-                        <p className="text-neutral-500 mb-2 text-xs lg:text-sm uppercase">
+                        <p className="text-neutral-500 mb-2 mt-5 text-xs lg:text-sm uppercase">
                           Quantity
                         </p>
                         <div className=" rounded-md border w-[130px] flex items-center">
@@ -647,7 +646,7 @@ const ProductDetail = ({ id }: { id: string }) => {
                         }
                       }}
                       variant={"outline"}
-                      className=" h-10"
+                      className=" h-10 !bg-transparent "
                       size={"sm"}
                     >
                       {wishlistData?.data

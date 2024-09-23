@@ -609,7 +609,34 @@ const FilterForm = ({ closeRef }: any) => {
             </>
           )}
         </div>
+
+        <div className="flex justify-end">
+          <Button
+            type="button"
+            onClick={() => {
+              setGenders([]);
+              setBrands([]);
+              setBrandName([]);
+              setType([]);
+              setRange([50000, 0]);
+              setSize([]);
+              setCategory([]);
+              setFitting([]);
+              setSize([]);
+              setSizeData([]);
+              setFittingData([]);
+              setCategoryData([]);
+              setCategoryName("");
+              setFittingName("");
+            }}
+            className="  underline"
+            variant={"link"}
+          >
+            Reset
+          </Button>
+        </div>
       </div>
+
       <div className=" absolute bottom-0 w-full  flex justify-between">
         <Button
           onClick={() => closeRef.current && closeRef.current.click()}

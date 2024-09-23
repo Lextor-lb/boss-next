@@ -9,7 +9,6 @@ const findToken = async () => {
   return token;
 };
 
-
 export const getFetch = async (
   url: string,
   body: any = null,
@@ -65,12 +64,8 @@ export const postFetch = async (
       body: JSON.stringify(body),
     };
 
-    console.log("Request options:", options);
-
     const response = await fetch(url, options);
     const data = await response.json();
-
-    console.log("Response data:", data);
 
     if (!response.ok) {
       throw new Error(data.message || "An error occurred");
@@ -104,12 +99,8 @@ export const postMediaFetch = async (
       body: body,
     };
 
-    console.log("Request options:", options);
-
     const response = await fetch(url, options);
     const data = await response.json();
-
-    console.log("Response data:", data);
 
     if (!response.ok) {
       throw new Error(data.message || "An error occurred");
@@ -146,8 +137,6 @@ export const deleteFetch = async (
     const response = await fetch(url, options);
     const data = await response.json();
 
-    console.log("Response data:", data);
-
     if (!response.ok) {
       throw new Error(data.message || "An error occurred");
     }
@@ -180,8 +169,6 @@ export const deleteSingleFetch = async (
 
     const response = await fetch(url, options);
     const data = await response.json();
-
-    console.log("Response data:", data);
 
     if (!response.ok) {
       throw new Error(data.message || "An error occurred");
@@ -216,13 +203,8 @@ export const putFetch = async (
       body: JSON.stringify(body),
     };
 
-    console.log("Request options:", body);
-
     const response = await fetch(url, options);
     const data = await response.json();
-
-    console.log("Response data:", data);
-    console.log(response);
 
     if (!response.ok) {
       throw new Error(data.message || "An error occurred");
@@ -256,12 +238,10 @@ export const patchFetch = async (
       body: JSON.stringify(body),
     };
 
-    console.log("Request options:", body);
 
     const response = await fetch(url, options);
     const data = await response.json();
 
-    console.log("Response data:", data);
 
     if (!response.ok) {
       throw new Error(data.message || "An error occurred");
@@ -307,7 +287,6 @@ export const editProductFetch = async (
       data = await response.text();
     }
 
-    console.log("Response data:", data);
 
     if (!response.ok) {
       throw new Error(data.message || "An error occurred");
@@ -353,7 +332,6 @@ export const editSliderFetch = async (
       data = await response.text();
     }
 
-    console.log("Response data:", data);
 
     if (!response.ok) {
       throw new Error(data.message || "An error occurred");

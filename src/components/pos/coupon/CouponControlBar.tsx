@@ -113,7 +113,6 @@ const CouponControlBar = ({
   const closeRef = useRef<HTMLButtonElement | null>(null);
 
   const onSubmit = async (value: any) => {
-    console.log(value);
     const formattedDate = formatDate(new Date(value.expiredDate));
     value.expiredDate = formattedDate;
 
@@ -130,7 +129,6 @@ const CouponControlBar = ({
           couponId: value.couponId,
           expiredDate: value.expiredDate,
         });
-    console.log(res);
     if (res) {
       reset({
         name: "",

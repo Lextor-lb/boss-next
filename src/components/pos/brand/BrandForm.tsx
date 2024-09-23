@@ -121,7 +121,6 @@ const BrandForm: React.FC<FormProps> = ({
         resetValue();
         refetch();
       }
-      console.log(res);
     } catch (error) {
       console.error("Error occurred:", error);
     }

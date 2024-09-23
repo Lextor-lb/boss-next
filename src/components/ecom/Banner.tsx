@@ -19,11 +19,11 @@ const Banner = () => {
     <div className=" lg:h-screen">
       <div className="flex justify-center object-contain items-center">
         <Carousel
-          // plugins={[
-          //   Autoplay({
-          //     delay: 2000,
-          //   }),
-          // ]}
+          plugins={[
+            Autoplay({
+              delay: 1500,
+            }),
+          ]}
           className="w-full"
         >
           <CarouselContent>

@@ -100,9 +100,6 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
       const result = await signInWithPopup(auth, provider);
       const idToken = await result.user.getIdToken(true);
 
-      console.log(result);
-      console.log(idToken);
-
       setIdToken(idToken);
     } catch (error) {
       console.error("Error during login:", error);
@@ -113,7 +110,6 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     if (data) {
-      console.log("API response:", data);
       if (typeof window !== "undefined") {
         localStorage.setItem("userId", data.user.id);
         localStorage.setItem("email", data.user.email);

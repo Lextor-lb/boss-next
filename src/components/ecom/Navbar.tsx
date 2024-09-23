@@ -10,6 +10,8 @@ import { useAppProvider } from "@/app/Provider/AppProvider";
 import { HamburgerMenuIcon } from "@radix-ui/react-icons";
 import Cart from "./Cart";
 import Wishlist from "./Wishlist";
+import useSWR from "swr";
+import { Backend_URL } from "@/lib/fetch";
 
 const Navbar = () => {
   const router = useRouter();
@@ -33,6 +35,38 @@ const Navbar = () => {
   };
 
   const { handleLogin } = useAppProvider();
+
+  const getWishlistData = async (url: string) => {
+    const token = localStorage.getItem("accessToken");
+
+    if (!token) {
+      throw new Error("No access token found");
+    }
+
+    const options: RequestInit = {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "multipart/form-data",
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    const response = await fetch(url, options);
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "An error occurred");
+    }
+
+    return data;
+  };
+
+  const {
+    data: wishlistData,
+    error: wishlistError,
+    mutate,
+  } = useSWR(`${Backend_URL}/wishlist`, getWishlistData);
 
   return (
     <div className=" select-none">
@@ -151,7 +185,18 @@ const Navbar = () => {
               <div>
                 <ControlSheet
                   closeRef={closeRef}
-                  buttonName={<Heart />}
+                  buttonName={
+                    <>
+                      {wishlistData?.data?.length > 0 ? (
+                        <>
+                        
+                          <Heart className=" fill-red-500 stroke-red-500" />
+                        </>
+                      ) : (
+                        <Heart />
+                      )}
+                    </>
+                  }
                   title="Wishlist"
                   desc="Your wishlist is here"
                 >

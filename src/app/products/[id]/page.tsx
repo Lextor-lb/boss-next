@@ -21,8 +21,6 @@ export async function generateMetadata({
     (res) => res.json()
   );
 
-  console.log(product);
-
   if (!product) {
     notFound(); // Handle not found
   }

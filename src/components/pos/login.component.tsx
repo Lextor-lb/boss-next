@@ -77,9 +77,6 @@ export default function Login() {
               </p>
               <p className="text-sm tracking-wider font-medium">
                 Welcome Back!
-                <span className="font-normal opacity-75">
-                  Please enter details
-                </span>
               </p>
             </div>
             <form onSubmit={handleSubmit(onSubmit)}>

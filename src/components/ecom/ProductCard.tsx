@@ -133,6 +133,7 @@ const ProductCard = ({
     error: wishlistError,
     mutate,
   } = useSWR(`${Backend_URL}/wishlist`, getWishlistData);
+
   const [deleteId, setDeleteId] = useState<number | null>(null);
 
   const deleteData = async (url: string) => {
@@ -209,7 +210,7 @@ const ProductCard = ({
               }
             }}
             variant={"outline"}
-            className=" h-6 w-6 p-0.5 rounded-full"
+            className=" h-6 w-6 p-0.5 !bg-transparent !border-none rounded-full"
             size={"sm"}
           >
             {wishlistData?.data

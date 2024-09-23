@@ -151,7 +151,6 @@ const CatListControlBar = ({
   const closeRef = useRef<HTMLButtonElement | null>(null);
 
   const onSubmit = async (value: FormData) => {
-    console.log(value);
     const formData = new FormData();
     formData.append("name", value.name);
     formData.append("productCategoryId", value.productCategoryId);

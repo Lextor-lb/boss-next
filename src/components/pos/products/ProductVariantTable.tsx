@@ -119,7 +119,6 @@ const ProductVariableTable = ({
                           className="!p-0"
                           onClick={() => {
                             handleEdit(id);
-                            console.log("clicked", id);
                           }}
                         >
                           <Edit2 />

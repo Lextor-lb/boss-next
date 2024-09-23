@@ -139,6 +139,9 @@ const AddProductPageFive = () => {
     setImage(undefined);
     setSize("");
     setEditMode({ status: false, id: "" });
+    if (inputRef?.current) {
+      inputRef.current.value = "";
+    }
   };
 
   const handleProceed = () => {

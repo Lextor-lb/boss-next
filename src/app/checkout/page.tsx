@@ -395,8 +395,6 @@ const Checkout = () => {
       }
     });
 
-    console.log(newOrderRecord);
-
     if (res?.ok) {
       const dataToOrder: OrderData = {
         orderCode: `${generateLongNumber(7)}`,
@@ -425,8 +423,6 @@ const Checkout = () => {
       if (remark !== "") {
         dataToOrder.remark = remark;
       }
-
-      console.log(dataToOrder);
 
       const orderRes = await order(dataToOrder);
       if (orderRes?.status) {

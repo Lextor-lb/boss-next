@@ -67,7 +67,6 @@ const OrderTable = ({ data, refetch }: any) => {
   );
 
   const processOrder = async (type: any) => {
-    console.log("here", type);
     const data: processDataType = {
       orderStatus: `${type}`,
     };
@@ -78,11 +77,8 @@ const OrderTable = ({ data, refetch }: any) => {
       data.cancelReason = cancelReason;
     }
 
-    console.log(cancelReason);
 
-    console.log(data);
     const res = await process(data);
-    console.log(res);
     if (res?.status) {
       refetch();
       closeRef.current && closeRef.current.click();

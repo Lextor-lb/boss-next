@@ -99,7 +99,6 @@ const AddCustomerForm = ({ closeRef, handleClose }: any) => {
 
   const onSubmit = async (value: any) => {
     value.specialId = parseInt(value.specialId);
-    console.log(value);
     const res = await add(value);
     handleClose();
   };

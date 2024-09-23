@@ -160,7 +160,9 @@ const AddProductPageSix = () => {
           </Button>
         </div>
       </div>
+
       {error && <p className="capitalize text-red-500">{error.message}</p>}
+
       <hr className="py-3" />
       <div className=" space-y-4">
         {/* photos */}
