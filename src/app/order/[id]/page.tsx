@@ -49,12 +49,12 @@ const Order = ({ params }: any) => {
   };
 
   const { data, isLoading, error, mutate } = useSWR(
-    userId !== null ? `${Backend_URL}/orders/${params.id}` : null,
+    userId !== null ? `${Backend_URL}/orders/ecommerce/${params.id}` : null,
     getData,
     {
       refreshInterval: 4000,
       errorRetryCount: 0,
-      errorRetryInterval: 6000,
+      errorRetryInterval: 1000000,
     }
   );
 

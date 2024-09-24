@@ -48,6 +48,7 @@ type orderItem = {
   ids: any;
   availableQuantity: number;
   availableIds: number[];
+  productId: number;
 };
 
 const ProductDetail = ({ id }: { id: string }) => {
@@ -128,6 +129,7 @@ const ProductDetail = ({ id }: { id: string }) => {
           ? [
               {
                 itemId: Date.now(),
+                productId: productData?.id as number,
                 name: productData?.name as string,
                 quantity: quantity,
                 salePrice: productData?.salePrice as number,
@@ -305,7 +307,6 @@ const ProductDetail = ({ id }: { id: string }) => {
     deleteId !== null ? `${Backend_URL}/wishlist/${deleteId}` : null,
     deleteData
   );
-
 
   return (
     <>

@@ -26,7 +26,7 @@ export async function generateMetadata({
   }
 
   return {
-    title: "Boss Nation", // Dynamic title based on product data
+    title: "Boss Nation",
     description:
       product.description || `Details about Product ${product.productCode}`,
     keywords: [product.description, `Boss ${product.productCode}`],

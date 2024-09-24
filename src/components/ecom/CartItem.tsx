@@ -4,18 +4,20 @@ import { Button } from "../ui/button";
 import { X } from "lucide-react";
 import { useAppProvider } from "@/app/Provider/AppProvider";
 import { Badge } from "../ui/badge";
+import { useRouter } from "next/navigation";
 
 const CartItem = ({ data }: any) => {
-  const {
-    cartItems,
-    setCartItems,
-    orderRecord,
-    setOrderRecord,
-    removeFromCart,
-  } = useAppProvider();
+  const { removeFromCart } = useAppProvider();
+
+  const router = useRouter();
 
   return (
-    <div>
+    <div
+      onClick={() => {
+        router.push(`/products/${data?.productId}`);
+      }}
+      className=" cursor-pointer"
+    >
       <div className=" grid grid-cols-3 gap-4">
         <div className=" col-span-1">
           <div className=" relative">
@@ -27,7 +29,10 @@ const CartItem = ({ data }: any) => {
               alt=""
             />
             <Button
-              onClick={() => removeFromCart(data.itemId)}
+              onClick={(e) => {
+                removeFromCart(data.itemId);
+                e.stopPropagation();
+              }}
               variant={"outline"}
               size={"sm"}
               className=" absolute w-5 h-5 right-1 !p-0 top-0"
@@ -78,7 +83,10 @@ const CartItem = ({ data }: any) => {
               </div>
             ) : (
               <p className=" text-xs lg:text-sm">
-                {new Intl.NumberFormat("ja-JP").format(data.salePrice)} MMK
+                {new Intl.NumberFormat("ja-JP").format(
+                  data?.quantity * data.salePrice
+                )}{" "}
+                MMK
               </p>
             )}
           </div>

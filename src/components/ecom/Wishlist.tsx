@@ -95,7 +95,6 @@ const WishList = ({ closeRef }: any) => {
     deleteData
   );
 
-
   return (
     <div className=" space-y-3 bg-white pt-4 z-50 overflow-auto h-[90%] relative">
       {data?.data.flatMap((el: any) => el.wishlistRecords).length == 0 ? (
@@ -123,12 +122,13 @@ const WishList = ({ closeRef }: any) => {
                         alt=""
                       />
                       <Button
-                        onClick={async () => {
+                        onClick={async (e) => {
                           await setDeleteId(data?.id);
                           const res = await deleteItem();
                           if (res) {
                             mutate();
                           }
+                          e.stopPropagation();
                         }}
                         variant={"outline"}
                         size={"sm"}

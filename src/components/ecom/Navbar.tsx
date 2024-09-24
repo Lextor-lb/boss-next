@@ -91,7 +91,7 @@ const Navbar = () => {
                 setSearchInputValue("");
                 router.push("/");
               }}
-              className="lg:text-xl text-lg cursor-pointer font-semibold"
+              className="lg:text-xl font-serif text-lg cursor-pointer font-semibold"
             >
               Boss Nation
             </p>
@@ -189,7 +189,6 @@ const Navbar = () => {
                     <>
                       {wishlistData?.data?.length > 0 ? (
                         <>
-                        
                           <Heart className=" fill-red-500 stroke-red-500" />
                         </>
                       ) : (

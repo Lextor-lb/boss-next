@@ -7,9 +7,15 @@ import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
 
 const Cart = ({ closeRef }: any) => {
-  const { cartItems, totalCost, orderRecord } = useAppProvider();
+  const { cartItems, orderRecord } = useAppProvider();
+
+  const totalCost = orderRecord.reduce(
+    (pv: any, cv: any) => pv + cv.quantity * cv.priceAfterDiscount,
+    0
+  );
 
   const router = useRouter();
+
   return (
     <div className=" space-y-3 bg-white pt-4 z-50 overflow-auto h-[90%] relative">
       {orderRecord.length == 0 ? (
