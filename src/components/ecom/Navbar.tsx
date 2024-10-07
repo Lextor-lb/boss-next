@@ -66,11 +66,13 @@ const Navbar = () => {
     data: wishlistData,
     error: wishlistError,
     mutate,
-  } = useSWR(`${Backend_URL}/wishlist`, getWishlistData);
+  } = useSWR(`${Backend_URL}/wishlist`, getWishlistData, {
+    errorRetryCount: 0,
+  });
 
   return (
     <div className=" select-none">
-      <div className=" w-full z-[50] h-[40px] flex justify-center items-center border-0 fixed bg-[#333333]">
+      {/* <div className=" w-full z-[50] h-[40px] flex justify-center items-center border-0 fixed bg-[#333333]">
         <div
           onClick={() => {
             handleLogin();
@@ -82,8 +84,8 @@ const Navbar = () => {
           </span>
           <span>Sign up for exclusive offers!</span>
         </div>
-      </div>
-      <div className="z-[50] h-[80px] top-8 fixed flex justify-center items-center bg-secondary w-full border-b-2 border-input">
+      </div> */}
+      <div className="z-[50] h-[80px] fixed flex justify-center items-center bg-secondary w-full border-b-2 border-input">
         <Container className="flex justify-center flex-col h-full">
           <div className="grid grid-cols-2 lg:grid-cols-3 items-center gap-3">
             <p
@@ -106,6 +108,7 @@ const Navbar = () => {
               >
                 New In
               </p>
+
               <p
                 onClick={() => {
                   setSearchInputValue("");
@@ -115,6 +118,7 @@ const Navbar = () => {
               >
                 Men
               </p>
+
               <p
                 onClick={() => {
                   setSearchInputValue("");

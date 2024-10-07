@@ -3,7 +3,7 @@ import Container from "@/components/Container.components";
 import NavHeader from "@/components/pos/NavHeader";
 import { Backend_URL, getFetch, putFetch } from "@/lib/fetch";
 import React, { useState } from "react";
-import useSWR from "swr";
+import useSWR, { useSWRConfig } from "swr";
 import {
   Select,
   SelectContent,
@@ -35,14 +35,14 @@ const OrderDetailAdminPage = ({ params }: any) => {
     return getFetch(url);
   };
 
-  const { data, isLoading, mutate } = useSWR(
-    `${Backend_URL}/orders/${params.id}`,
-    getData
-  );
-
   const putFetcher = (url: string, { arg }: { arg: any }) => {
     return putFetch(url, arg);
   };
+
+  const { data, isLoading } = useSWR(
+    `${Backend_URL}/orders/${params.id}`,
+    getData
+  );
 
   const {
     data: processData,

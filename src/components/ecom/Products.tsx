@@ -49,10 +49,11 @@ const Products = ({
             <ProductSkeleton />
           </div>
         ) : (
-          <div className=" grid grid-cols-2 gap-x-[20px] gap-y-[45px] lg:grid-cols-4">
+          <div className=" grid grid-cols-1 gap-x-[20px] gap-y-[45px] lg:grid-cols-4">
             {data.length == 0 ? (
               <div className=" h-[500px] text-sm text-red-500 col-span-full text-center">
-                Opps. There is no product found!
+                Thank you for your interest. Unfortunately, this product is
+                currently unavailable
               </div>
             ) : (
               <>

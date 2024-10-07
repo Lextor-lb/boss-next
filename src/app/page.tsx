@@ -40,7 +40,7 @@ export default function Home() {
   const { data, error, isLoading } = useSWR(
     searchInputValue !== ""
       ? `${Backend_URL}/ecommerce-Products/riddle/man?search=${searchInputValue}`
-      : `${Backend_URL}/ecommerce-Products/riddle/man?limit=${12}`,
+      : `${Backend_URL}/ecommerce-Products/riddle/man?limit=${4}`,
     getData
   );
 
