@@ -23,7 +23,7 @@ const HotDealAlert = ({ data, isLoading }: any) => {
   return (
     <div className=" space-y-4 mb-12">
       <div className=" flex justify-between items-center">
-        <Heading header="Hot Deal Alert" desc="Check this out!" />
+        <Heading header="You Might Also Like" desc="Check this out!" />
         <div className=" hidden lg:flex gap-2">
           <Button
             onClick={() => previous.current && previous.current.click()}

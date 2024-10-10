@@ -123,12 +123,12 @@ const WishList = ({ closeRef }: any) => {
                       />
                       <Button
                         onClick={async (e) => {
+                          e.stopPropagation();
                           await setDeleteId(data?.id);
                           const res = await deleteItem();
                           if (res) {
                             mutate();
                           }
-                          e.stopPropagation();
                         }}
                         variant={"outline"}
                         size={"sm"}

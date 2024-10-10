@@ -42,7 +42,8 @@ const FilterForm = ({ closeRef }: any) => {
   const [sizeData, setSizeData] = useState([]);
   const [openSelect, setOpenSelect] = useState(false);
   const [openSelectFitting, setOpenSelectFitting] = useState(false);
-  const [categoryName, setCategoryName] = useState("");
+  const [categoryName, setCategoryName] = useState<string[]>([]);
+  const [typeName, setTypeName] = useState<string[]>([]);
   const [fittingName, setFittingName] = useState("");
 
   const router = useRouter();
@@ -59,6 +60,8 @@ const FilterForm = ({ closeRef }: any) => {
       setBrandName(filters.brandName || []);
       setSize(filters.size || [1, 5]);
       setCategory(filters.category || [1, 5]);
+      setCategoryName(filters.categoryName || []);
+      setTypeName(filters.typeName || []);
       setFitting(filters.fitting || [1, 5]);
     }
   }, [isClient]);
@@ -92,7 +95,11 @@ const FilterForm = ({ closeRef }: any) => {
   };
 
   const handleCategoryChange = (value: string | number) => {
-    setCategory([value]);
+    setCategory((prev) =>
+      prev.includes(value)
+        ? prev.filter((item) => item !== value)
+        : [...prev, value]
+    );
   };
 
   const handleFittingChange = (value: string | number) => {
@@ -146,12 +153,6 @@ const FilterForm = ({ closeRef }: any) => {
           .find((el: any) => el.id == category[0])?.productFittings
       );
 
-      setCategoryName(
-        typesData?.data
-          ?.flatMap((el: any) => el.productCategories)
-          ?.find((categoryEl: any) => categoryEl.id == category[0])?.name
-      );
-
       setFittingName(
         typesData?.data
           ?.flatMap((el: any) => el.productCategories)
@@ -195,7 +196,9 @@ const FilterForm = ({ closeRef }: any) => {
           brandName,
           size,
           category,
+          categoryName,
           fitting,
+          typeName,
         })
       );
 
@@ -235,20 +238,27 @@ const FilterForm = ({ closeRef }: any) => {
       queryParams.push(`max=${range[1]}`);
     }
 
-    // Create the URL with the query parameters
-    if (brandName.length > 0) {
-      const queryString =
-        queryParams.length > 0 ? `/${queryParams.join("&")}` : "";
-      router.push(`/products-filter${queryString}&page=1/${brandName}`);
-    } else {
-      const queryString =
-        queryParams.length > 0 ? `/${queryParams.join("&")}` : "";
-      router.push(`/products-filter${queryString}&page=1`);
-    }
+    const nameSegments = [
+      ...(brandName.length > 0 ? [`${brandName.join(", ")}`] : []),
+      ...(typeName.length > 0 ? [`${typeName.join(", ")}`] : []),
+      ...(categoryName.length > 0 ? [`${categoryName.join(", ")}`] : []),
+    ];
+
+    const queryString =
+      queryParams.length > 0 ? `/${queryParams.join("&")}` : "";
+
+    // Add nameSegments to the URL if there are any
+    const fullPath =
+      nameSegments.length > 0
+        ? `/products-filter${queryString}&page=1/${nameSegments.join("/")}`
+        : `/products-filter${queryString}&page=1`;
+
+    // Navigate to the constructed URL
+    router.push(fullPath);
   };
 
   return (
-    <form className=" h-[90%] relative overflow-auto" onSubmit={handleSubmit}>
+    <form className=" h-[90%] relative overflow-hidden" onSubmit={handleSubmit}>
       <div className="space-y-4 h-[90%] overflow-auto">
         <div className="space-y-1.5">
           <div
@@ -336,6 +346,8 @@ const FilterForm = ({ closeRef }: any) => {
           )}
         </div>
 
+        {/* types */}
+
         <div className="space-y-1.5">
           <div
             onClick={() => {
@@ -359,6 +371,11 @@ const FilterForm = ({ closeRef }: any) => {
                       key={id}
                       run={() => {
                         handleTypeChange(id);
+                        setTypeName((prev) =>
+                          prev.includes(name)
+                            ? prev.filter((item) => item !== name)
+                            : [...prev, name]
+                        );
                       }}
                       name={name}
                       value={id}
@@ -370,6 +387,7 @@ const FilterForm = ({ closeRef }: any) => {
           )}
         </div>
 
+        {/* categories */}
         <div className="space-y-1.5">
           <div
             onClick={() => {
@@ -386,65 +404,42 @@ const FilterForm = ({ closeRef }: any) => {
           </div>
           {open.includes(5) && (
             <div className=" w-full">
-              <Popover open={openSelect} onOpenChange={setOpenSelect}>
-                <PopoverTrigger className=" w-full" asChild>
-                  <Button
-                    variant="outline"
-                    role="combobox"
-                    className="w-full justify-between !rounded-md"
-                  >
-                    {categoryName ? categoryName : "Categories"}
-                    <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className=" w-full h-full p-0">
-                  <Command defaultValue={category[0] as string}>
-                    <CommandInput
-                      placeholder="Search Category..."
-                      className="h-9"
-                    />
-                    <CommandEmpty>No category found!</CommandEmpty>
-                    <CommandList>
-                      <CommandGroup>
-                        {categoryData?.map(({ id, name }: any) => (
-                          <CommandItem
-                            className={cn(
-                              category[0] === id ? "bg-accent" : ""
-                            )}
-                            key={id}
-                            value={name}
-                            onSelect={() => {
-                              const selectedCategory = categoryData.find(
-                                (el: any) => el.id === id
-                              );
-                              setSizeData(
-                                selectedCategory?.productFittings || []
-                              );
-                              setOpenSelect(false);
-                              setCategoryName(selectedCategory?.name || ""); // Set categoryName properly
-                              handleCategoryChange(id); // Pass the id instead of name
-                            }}
-                          >
-                            <Check
-                              className={cn(
-                                "mr-2 h-4 w-4",
-                                category.includes(id)
-                                  ? "opacity-100"
-                                  : "opacity-0"
-                              )}
-                            />
-                            {name}
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
-                    </CommandList>
-                  </Command>
-                </PopoverContent>
-              </Popover>
+              <>
+                {categoryData?.length > 0 && (
+                  <div className=" space-y-1.5 basis-1/2">
+                    {categoryData?.map(({ id, name }: any) => (
+                      <div
+                        key={id}
+                        className="flex items-center select-none space-x-2 bg-secondary p-3"
+                      >
+                        <Checkbox
+                          id={name}
+                          checked={category.includes(id)}
+                          onCheckedChange={() => {
+                            handleCategoryChange(id);
+                            setCategoryName((prev) =>
+                              prev.includes(name)
+                                ? prev.filter((item) => item !== name)
+                                : [...prev, name]
+                            );
+                          }}
+                        />
+                        <label
+                          htmlFor={name}
+                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        >
+                          {name}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </>
             </div>
           )}
         </div>
 
+        {/* fittings */}
         <div className="space-y-1.5">
           <div
             onClick={() => {
@@ -521,6 +516,8 @@ const FilterForm = ({ closeRef }: any) => {
           )}
         </div>
 
+        {/* sizes */}
+
         <div className="space-y-1.5">
           <div
             onClick={() => {
@@ -537,7 +534,7 @@ const FilterForm = ({ closeRef }: any) => {
           </div>
           {open.includes(6) && (
             <>
-              {sizeData.length > 0 && (
+              {sizeData?.length > 0 && (
                 <div className=" space-y-1.5 basis-1/2">
                   {sizeData?.map(({ id, name }: any) => (
                     <div
@@ -565,7 +562,7 @@ const FilterForm = ({ closeRef }: any) => {
           )}
         </div>
 
-        <div className="space-y-1.5 ">
+        {/* <div className="space-y-1.5 ">
           <div
             onClick={() => {
               if (open.includes(4)) {
@@ -608,7 +605,7 @@ const FilterForm = ({ closeRef }: any) => {
               </div>
             </>
           )}
-        </div>
+        </div> */}
 
         <div className="flex justify-end">
           <Button
@@ -626,7 +623,7 @@ const FilterForm = ({ closeRef }: any) => {
               setSizeData([]);
               setFittingData([]);
               setCategoryData([]);
-              setCategoryName("");
+              setCategoryName([]);
               setFittingName("");
             }}
             className="  underline"

@@ -308,6 +308,13 @@ const ProductDetail = ({ id }: { id: string }) => {
     deleteData
   );
 
+  const { data: dealData, isLoading: isDealLoading } = useSWR(
+    `${Backend_URL}/ecommerce-Products/riddle/${
+      productData?.category
+    }?limit=${4}`,
+    getData
+  );
+
   return (
     <>
       {isLoading ? (
@@ -719,7 +726,7 @@ const ProductDetail = ({ id }: { id: string }) => {
 
             <hr className=" my-8" />
 
-            {/* <HotDealAlert data={data} isLoading={dealLoading} /> */}
+            <HotDealAlert data={dealData} isLoading={isDealLoading} />
           </div>
 
           <AlertDialog>
