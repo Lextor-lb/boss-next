@@ -16,10 +16,18 @@ import useSWR from "swr";
 import { useAppProvider } from "@/app/Provider/AppProvider";
 import ControlSheet from "@/components/ecom/ControlSheet";
 import FilterForm from "@/components/ecom/FilterForm";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+} from "@/components/ui/select";
+import { SelectValue } from "@radix-ui/react-select";
 
 const GeneralizedPage = ({ params }: { params: any }) => {
-  const [currentPage, setCurrentPage] = useState(1);
   const [limit, setLimit] = useState(8);
+  const [sorting, setSorting] = useState("");
+
   const { searchInputValue, setSearchInputValue } = useAppProvider();
 
   const getData = (url: string) => {
@@ -30,16 +38,20 @@ const GeneralizedPage = ({ params }: { params: any }) => {
 
   const router = useRouter();
   const searchParams = useSearchParams();
-  const page = searchParams.get("page") || "1";
+  const page = searchParams.get("page");
 
   const { data, isLoading, error } = useSWR(
     searchInputValue !== ""
       ? `${Backend_URL}/ecommerce-Products/riddle/${params.slug[0]}?search=${searchInputValue}`
       : `${Backend_URL}/ecommerce-Products/riddle/${
           params.slug[0]
-        }?page=${page}&limit=${12}`,
+        }?page=${page}${
+          sorting ? `&orderBy=salePrice&orderDirection=${sorting}` : ""
+        }&limit=${12}`,
     getData
   );
+
+  const [currentPage, setCurrentPage] = useState(Number(page));
 
   return (
     <div className=" py-8 space-y-12">
@@ -49,7 +61,7 @@ const GeneralizedPage = ({ params }: { params: any }) => {
             path="Home"
             currentPage={params.slug[0] == "new-in" ? "New In" : params.slug[0]}
           />
-          
+
           <Heading
             header={`New products for ${
               params.slug[0] == "new-in" ? "you" : params.slug[0]
@@ -61,7 +73,22 @@ const GeneralizedPage = ({ params }: { params: any }) => {
       <div className=" py-3 border">
         <Container>
           <div className="flex justify-end items-center">
-            <div className=" flex items-center gap-3">
+            <div className=" flex items-center justify-end gap-3">
+              <div className="col-span-full space-y-1.5">
+                <Select
+                  onValueChange={(e) => {
+                    setSorting(e);
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sort Price" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="asc">Low to high</SelectItem>
+                    <SelectItem value="desc">High to low</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
               <ControlSheet
                 closeRef={closeRef}
                 buttonName={
